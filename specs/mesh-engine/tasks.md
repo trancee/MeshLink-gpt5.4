@@ -17,8 +17,8 @@
 
 ## Phase 3: Handshake Management
 
-- [ ] T008 Implement `NoiseHandshakeManager` (per-peer Noise XX orchestration)
-- [ ] T009 Write `NoiseHandshakeManagerDiagnosticTest`
+- [x] T008 Implement `NoiseHandshakeManager` (per-peer Noise XX orchestration)
+- [x] T009 Write `NoiseHandshakeManagerDiagnosticTest`
 
 ## Phase 4: State Management
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-9 actionable tasks complete, 13 remain pending.
+11 actionable tasks complete, 11 remain pending.
