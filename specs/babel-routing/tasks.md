@@ -1,13 +1,13 @@
 # Tasks: Babel Routing
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — routing foundation types bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `RoutingConfig` (timeouts, thresholds, hop limit)
-- [ ] T002 [P] Define `PeerInfo` data class (neighbor state)
-- [ ] T003 [P] Define `OutboundFrame` (queued transmission frame)
-- [ ] T004 Write `RoutingConfigTest`
+- [x] T001 Define `RoutingConfig` (timeouts, thresholds, hop limit)
+- [x] T002 [P] Define `PeerInfo` data class (neighbor state)
+- [x] T003 [P] Define `OutboundFrame` (queued transmission frame)
+- [x] T004 Write `RoutingConfigTest`
 
 ## Phase 2: Routing Core
 
@@ -38,4 +38,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-All 18 actionable tasks are now pending.
+4 actionable tasks complete, 14 remain pending.
