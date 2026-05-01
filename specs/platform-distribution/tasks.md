@@ -46,17 +46,17 @@ swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcfr
 
 ### Implementation
 
-- [ ] T008 [US1] Implement Android crypto actual in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt`.
+- [x] T008 [US1] Implement Android crypto actual in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt`.
 <!-- parallel-group: 1 -->
-- [ ] T009 [P] [US1] Implement Android secure storage in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/storage/AndroidSecureStorage.kt`.
-- [ ] T010 [P] [US1] Implement the Android background BLE service in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/MeshLinkService.kt`.
-- [ ] T011 [US1] Implement Android BLE transport in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/AndroidBleTransport.kt`.
-- [ ] T012 [US1] Wire Android platform dependencies in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/api/MeshLinkAndroidFactory.kt` after T008-T011.
+- [x] T009 [P] [US1] Implement Android secure storage in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/storage/AndroidSecureStorage.kt`.
+- [x] T010 [P] [US1] Implement the Android background BLE service in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/MeshLinkService.kt`.
+- [x] T011 [US1] Implement Android BLE transport in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/AndroidBleTransport.kt`.
+- [x] T012 [US1] Wire Android platform dependencies in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/api/MeshLinkAndroidFactory.kt` after T008-T011.
 <!-- parallel-group: 2 -->
-- [ ] T013 [P] [US1] Add Android crypto provider coverage in `meshlink/src/androidHostTest/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProviderTest.kt`.
-- [ ] T014 [P] [US1] Add Android factory/distribution coverage in `meshlink/src/androidHostTest/kotlin/ch/trancee/meshlink/api/MeshLinkAndroidFactoryTest.kt`.
-- [ ] T015 [US1] Refresh Android consumer rules in `consumer-rules.pro`.
-- [ ] T016 [US1] Verify Android distribution with `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify`.
+- [x] T013 [P] [US1] Add Android crypto provider coverage in `meshlink/src/androidHostTest/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProviderTest.kt`.
+- [x] T014 [P] [US1] Add Android factory/distribution coverage in `meshlink/src/androidHostTest/kotlin/ch/trancee/meshlink/api/MeshLinkAndroidFactoryTest.kt`.
+- [x] T015 [US1] Refresh Android consumer rules in `consumer-rules.pro`.
+- [x] T016 [US1] Verify Android distribution with `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify`.
 
 **Checkpoint**: Android artifacts are publishable and independently verifiable.
 
@@ -69,13 +69,13 @@ swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcfr
 
 ### Implementation
 
-- [ ] T017 [US2] Implement the iOS crypto bridge contract in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoBridge.kt`.
-- [ ] T018 [US2] Implement the iOS crypto provider in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt`.
+- [x] T017 [US2] Implement the iOS crypto bridge contract in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoBridge.kt`.
+- [x] T018 [US2] Implement the iOS crypto provider in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt`.
 <!-- parallel-group: 3 -->
-- [ ] T019 [P] [US2] Implement iOS secure storage in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/storage/IosSecureStorage.kt`.
-- [ ] T020 [P] [US2] Implement the iOS helper node in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/engine/MeshNode.kt`.
-- [ ] T021 [US2] Implement physical-device BLE transport in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/transport/IosBleTransport.kt`.
-- [ ] T022 [US2] Wire iOS platform dependencies in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/api/MeshLinkIosFactory.kt` after T017-T021.
+- [x] T019 [P] [US2] Implement iOS secure storage in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/storage/IosSecureStorage.kt`.
+- [x] T020 [P] [US2] Implement the iOS helper node in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/engine/MeshNode.kt`.
+- [x] T021 [US2] Implement physical-device BLE transport in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/transport/IosBleTransport.kt`.
+- [x] T022 [US2] Wire iOS platform dependencies in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/api/MeshLinkIosFactory.kt` after T017-T021.
 - [x] T023 [US2] Create the release-hosted SwiftPM binary-target manifest in `Package.swift`.
 - [x] T024 [US2] Document physical-device-only iOS integration and unsupported simulator execution in `docs/ios-crypto-bridge.md`.
 - [x] T025 [US2] Verify device-only iOS packaging with `./gradlew :meshlink:compileKotlinIosArm64 :meshlink:assembleMeshLinkReleaseXCFramework`.
