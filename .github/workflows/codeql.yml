@@ -24,64 +24,32 @@ jobs:
       matrix:
         language:
           - actions
-          - c-cpp
           - java-kotlin
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Detect native sources
-        if: matrix.language == 'c-cpp'
-        id: detect_native
-        run: |
-          if find . -type f \( \
-            -name '*.c' -o \
-            -name '*.cc' -o \
-            -name '*.cpp' -o \
-            -name '*.cxx' -o \
-            -name '*.h' -o \
-            -name '*.hh' -o \
-            -name '*.hpp' -o \
-            -name '*.hxx' -o \
-            -name '*.m' -o \
-            -name '*.mm' \
-          \) | grep -q .; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Report skipped native analysis
-        if: matrix.language == 'c-cpp' && steps.detect_native.outputs.present != 'true'
-        run: echo "No C/C++/Objective-C sources found; skipping c-cpp CodeQL analysis."
+        uses: actions/checkout@v6.0.2
 
       - name: Initialize CodeQL
-        if: matrix.language != 'c-cpp' || steps.detect_native.outputs.present == 'true'
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4.35.2
         with:
           languages: ${{ matrix.language }}
 
       - name: Set up JDK 21
         if: matrix.language == 'java-kotlin'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5.2.0
         with:
           distribution: temurin
           java-version: "21"
 
       - name: Set up Gradle
         if: matrix.language == 'java-kotlin'
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6.1.0
 
       - name: Build Kotlin sources for CodeQL
         if: matrix.language == 'java-kotlin'
         run: ./gradlew :meshlink:compileKotlinJvm :meshlink:compileAndroidMain :meshlink:compileKotlinIosArm64
 
-      - name: Autobuild native sources
-        if: matrix.language == 'c-cpp' && steps.detect_native.outputs.present == 'true'
-        uses: github/codeql-action/autobuild@v3
-
       - name: Analyze
-        if: matrix.language != 'c-cpp' || steps.detect_native.outputs.present == 'true'
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4.35.2
         with:
           category: /language:${{ matrix.language }}
