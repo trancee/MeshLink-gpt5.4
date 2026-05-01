@@ -1,27 +1,49 @@
 ## Token Usage Report
 
-**Date**: 2026-04-30  
+**Date**: 2026-05-01  
 **Target Context Window**: 200000 tokens  
 **Estimation Method**: chars ÷ 4.0  
-**Flags**: none
+**Installed extensions counted**: from `.specify/extensions.yml` only
 
-### Assumption used for extension inventory
-`.specify/extensions.yml` currently has `installed: []`, but project-local extension directories exist under `.specify/extensions/`.  
-To make the report useful, I measured the **available local extensions on disk** rather than reporting extension cost as zero.
+### Scope note
+A previous report counted **local extension directories on disk** even though they were not installed.  
+This run follows the current command spec strictly and counts **only installed extensions**.
 
 ---
 
 ## Governance Files
 
 | File | Exists | Chars | Est. Tokens | Load Timing | Notes |
-|---|---:|---:|---:|---|---|
-| `AGENTS.md` | Yes | 188 | 47.0 | Always | Minimal routing note |
-| `.github/copilot-instructions.md` | Yes | 2062 | 515.5 | Always | Loaded by Copilot-style sessions |
+|---|---|---:|---:|---|---|
+| `CLAUDE.md` | No | 0 | 0.0 | Always | Not present |
+| `AGENTS.md` | Yes | 188 | 47.0 | Always | Minimal routing note; references “current plan” without concrete path |
+| `.github/copilot-instructions.md` | Yes | 2062 | 515.5 | Always | References constitution + durable memory files |
 | `.specify/memory/constitution.md` | Yes | 8952 | 2238.0 | Constitution-aware | Actual content, no redirect |
+| `docs/memory/ARCHITECTURE.md` | Yes | 653 | 163.2 | Referenced by always-loaded file | Referenced from `.github/copilot-instructions.md` |
+| `docs/memory/BUGS.md` | Yes | 515 | 128.8 | Referenced by always-loaded file | Referenced from `.github/copilot-instructions.md` |
+| `docs/memory/DECISIONS.md` | Yes | 585 | 146.2 | Referenced by always-loaded file | Referenced from `.github/copilot-instructions.md` |
+| `docs/memory/PROJECT_CONTEXT.md` | Yes | 657 | 164.2 | Referenced by always-loaded file | Referenced from `.github/copilot-instructions.md` |
+| `docs/memory/WORKLOG.md` | Yes | 218 | 54.5 | Referenced by always-loaded file | Referenced from `.github/copilot-instructions.md` |
 
-**Total governance tokens**: **2800.5**  
-- **Baseline (always-loaded only)**: **562.5**
-- **Constitution-aware load**: **2800.5**
+**Total governance tokens**: **3457.4**  
+**Baseline only**: **562.5**  
+**Supplementary governance beyond constitution**: **656.9**
+
+### Governance composition
+- **Constitution**: 2238.0 tokens (**64.7%** of constitution-aware load)
+- **Copilot instructions**: 515.5 tokens (**14.9%**)
+- **Referenced durable memory files**: 656.9 tokens (**19.0%**)
+- **AGENTS.md**: 47.0 tokens (**1.4%**)
+
+### Unresolved / template references
+These were detected but not counted as concrete files:
+- `AGENTS.md` → “current plan” (textual reference, no path)
+- `.github/copilot-instructions.md` → `specs/<feature>/memory.md`
+- `.github/copilot-instructions.md` → `specs/<feature>/memory-synthesis.md`
+
+No extra files found under:
+- `.ai/rules/*.md`
+- `.specify/memory/*.md` beyond `constitution.md`
 
 ---
 
@@ -29,27 +51,12 @@ To make the report useful, I measured the **available local extensions on disk**
 
 | Extension | Commands | Total Tokens | Largest Command | Largest Tokens |
 |---|---:|---:|---|---:|
-| `optimize` | 3 | 10311.2 | `speckit.optimize.run` | 5337.2 |
-| `review` | 7 | 9175.5 | `speckit.review.errors` | 1962.5 |
-| `security-review` | 7 | 8936.7 | `speckit.security-review.audit` | 4484.0 |
-| `fleet` | 2 | 8853.3 | `speckit.fleet.run` | 7713.8 |
-| `wireframe` | 6 | 8560.3 | `speckit.wireframe.generate` | 2269.0 |
-| `ripple` | 3 | 8214.4 | `speckit.ripple.scan` | 4119.2 |
-| `sync` | 5 | 5803.5 | `speckit.sync.backfill` | 1746.5 |
-| `brownfield` | 4 | 5244.0 | `speckit.brownfield.migrate` | 1470.8 |
-| `refine` | 4 | 3410.6 | `speckit.refine.propagate` | 1022.0 |
-| `orchestrator` | 4 | 3323.8 | `speckit.orchestrator.conflicts` | 906.8 |
-| `diagram` | 3 | 2734.8 | `speckit.diagram.dependencies` | 994.8 |
-| `ship` | 1 | 2649.2 | `speckit.ship.run` | 2649.2 |
-| `git` | 5 | 2447.1 | `speckit.git.feature` | 816.0 |
-| `verify` | 1 | 2430.2 | `speckit.verify.run` | 2430.2 |
-| `memory-md` | 6 | 2094.8 | `speckit.memory-md.plan-with-memory` | 513.2 |
+| *(none installed in `.specify/extensions.yml`)* | 0 | 0.0 | — | — |
 
-**Largest command invocation estimate**:
-- `speckit.fleet.run`
-- command file: **7713.8**
-- referenced docs: **1139.5**
-- total invocation estimate with baseline: **9415.8**
+**Total extension tokens**: **0.0**
+
+### Important note
+Project-local extension directories do exist under `.specify/extensions/`, but they are **not counted** here because they are **not installed** in `.specify/extensions.yml`.
 
 ---
 
@@ -57,71 +64,84 @@ To make the report useful, I measured the **available local extensions on disk**
 
 | Session Type | Tokens | % of 8K | % of 32K | % of 128K | % of 200K | % of 1M |
 |---|---:|---:|---:|---:|---:|---:|
-| Baseline (always-loaded governance) | 562.5 | 7.03% | 1.76% | 0.44% | 0.28% | 0.06% |
-| + Constitution | 2800.5 | 35.01% | 8.75% | 2.19% | 1.40% | 0.28% |
-| + Largest command invocation | 9415.8 | 117.70% | 29.42% | 7.36% | 4.71% | 0.94% |
+| Baseline (governance only) | 562.5 | 7.03% | 1.76% | 0.44% | 0.28% | 0.06% |
+| + Constitution + referenced durable memory | 3457.4 | 43.22% | 10.80% | 2.70% | 1.73% | 0.35% |
+| + Largest installed command | — | — | — | — | — | — |
 
 ### Interpretation
-- Your **baseline governance** is acceptable.
-- The **constitution** is the dominant governance overhead.
-- The **largest command prompts**, especially Fleet and Optimize, are expensive enough to overflow an **8K** context and consume a non-trivial share of **32K**.
+- **200K / 128K / 32K models**: governance overhead is healthy.
+- **8K models**: a constitution-aware session is expensive at **43.22%** before task-specific context.
+- **Installed extension prompt overhead is currently zero**.
 
 ---
 
 ## Historical Trend
 
-A previous report exists at `.specify/optimize/token-report.md`.
+Previous report found at:
+- `.specify/optimize/token-report.md`
 
-### Comparable governance files
+### Per-file comparison
 
 | File | Previous | Current | Change | Growth % | Flag |
 |---|---:|---:|---:|---:|---|
+| `.github/copilot-instructions.md` | 515.5 | 515.5 | 0.0 | 0.0% | — |
+| `.specify/memory/constitution.md` | 2238.0 | 2238.0 | 0.0 | 0.0% | — |
 | `AGENTS.md` | 47.0 | 47.0 | 0.0 | 0.0% | — |
-| `.specify/memory/constitution.md` | 2328.0 | 2238.0 | -90.0 | -3.9% | shrinking |
+| `docs/memory/ARCHITECTURE.md` | — | 163.2 | — | — | new scope |
+| `docs/memory/BUGS.md` | — | 128.8 | — | — | new scope |
+| `docs/memory/DECISIONS.md` | — | 146.2 | — | — | new scope |
+| `docs/memory/PROJECT_CONTEXT.md` | — | 164.2 | — | — | new scope |
+| `docs/memory/WORKLOG.md` | — | 54.5 | — | — | new scope |
 
-### Important trend note
-The previous report **did not count** `.github/copilot-instructions.md`, while this run **does**.
-
-So:
-- **Constitution trend** is reliable: it shrank
-- **Total governance trend** is not fully apples-to-apples because discovery is more complete now
+**Growth threshold**: 20%  
+**Files over threshold**: none
 
 ### Overall governance trend
-- **Constitution**: shrinking
-- **Total governance ecosystem**: effectively higher than the prior snapshot because `.github/copilot-instructions.md` is now included
+- **Comparable tracked files**: **Stable (0.0%)**
+- **Measured total governance overhead** is higher than the previous report because this run includes additional concrete files referenced by `.github/copilot-instructions.md`.
+
+### Extension trend note
+The previous report counted **local extensions on disk** despite `installed: []`.  
+This run counts **installed extensions only**, so **extension totals are not directly comparable**.
 
 ---
 
 ## Optimization Suggestions
 
-1. **Compress the biggest command prompts first**
-   - Highest-impact targets:
-     - `speckit.fleet.run` (~7714 tokens)
-     - `speckit.optimize.run` (~5337 tokens)
-     - `speckit.security-review.audit` (~4484 tokens)
-     - `speckit.ripple.scan` (~4119 tokens)
-   - These dominate invocation cost more than governance files do.
+Suggest-only; nothing applied.
 
-2. **Keep constitution work incremental**
-   - You already reduced the constitution from ~2328 to ~2238 tokens.
-   - Further savings are possible, but command prompt size is now the larger issue.
+1. **Keep the constitution purely normative**
+   - Move sync-impact/history commentary out of `.specify/memory/constitution.md` into a companion doc.
+   - Projected savings: **~80–150 tokens**
+   - Why: the constitution is your biggest active governance file by far.
 
-3. **Treat Fleet as a high-context operation**
-   - `speckit.fleet.run` is too large for small-window models.
-   - Prefer larger-window models for Fleet, or split orchestration into smaller commands.
+2. **Compress `.github/copilot-instructions.md` into a tighter checklist**
+   - Replace repeated phase prose with a shorter decision checklist plus one pointer to durable memory guidance.
+   - Projected savings: **~100–180 tokens**
+   - Why: this is always-loaded overhead.
 
-4. **Use token audits periodically**
-   - Now that you have a better discovery baseline, future runs will provide more reliable trend tracking.
+3. **Introduce a single durable-memory index**
+   - Example: `docs/memory/README.md`, then reference that from `.github/copilot-instructions.md` instead of listing five files inline.
+   - Projected savings: **~50–100 baseline tokens**
+   - Why: reduces always-loaded prompt size, even if the deeper docs remain available when needed.
+
+4. **Treat 8K models as “baseline-only” unless necessary**
+   - Savings: **context preservation rather than file reduction**
+   - Why: loading constitution + durable memory consumes **43.22%** of an 8K window before task context.
+
+5. **If extension activation is planned, audit before installing**
+   - Current installed cost: **0**
+   - Prevented future cost: **potentially thousands of tokens**
+   - Why: the previous report showed large local command prompts, but they are inactive today.
 
 ---
 
 ## Recommended Actions
 
-- If you want the biggest context savings, run:
-  - `/speckit.optimize.run --category token_budget`
-  on the **largest extension command prompts**, especially Fleet and Optimize.
-- If you want command-level compression next, I’d start with:
-  - `fleet`
-  - `optimize`
-  - `security-review`
-- Governance file budget is currently **healthy** enough that extension-command optimization will likely yield better returns.
+- If you mainly use **32K+ models**, your current governance budget is fine.
+- If you want to support **8K models**, compress:
+  - `.specify/memory/constitution.md`
+  - `.github/copilot-instructions.md`
+- If `installed: []` is intentional, extension-token optimization is **not urgent**.
+- If you plan to activate extensions later, update `.specify/extensions.yml` and rerun this audit first.
+- Run this audit periodically to keep governance growth visible.

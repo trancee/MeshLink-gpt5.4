@@ -1,50 +1,21 @@
 # Copilot Instructions
 
-This repository uses the layered Spec Kit Memory workflow.
+This repository uses the Spec Kit memory workflow. For non-trivial tasks, memory is required.
 
-For any non-trivial task, memory is part of the workflow, not optional documentation.
+## Memory Model
 
-## Memory Layers
-
-- Constitution / principles:
-  Read `.specify/memory/constitution.md` first.
-  Store only stable operating principles there. Never store feature-specific notes there.
-- Durable project memory:
-  `docs/memory/PROJECT_CONTEXT.md`
-  `docs/memory/ARCHITECTURE.md`
-  `docs/memory/DECISIONS.md`
-  `docs/memory/BUGS.md`
-  `docs/memory/WORKLOG.md`
-- Active feature memory:
-  `specs/<feature>/memory.md`
-  `specs/<feature>/memory-synthesis.md`
-- Ephemeral run context:
-  Use the current prompt, diff, terminal output, and temporary notes only. Do not commit them to durable memory.
+- Read `.specify/memory/constitution.md` first.
+- Durable project memory lives in `docs/memory/`.
+- Active feature memory lives in `specs/<feature>/memory.md` and `specs/<feature>/memory-synthesis.md`.
+- Ephemeral run context belongs in the prompt, diff, terminal output, and temporary notes only; do not commit it to durable memory.
 
 ## Required Workflow
 
-These requirements are enforced in this repository by prompts, shared instructions, and review expectations.
-They are not yet backed by separate `/tasks` or `/verify` extension commands.
+- Before `/specify`: read the constitution, relevant durable memory, and related bug or decision entries. Produce or refresh `memory-synthesis.md` with constraints, reused decisions, boundaries, conflicts, assumptions, and watchpoints.
+- Before `/plan` and `/tasks`: read the active spec plus feature memory. Do not proceed through unresolved conflicts with project memory or architecture boundaries.
+- Before `/implement`: re-read `memory-synthesis.md` and treat implementation and verification watchpoints as requirements.
+- After `/implement` and `/verify`: review the diff, completed work, tests, and findings. Update durable memory only when the lesson is durable, evidenced, reusable, and non-obvious. Do not add changelog-style or speculative entries.
 
-Before `/specify`:
-- Read constitution, durable project memory, and any closely related bug or decision entries.
-- Produce or refresh a compact `memory-synthesis.md` section for constraints, reused decisions, bug patterns, boundaries, conflicts, assumptions, and watchpoints.
+Treat `docs/memory/` as repository memory. Keep entries concise, durable, and reviewable in Git.
 
-Before `/plan` and `/tasks`:
-- Read the active spec plus `memory.md` and `memory-synthesis.md`.
-- Do not proceed if there is an unresolved hard conflict with project memory or architecture boundaries.
-
-Before `/implement`:
-- Re-read `memory-synthesis.md`.
-- Treat implementation and verification watchpoints as requirements, not suggestions.
-
-After `/implement` and after `/verify`:
-- Review the diff, task completion, tests, and findings.
-- Update durable memory only when the lesson is durable, evidenced, reusable, and non-obvious.
-- Refuse changelog-style or speculative memory updates.
-
-Treat `docs/memory/` as the repository memory layer.
-Keep entries concise, durable, and reviewable in Git.
-Do not assume hidden state outside the repository.
-
-A task is not fully complete until memory has been reviewed.
+A task is not complete until memory has been reviewed.
