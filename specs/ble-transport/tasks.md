@@ -18,13 +18,13 @@
 
 ## Phase 3: Discovery & Connection
 
-- [ ] T009 Implement `AdvertisementCodec` (pseudonym + power tier in BLE advertisement)
+- [x] T009 Implement `AdvertisementCodec` (pseudonym + power tier in BLE advertisement)
 - [x] T010 [P] Implement `ConnectionInitiationPolicy` (deterministic initiator from peer IDs)
 - [ ] T011 [P] Implement `MeshHashFilter` (advertisement dedup)
 - [ ] T012 [P] Implement `OemL2capProbeCache` (device model → capability cache)
 - [ ] T013 [P] Implement `OemSlotTracker` (advertisement slot management)
 - [ ] T014 [P] Implement `WriteLatencyTracker`
-- [ ] T015 Write `AdvertisementCodecTest`, `ConnectionInitiationPolicyTest`
+- [x] T015 Write `AdvertisementCodecTest`, `ConnectionInitiationPolicyTest`
 - [ ] T016 Write `MeshHashFilterTest`, `OemL2capProbeCacheTest`, `OemSlotTrackerTest`
 - [ ] T017 Write `WriteLatencyTrackerTest`
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-9 actionable tasks complete, 13 remain pending.
+11 actionable tasks complete, 11 remain pending.
