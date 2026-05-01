@@ -17,7 +17,7 @@
 - [ ] T008 Implement `HandshakeState` (XX pattern state machine)
 - [ ] T009 Implement `NoiseXXHandshake` (3-message initiator/responder flow)
 - [x] T010 [P] Implement `DhCache` (LRU memoization of X25519 results)
-- [ ] T011 [P] Implement `NoiseSession` (established session with send/recv CipherState pair)
+- [x] T011 [P] Implement `NoiseSession` (established session with send/recv CipherState pair)
 - [ ] T012 Write `NoiseXXHandshakeTest` — full handshake round-trip
 - [x] T013 Write `SymmetricStateTest`, `CipherStateTest`, `DhCacheTest`
 
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-14 actionable tasks complete, 17 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+15 actionable tasks complete, 16 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
