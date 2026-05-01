@@ -1,13 +1,13 @@
 # Tasks: BLE Transport
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — transport foundation types and constants bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `BleTransport` interface (connect, disconnect, send, receive, advertise)
-- [ ] T002 [P] Define `BleTransportConfig` (scan intervals, connection timeouts, advertisement settings)
-- [ ] T003 [P] Define `GattConstants` (service UUID, characteristic UUIDs)
-- [ ] T004 Write `BleTransportConfigTest`, `GattConstantsTest`
+- [x] T001 Define `BleTransport` interface (connect, disconnect, send, receive, advertise)
+- [x] T002 [P] Define `BleTransportConfig` (scan intervals, connection timeouts, advertisement settings)
+- [x] T003 [P] Define `GattConstants` (service UUID, characteristic UUIDs)
+- [x] T004 Write `BleTransportConfigTest`, `GattConstantsTest`
 
 ## Phase 2: L2CAP & Frame Codec
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-All 22 actionable tasks are now pending.
+4 actionable tasks complete, 18 remain pending.
