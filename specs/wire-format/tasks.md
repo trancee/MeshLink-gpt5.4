@@ -13,7 +13,7 @@
 ## Phase 2: Message Codecs
 
 - [x] T006 [P] Implement `Hello` encode/decode
-- [ ] T007 [P] Implement `Handshake` encode/decode
+- [x] T007 [P] Implement `Handshake` encode/decode
 - [ ] T008 [P] Implement `Update` encode/decode (Babel routing update)
 - [ ] T009 [P] Implement `Chunk` encode/decode (transfer payload)
 - [ ] T010 [P] Implement `ChunkAck` encode/decode (SACK)
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-6 actionable tasks complete, 16 remain pending. Current JVM and Android host-test coverage verify at 100%.
+7 actionable tasks complete, 15 remain pending. Current JVM and Android host-test coverage verify at 100%.

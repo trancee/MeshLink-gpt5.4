@@ -1,5 +1,8 @@
 package ch.trancee.meshlink.wire
 
+import ch.trancee.meshlink.wire.messages.HandshakeMessage
+import ch.trancee.meshlink.wire.messages.HandshakeRound
+import ch.trancee.meshlink.wire.messages.HandshakeMessageCodec
 import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.HelloMessageCodec
 import kotlin.test.Test
@@ -52,6 +55,51 @@ public class WireCodecTest {
             expected = byteArrayOf(MessageType.HELLO.code.toByte(), 0x10, 0x00, 0x00, 0x00) + expectedPayload,
             actual = encoded,
             message = "WireCodec should write the one-byte message type and little-endian payload length before the payload",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripHandshakeMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedPayload: ByteArray = byteArrayOf(0x51, 0x52, 0x53)
+        val message = HandshakeMessage(
+            round = HandshakeRound.ONE,
+            payload = expectedPayload,
+        )
+
+        // Act
+        val decoded: HandshakeMessage = assertIs<HandshakeMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = HandshakeRound.ONE,
+            actual = decoded.round,
+            message = "WireCodec should preserve the handshake round through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedPayload,
+            actual = decoded.payload,
+            message = "WireCodec should preserve the handshake payload through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesHandshakeTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = HandshakeMessage(
+            round = HandshakeRound.THREE,
+            payload = byteArrayOf(0x61, 0x62),
+        )
+        val expectedPayload: ByteArray = HandshakeMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.HANDSHAKE.code.toByte(), 0x03, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame HANDSHAKE messages with the correct type tag and payload length",
         )
     }
 
@@ -144,7 +192,7 @@ public class WireCodecTest {
     public fun decode_throwsWhenMessageTypeIsRecognizedButCodecIsNotYetImplemented(): Unit {
         // Arrange
         val encoded: ByteArray = byteArrayOf(
-            MessageType.HANDSHAKE.code.toByte(),
+            MessageType.UPDATE.code.toByte(),
             0x00,
             0x00,
             0x00,
@@ -158,7 +206,7 @@ public class WireCodecTest {
 
         // Assert
         assertEquals(
-            expected = "WireCodec does not yet support decoding HANDSHAKE messages.",
+            expected = "WireCodec does not yet support decoding UPDATE messages.",
             actual = error.message,
             message = "WireCodec should surface unsupported message types until their specific codecs are implemented",
         )
