@@ -37,9 +37,9 @@
 
 ## Phase 6: Integration
 
-- [ ] T019 Write `MeshEngineIntegrationTest` (multi-node via MeshTestHarness)
+- [x] T019 Write `MeshEngineIntegrationTest` (multi-node via MeshTestHarness)
 - [ ] T020 Write `PeerLifecycleIntegrationTest`
-- [ ] T021 Write `PseudonymRotationIntegrationTest`
+- [x] T021 Write `PseudonymRotationIntegrationTest`
 - [ ] T022 Write `StubApiWiringIntegrationTest`
 
 ## Verification
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-17 actionable tasks complete, 5 remain pending.
+19 actionable tasks complete, 3 remain pending.
