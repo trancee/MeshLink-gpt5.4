@@ -1290,7 +1290,8 @@ final class ch.trancee.meshlink.engine/MeshStateSweepResult { // ch.trancee.mesh
 }
 
 final class ch.trancee.meshlink.engine/NoiseHandshakeManager { // ch.trancee.meshlink.engine/NoiseHandshakeManager|null[0]
-    constructor <init>(ch.trancee.meshlink.api/DiagnosticSink = ...) // ch.trancee.meshlink.engine/NoiseHandshakeManager.<init>|<init>(ch.trancee.meshlink.api.DiagnosticSink){}[0]
+    constructor <init>() // ch.trancee.meshlink.engine/NoiseHandshakeManager.<init>|<init>(){}[0]
+    constructor <init>(ch.trancee.meshlink.api/DiagnosticSink) // ch.trancee.meshlink.engine/NoiseHandshakeManager.<init>|<init>(ch.trancee.meshlink.api.DiagnosticSink){}[0]
 
     final fun beginHandshake(ch.trancee.meshlink.api/PeerIdHex, ch.trancee.meshlink.crypto.noise/HandshakeRole, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/NoiseHandshakeManager.beginHandshake|beginHandshake(ch.trancee.meshlink.api.PeerIdHex;ch.trancee.meshlink.crypto.noise.HandshakeRole;kotlin.ByteArray){}[0]
     final fun createOutboundMessage(ch.trancee.meshlink.api/PeerIdHex, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/NoiseHandshakeManager.createOutboundMessage|createOutboundMessage(ch.trancee.meshlink.api.PeerIdHex;kotlin.ByteArray){}[0]

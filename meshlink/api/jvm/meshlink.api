@@ -951,7 +951,6 @@ public final class ch/trancee/meshlink/engine/MeshStateSweepResult {
 public final class ch/trancee/meshlink/engine/NoiseHandshakeManager {
 	public fun <init> ()V
 	public fun <init> (Lch/trancee/meshlink/api/DiagnosticSink;)V
-	public synthetic fun <init> (Lch/trancee/meshlink/api/DiagnosticSink;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun beginHandshake (Lch/trancee/meshlink/api/PeerIdHex;Lch/trancee/meshlink/crypto/noise/HandshakeRole;[B)Lch/trancee/meshlink/wire/messages/HandshakeMessage;
 	public final fun createOutboundMessage (Lch/trancee/meshlink/api/PeerIdHex;[B)Lch/trancee/meshlink/wire/messages/HandshakeMessage;
 	public final fun isHandshakeActive (Lch/trancee/meshlink/api/PeerIdHex;)Z

@@ -232,7 +232,11 @@ private constructor(
       return MeshEngine(
         config = config,
         transport = transport,
-        handshakeManager = NoiseHandshakeManager(diagnosticSink = diagnosticSink),
+        handshakeManager =
+          NoiseHandshakeManager(
+            diagnosticSink = diagnosticSink,
+            trustMode = config.meshLinkConfig.security.trustMode,
+          ),
         stateManager = MeshStateManager(),
         pseudonymRotator = PseudonymRotator(cryptoProvider = cryptoProvider),
         deliveryPipeline =

@@ -13,6 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 public class NoiseHandshakeManagerDiagnosticTest {
@@ -79,6 +80,119 @@ public class NoiseHandshakeManagerDiagnosticTest {
     assertEquals(expected = PeerState.Connected, actual = initiatorPayload.state)
     assertEquals(expected = peerId, actual = responderPayload.peerId)
     assertEquals(expected = PeerState.Connected, actual = responderPayload.state)
+    assertNotNull(actual = initiator.session(peerId = peerId))
+    assertNotNull(actual = responder.session(peerId = peerId))
+  }
+
+  @Test
+  public fun receiveHandshakeMessage_rejectsUnknownPeersInStrictModeAfterHandshakeCompletes():
+    Unit {
+    // Arrange
+    val peerId = PeerIdHex(value = "00112233")
+    val initiator = NoiseHandshakeManager()
+    val strictSink = DiagnosticSink.create(bufferSize = 4, clock = { 25L })
+    val strictResponder =
+      NoiseHandshakeManager(
+        diagnosticSink = strictSink,
+        trustMode = ch.trancee.meshlink.api.TrustMode.STRICT,
+      )
+
+    // Act
+    val first: HandshakeMessage =
+      initiator.beginHandshake(
+        peerId = peerId,
+        role = HandshakeRole.INITIATOR,
+        payload = byteArrayOf(0x01),
+      )
+    strictResponder.receiveHandshakeMessage(
+      peerId = peerId,
+      role = HandshakeRole.RESPONDER,
+      message = first,
+    )
+    val second: HandshakeMessage =
+      strictResponder.createOutboundMessage(peerId = peerId, payload = byteArrayOf(0x02))
+    initiator.receiveHandshakeMessage(
+      peerId = peerId,
+      role = HandshakeRole.INITIATOR,
+      message = second,
+    )
+    val third: HandshakeMessage =
+      initiator.createOutboundMessage(peerId = peerId, payload = byteArrayOf(0x03))
+    val error =
+      assertFailsWith<IllegalStateException> {
+        strictResponder.receiveHandshakeMessage(
+          peerId = peerId,
+          role = HandshakeRole.RESPONDER,
+          message = third,
+        )
+      }
+
+    // Assert
+    assertEquals(
+      expected = "NoiseHandshakeManager rejected peer 00112233: Peer is not pinned in STRICT mode.",
+      actual = error.message,
+    )
+    assertFalse(actual = strictResponder.isHandshakeActive(peerId = peerId))
+    assertEquals(actual = null, expected = strictResponder.session(peerId = peerId))
+    assertEquals(
+      expected = listOf(DiagnosticCode.HANDSHAKE_STARTED, DiagnosticCode.HANDSHAKE_FAILED),
+      actual = strictSink.diagnosticEvents.replayCache.map { event -> event.code },
+    )
+  }
+
+  @Test
+  public fun receiveHandshakeMessage_requiresExternalApprovalForUnknownPeersInPromptMode(): Unit {
+    // Arrange
+    val peerId = PeerIdHex(value = "00112233")
+    val initiator = NoiseHandshakeManager()
+    val promptSink = DiagnosticSink.create(bufferSize = 4, clock = { 27L })
+    val promptResponder =
+      NoiseHandshakeManager(
+        diagnosticSink = promptSink,
+        trustMode = ch.trancee.meshlink.api.TrustMode.PROMPT,
+      )
+
+    // Act
+    val first: HandshakeMessage =
+      initiator.beginHandshake(
+        peerId = peerId,
+        role = HandshakeRole.INITIATOR,
+        payload = byteArrayOf(0x01),
+      )
+    promptResponder.receiveHandshakeMessage(
+      peerId = peerId,
+      role = HandshakeRole.RESPONDER,
+      message = first,
+    )
+    val second: HandshakeMessage =
+      promptResponder.createOutboundMessage(peerId = peerId, payload = byteArrayOf(0x02))
+    initiator.receiveHandshakeMessage(
+      peerId = peerId,
+      role = HandshakeRole.INITIATOR,
+      message = second,
+    )
+    val third: HandshakeMessage =
+      initiator.createOutboundMessage(peerId = peerId, payload = byteArrayOf(0x03))
+    val error =
+      assertFailsWith<IllegalStateException> {
+        promptResponder.receiveHandshakeMessage(
+          peerId = peerId,
+          role = HandshakeRole.RESPONDER,
+          message = third,
+        )
+      }
+
+    // Assert
+    assertEquals(
+      expected = "NoiseHandshakeManager requires trust confirmation for peer 00112233.",
+      actual = error.message,
+    )
+    assertFalse(actual = promptResponder.isHandshakeActive(peerId = peerId))
+    assertEquals(expected = null, actual = promptResponder.session(peerId = peerId))
+    assertEquals(
+      expected = listOf(DiagnosticCode.HANDSHAKE_STARTED, DiagnosticCode.HANDSHAKE_FAILED),
+      actual = promptSink.diagnosticEvents.replayCache.map { event -> event.code },
+    )
   }
 
   @Test
