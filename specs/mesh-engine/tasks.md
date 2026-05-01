@@ -27,12 +27,12 @@
 
 ## Phase 5: Engine Core
 
-- [ ] T012 Implement `MeshEngine.create()` factory (wire all subsystems)
-- [ ] T013 Implement lifecycle management (start, stop, pause, resume)
+- [x] T012 Implement `MeshEngine.create()` factory (wire all subsystems)
+- [x] T013 Implement lifecycle management (start, stop, pause, resume)
 - [ ] T014 Implement inbound message routing (handshake vs data path)
 - [ ] T015 Implement outbound message scheduling (via DeliveryPipeline)
 - [ ] T016 Write `MeshEngineTest` — 9 scenarios covering all paths
-- [ ] T017 Write `MeshEngineApiLifecycleTest`
+- [x] T017 Write `MeshEngineApiLifecycleTest`
 - [ ] T018 Write `MeshEngineApiIdentityTest`
 
 ## Phase 6: Integration
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-11 actionable tasks complete, 11 remain pending.
+14 actionable tasks complete, 8 remain pending.
