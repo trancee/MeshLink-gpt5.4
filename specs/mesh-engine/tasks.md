@@ -1,6 +1,6 @@
 # Tasks: Mesh Engine
 
-**Status**: In progress — engine foundation configuration types bootstrapped
+**Status**: In progress — engine core and integrations implemented; outbound scheduling remains pending on DeliveryPipeline wiring
 
 ## Phase 1: Foundation
 
@@ -38,9 +38,9 @@
 ## Phase 6: Integration
 
 - [x] T019 Write `MeshEngineIntegrationTest` (multi-node via MeshTestHarness)
-- [ ] T020 Write `PeerLifecycleIntegrationTest`
+- [x] T020 Write `PeerLifecycleIntegrationTest`
 - [x] T021 Write `PseudonymRotationIntegrationTest`
-- [ ] T022 Write `StubApiWiringIntegrationTest`
+- [x] T022 Write `StubApiWiringIntegrationTest`
 
 ## Verification
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-19 actionable tasks complete, 3 remain pending.
+21 actionable tasks complete, 1 remain pending.

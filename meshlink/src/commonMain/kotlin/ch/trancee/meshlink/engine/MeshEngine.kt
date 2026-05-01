@@ -7,6 +7,7 @@ import ch.trancee.meshlink.api.MeshLinkApi
 import ch.trancee.meshlink.api.MeshLinkState
 import ch.trancee.meshlink.api.PeerDetail
 import ch.trancee.meshlink.api.PeerIdHex
+import ch.trancee.meshlink.api.PeerState
 import ch.trancee.meshlink.crypto.CryptoProvider
 import ch.trancee.meshlink.crypto.CryptoProviderFactory
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
@@ -145,6 +146,21 @@ public class MeshEngine private constructor(
             identityKey = identityKey,
             timestampMillis = timestampMillis,
         )
+    }
+
+    public fun publishPeers(peerDetails: List<PeerDetail>): Unit {
+        mutablePeers.value = peerDetails
+        peerDetails.forEach { peerDetail ->
+            diagnosticSink.emit(code = DiagnosticCode.PEER_DISCOVERED) {
+                ch.trancee.meshlink.api.DiagnosticPayload.PeerLifecycle(
+                    peerId = peerDetail.peerId,
+                    state = when (peerDetail.state) {
+                        PeerState.Disconnected -> PeerState.Disconnected
+                        else -> peerDetail.state
+                    },
+                )
+            }
+        }
     }
 
     private fun transitionTo(
