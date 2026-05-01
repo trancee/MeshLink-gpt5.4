@@ -12,13 +12,13 @@
 
 ## Phase 2: Delivery Pipeline
 
-- [ ] T006 Implement `DeliveryPipeline` (send, receive, ack, timeout orchestration)
+- [x] T006 Implement `DeliveryPipeline` (send, receive, ack, timeout orchestration)
 - [x] T007 Implement `SlidingWindowRateLimiter` (per-peer-pair enforcement)
-- [ ] T008 Write `DeliveryPipelineTest` — core send/receive/ack cycle
-- [ ] T009 Write `DeliveryPipelineCancelTest` — cancellation behavior
-- [ ] T010 Write `DeliveryPipelineDiagnosticTest` — diagnostic emissions
-- [ ] T011 Write `DeliveryPipelineBranchCoverageTest` — edge paths
-- [ ] T012 Write `DeliveryOutcomeMapperTest`
+- [x] T008 Write `DeliveryPipelineTest` — core send/receive/ack cycle
+- [x] T009 Write `DeliveryPipelineCancelTest` — cancellation behavior
+- [x] T010 Write `DeliveryPipelineDiagnosticTest` — diagnostic emissions
+- [x] T011 Write `DeliveryPipelineBranchCoverageTest` — edge paths
+- [x] T012 Write `DeliveryOutcomeMapperTest`
 
 ## Phase 3: Cut-Through Relay
 
@@ -39,4 +39,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-6 actionable tasks complete, 13 remain pending.
+12 actionable tasks complete, 7 remain pending.
