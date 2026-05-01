@@ -12,7 +12,7 @@
 
 ## Phase 2: Noise Protocol Core
 
-- [ ] T006 Implement `SymmetricState` (MixKey, MixHash, EncryptAndHash, DecryptAndHash)
+- [x] T006 Implement `SymmetricState` (MixKey, MixHash, EncryptAndHash, DecryptAndHash)
 - [ ] T007 [P] Implement `CipherState` (InitializeKey, EncryptWithAd, DecryptWithAd, nonce tracking)
 - [ ] T008 Implement `HandshakeState` (XX pattern state machine)
 - [ ] T009 Implement `NoiseXXHandshake` (3-message initiator/responder flow)
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-11 actionable tasks complete, 20 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+12 actionable tasks complete, 19 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
