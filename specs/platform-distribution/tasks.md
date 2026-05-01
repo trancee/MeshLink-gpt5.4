@@ -111,7 +111,7 @@ swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcfr
 - [x] T031 [US4] Create or refresh PR validation in `.github/workflows/ci.yml` for `ktfmt`, `detekt`, `jvmTest`, `androidHostTest`, `koverVerify`, `apiCheck`, and `jvmCiBenchmark`.
 <!-- parallel-group: 4 -->
 - [x] T032 [P] [US4] Create or refresh release automation in `.github/workflows/release.yml` for `publish-android`, `publish-ios`, XCFramework zip packaging, checksum generation, `Package.swift` validation, and GitHub release asset upload.
-- [ ] T033 [P] [US4] Create or refresh scheduled scanning in `.github/workflows/codeql.yml`.
+- [x] T033 [P] [US4] Create or refresh scheduled scanning in `.github/workflows/codeql.yml`.
 - [x] T034 [P] [US4] Create or refresh local quality hooks in `.githooks/pre-commit`.
 - [x] T035 [US4] Verify release artifacts with `./scripts/verify-publish.sh meshlink/build/outputs/aar meshlink/build/XCFrameworks/release`.
 - [x] T036 [US4] Verify SwiftPM checksum generation with `swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip`.

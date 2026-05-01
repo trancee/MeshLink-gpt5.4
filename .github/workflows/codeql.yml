@@ -18,14 +18,17 @@ permissions:
 
 jobs:
   analyze:
-    runs-on: macos-latest
+    runs-on: ${{ matrix.runs_on }}
     strategy:
       fail-fast: false
       matrix:
-        language:
-          - actions
-          - c-cpp
-          - java-kotlin
+        include:
+          - language: actions
+            runs_on: ubuntu-latest
+          - language: c-cpp
+            runs_on: ubuntu-latest
+          - language: java-kotlin
+            runs_on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
