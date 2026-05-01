@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.api
 
+/** Public-facing routing snapshot for debugging and inspection surfaces. */
 public data class RoutingSnapshot(
   public val destinationPeerId: PeerIdHex,
   public val nextHopPeerId: PeerIdHex,

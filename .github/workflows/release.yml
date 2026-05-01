@@ -1,3 +1,5 @@
+# Release workflow that publishes Maven artifacts first, then packages and uploads the
+# SwiftPM/XCFramework distribution once the repository publications succeeded.
 name: release
 
 on:
@@ -15,6 +17,8 @@ permissions:
   contents: write
 
 jobs:
+  # Publish the Android/JVM/KMP Maven artifacts from Linux where the shared release
+  # verification path is fastest and easiest to cache.
   publish-android:
     runs-on: ubuntu-latest
     env:
@@ -45,6 +49,8 @@ jobs:
           :meshlink:publishJvmPublicationToOSSRHRepository
           :meshlink:publishKotlinMultiplatformPublicationToOSSRHRepository
 
+  # Publish the iOS Maven publication separately on macOS because Apple binaries must
+  # be assembled on an Apple runner.
   publish-ios:
     runs-on: macos-latest
     env:
@@ -71,6 +77,8 @@ jobs:
       - name: Publish iOS artifacts
         run: ./gradlew :meshlink:publishIosArm64PublicationToOSSRHRepository
 
+  # Only package and upload the XCFramework after the Maven publications completed so
+  # release assets and repository metadata describe the same version.
   publish-xcframework:
     needs:
       - publish-android

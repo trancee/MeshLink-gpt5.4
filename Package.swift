@@ -4,6 +4,8 @@
 // match the GitHub release asset uploaded by .github/workflows/release.yml.
 import PackageDescription
 
+// SwiftPM manifest for consuming the prebuilt MeshLink XCFramework published by the
+// release workflow.
 let package = Package(
     name: "MeshLink",
     platforms: [
@@ -16,6 +18,8 @@ let package = Package(
         ),
     ],
     targets: [
+        // The checksum is intentionally replaced during release preparation so the
+        // manifest matches the exact archive uploaded for the tagged version.
         .binaryTarget(
             name: "MeshLink",
             url: "https://github.com/trancee/meshlink/releases/download/v0.1.0/MeshLink.xcframework.zip",

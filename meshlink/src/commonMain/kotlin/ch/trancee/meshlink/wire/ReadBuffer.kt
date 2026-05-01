@@ -1,8 +1,10 @@
 package ch.trancee.meshlink.wire
 
+/** Little-endian read cursor over a byte array. */
 public class ReadBuffer(private val source: ByteArray) {
   private var position: Int = 0
 
+  /** Bytes still available from the current cursor onward. */
   public val remaining: Int
     get() = source.size - position
 
@@ -44,6 +46,7 @@ public class ReadBuffer(private val source: ByteArray) {
       (b7 shl 56)
   }
 
+  /** Reads exactly [length] bytes and advances the cursor. */
   public fun readBytes(length: Int): ByteArray {
     if (length < 0) {
       throw IllegalArgumentException("ReadBuffer cannot read a negative number of bytes.")

@@ -6,6 +6,12 @@ import ch.trancee.meshlink.api.PeerIdHex
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * Android transport façade.
+ *
+ * It currently delegates to [VirtualMeshTransport] so engine and API layers can be exercised on
+ * Android without depending on live platform BLE plumbing yet.
+ */
 public class AndroidBleTransport(
   localPeerId: PeerIdHex,
   diagnosticSink: DiagnosticSink = NoOpDiagnosticSink,
@@ -17,6 +23,7 @@ public class AndroidBleTransport(
 
   override val receivedFrames: SharedFlow<ByteArray> = delegate.receivedFrames
 
+  /** Test/simulation helper for wiring an in-memory remote peer. */
   public fun attachPeer(peerId: PeerIdHex, transport: VirtualMeshTransport): Unit {
     delegate.attachPeer(peerId = peerId, transport = transport)
   }

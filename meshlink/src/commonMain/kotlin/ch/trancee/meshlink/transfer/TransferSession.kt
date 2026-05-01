@@ -2,6 +2,7 @@ package ch.trancee.meshlink.transfer
 
 import ch.trancee.meshlink.api.PeerIdHex
 
+/** Outbound transfer state for a single payload. */
 public class TransferSession(
   public val transferId: String,
   public val recipientPeerId: PeerIdHex,
@@ -22,6 +23,7 @@ public class TransferSession(
     return sackTracker.totalChunks
   }
 
+  /** Returns the next window of missing chunks that should be transmitted. */
   public fun nextChunks(windowSize: Int): List<OutboundChunk> {
     require(windowSize > 0) { "TransferSession windowSize must be greater than 0." }
 
@@ -34,6 +36,7 @@ public class TransferSession(
     }
   }
 
+  /** Records acknowledgement of a chunk and emits progress or completion. */
   public fun acknowledge(chunkIndex: Int): TransferEvent {
     sackTracker.acknowledge(chunkIndex = chunkIndex)
     val acknowledgedBytes: Long =
@@ -52,6 +55,7 @@ public class TransferSession(
     }
   }
 
+  /** Returns the byte offset from which a resumed transfer should continue. */
   public fun resumeOffsetBytes(): Int {
     return ResumeCalculator.resumeOffsetBytes(
       sackTracker = sackTracker,
@@ -79,6 +83,7 @@ public class TransferSession(
   }
 }
 
+/** Wire-ready outbound transfer chunk. */
 public data class OutboundChunk(
   public val transferId: String,
   public val chunkIndex: Int,

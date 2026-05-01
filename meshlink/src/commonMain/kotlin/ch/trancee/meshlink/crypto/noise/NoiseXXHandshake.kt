@@ -3,15 +3,18 @@ package ch.trancee.meshlink.crypto.noise
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 
+/** Minimal role-aware controller for the three-message Noise XX exchange. */
 public class NoiseXXHandshake(private val role: HandshakeRole) {
   private val state: HandshakeState = HandshakeState(role = role)
 
+  /** Produces the next outbound handshake message for the local role. */
   public fun createOutboundMessage(payload: ByteArray): HandshakeMessage {
     val round: HandshakeRound = expectedOutboundRound()
     state.recordSend()
     return HandshakeMessage(round = round, payload = payload.copyOf())
   }
 
+  /** Validates and consumes the next inbound handshake message. */
   public fun receiveInboundMessage(message: HandshakeMessage): Unit {
     val expectedRound: HandshakeRound = expectedInboundRound()
     if (message.round != expectedRound) {

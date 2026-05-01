@@ -1,9 +1,19 @@
 package ch.trancee.meshlink.crypto
 
+/**
+ * Sliding-window replay detector for monotonically increasing nonces.
+ *
+ * The implementation tracks the highest accepted nonce and a 64-bit bitmap covering the recent
+ * window behind it.
+ */
 public class ReplayGuard {
   private var highestSeenNonce: Long = UNINITIALIZED_HIGHEST_NONCE
   private var seenBitmap: ULong = 0uL
 
+  /**
+   * Returns true if the nonce has not been seen recently and falls inside the replay window, while
+   * also marking it as observed.
+   */
   public fun checkAndMark(nonce: Long): Boolean {
     if (nonce < 0L) {
       return false

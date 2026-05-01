@@ -5,6 +5,10 @@ import ch.trancee.meshlink.api.DiagnosticPayload
 import ch.trancee.meshlink.api.DiagnosticSink
 import ch.trancee.meshlink.api.NoOpDiagnosticSink
 
+/**
+ * Coordinates outbound delivery bookkeeping, inbound deduplication, and cut-through relay support
+ * for user-visible messages.
+ */
 public class DeliveryPipeline(
   private val config: MessagingConfig,
   private val diagnosticSink: DiagnosticSink = NoOpDiagnosticSink,
@@ -15,10 +19,24 @@ public class DeliveryPipeline(
     ),
   private val cutThroughBuffer: CutThroughBuffer = CutThroughBuffer(),
 ) {
+  // Sequence numbers are tracked per sender so message IDs stay monotonic for each
+  // originating peer without requiring a global counter.
   private val nextSequenceNumbersBySender: MutableMap<String, Long> = mutableMapOf()
+
+  // Pending outbound deliveries are retained until they are acknowledged, cancelled,
+  // or expired by the timeout sweep.
   private val pendingDeliveries: MutableMap<MessageIdKey, PendingDelivery> = linkedMapOf()
+
+  // Inbound message IDs are remembered to provide at-most-once delivery semantics to
+  // application code even if lower layers retransmit.
   private val deliveredInboundMessageIds: MutableSet<MessageIdKey> = linkedSetOf()
 
+  /**
+   * Registers a new outbound payload with the delivery pipeline.
+   *
+   * The payload is only considered sent once it survives capacity checks and the current rate limit
+   * window.
+   */
   public fun send(
     senderPeerId: ch.trancee.meshlink.api.PeerIdHex,
     recipientPeerId: ch.trancee.meshlink.api.PeerIdHex,
@@ -57,6 +75,7 @@ public class DeliveryPipeline(
     return SendResult.Sent(messageId = messageId)
   }
 
+  /** Accepts an inbound payload if it has not been delivered before. */
   public fun receive(
     messageId: MessageIdKey,
     fromPeerId: ch.trancee.meshlink.api.PeerIdHex,
@@ -69,11 +88,13 @@ public class DeliveryPipeline(
     }
   }
 
+  /** Completes an outbound delivery once the remote side acknowledges it. */
   public fun acknowledge(messageId: MessageIdKey): DeliveryOutcome? {
     val pendingDelivery: PendingDelivery = pendingDeliveries.remove(messageId) ?: return null
     return Delivered(messageId = messageId, peerId = pendingDelivery.recipientPeerId)
   }
 
+  /** Cancels an outbound delivery that should no longer be retried. */
   public fun cancel(messageId: MessageIdKey): DeliveryOutcome? {
     val pendingDelivery: PendingDelivery = pendingDeliveries.remove(messageId) ?: return null
     diagnosticSink.emit(code = DiagnosticCode.MESSAGE_FAILED) {
@@ -86,6 +107,7 @@ public class DeliveryPipeline(
     )
   }
 
+  /** Expires every delivery that has exceeded the configured timeout window. */
   public fun failTimedOut(nowEpochMillis: Long): List<DeliveryOutcome> {
     require(nowEpochMillis >= 0) {
       "DeliveryPipeline nowEpochMillis must be greater than or equal to 0."
@@ -112,6 +134,10 @@ public class DeliveryPipeline(
     }
   }
 
+  /**
+   * Appends the local hop to an already streaming relay frame without fully re-buffering the
+   * transfer payload.
+   */
   public fun relayChunk0(chunk0: ByteArray, localHopPeerId: ByteArray): ByteArray {
     val forwardedFrame: ByteArray =
       cutThroughBuffer.appendVisitedHop(chunk0 = chunk0, hopPeerId = localHopPeerId)
@@ -121,6 +147,7 @@ public class DeliveryPipeline(
     return forwardedFrame
   }
 
+  /** Number of outbound deliveries still awaiting a terminal outcome. */
   public fun pendingCount(): Int {
     return pendingDeliveries.size
   }

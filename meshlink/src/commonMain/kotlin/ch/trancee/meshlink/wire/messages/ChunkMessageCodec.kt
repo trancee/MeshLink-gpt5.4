@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [ChunkMessage]. */
 public object ChunkMessageCodec {
   private const val HEADER_SIZE: Int = Long.SIZE_BYTES + Int.SIZE_BYTES
 

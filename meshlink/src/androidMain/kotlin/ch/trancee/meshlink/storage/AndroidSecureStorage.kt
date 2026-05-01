@@ -1,5 +1,11 @@
 package ch.trancee.meshlink.storage
 
+/**
+ * Temporary in-memory stand-in for Android secure storage.
+ *
+ * The current implementation behaves like a simple key/value map so higher layers can be exercised
+ * before a real Keystore-backed implementation lands.
+ */
 public class AndroidSecureStorage {
   private val valuesByKey: MutableMap<String, String> = mutableMapOf()
 

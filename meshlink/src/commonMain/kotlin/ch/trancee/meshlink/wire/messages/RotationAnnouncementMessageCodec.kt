@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [RotationAnnouncementMessage]. */
 public object RotationAnnouncementMessageCodec {
   public const val PUBLIC_KEY_SIZE: Int = 32
   public const val SIGNATURE_SIZE: Int = 64

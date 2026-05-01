@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.api
 
+/** Marks MeshLink APIs that are not yet considered stable. */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 @RequiresOptIn(

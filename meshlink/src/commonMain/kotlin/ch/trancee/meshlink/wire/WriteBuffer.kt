@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.wire
 
+/** Growable little-endian write buffer. */
 public class WriteBuffer(initialCapacity: Int = 16) {
   private var buffer: ByteArray = ByteArray(size = initialCapacity.coerceAtLeast(minimumValue = 1))
   private var position: Int = 0
@@ -31,12 +32,14 @@ public class WriteBuffer(initialCapacity: Int = 16) {
     buffer[position++] = ((value ushr 56) and 0xFFL).toByte()
   }
 
+  /** Appends the provided bytes verbatim. */
   public fun writeBytes(value: ByteArray): Unit {
     ensureCapacity(additionalBytes = value.size)
     value.copyInto(destination = buffer, destinationOffset = position)
     position += value.size
   }
 
+  /** Returns a trimmed copy containing only the written portion. */
   public fun toByteArray(): ByteArray {
     return buffer.copyOf(newSize = position)
   }

@@ -2,6 +2,12 @@ package ch.trancee.meshlink.crypto.noise
 
 import ch.trancee.meshlink.crypto.CryptoProvider
 
+/**
+ * Noise handshake symmetric state.
+ *
+ * It tracks the chaining key, handshake hash, and optional cipher key while the handshake is still
+ * in progress.
+ */
 public class SymmetricState(
   private val provider: CryptoProvider,
   initialChainingKey: ByteArray,
@@ -17,11 +23,13 @@ public class SymmetricState(
 
   public fun hasCipherKey(): Boolean = cipherKey != null
 
+  /** Mixes data into the running handshake hash. */
   public fun mixHash(data: ByteArray): ByteArray {
     handshakeHash = provider.hmacSha256(key = handshakeHash, message = data)
     return handshakeHash()
   }
 
+  /** Mixes input key material into the chaining key and derives a fresh cipher key. */
   public fun mixKey(inputKeyMaterial: ByteArray): ByteArray {
     val derivedKeyMaterial: ByteArray =
       provider.hkdfSha256(
@@ -37,6 +45,7 @@ public class SymmetricState(
     return newCipherKey.copyOf()
   }
 
+  /** Encrypts handshake payload bytes, then folds the ciphertext into the handshake hash. */
   public fun encryptAndHash(plaintext: ByteArray): ByteArray {
     val ciphertext: ByteArray =
       if (cipherKey == null) {
@@ -53,6 +62,7 @@ public class SymmetricState(
     return ciphertext
   }
 
+  /** Decrypts handshake payload bytes, then folds the ciphertext into the handshake hash. */
   public fun decryptAndHash(ciphertext: ByteArray): ByteArray {
     val plaintext: ByteArray =
       if (cipherKey == null) {

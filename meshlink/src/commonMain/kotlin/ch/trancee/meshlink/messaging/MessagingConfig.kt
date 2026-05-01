@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.messaging
 
+/** Delivery-pipeline tuning knobs. */
 public data class MessagingConfig(
   public val rateLimitWindowMillis: Long,
   public val maxMessagesPerWindow: Int,
@@ -21,6 +22,7 @@ public data class MessagingConfig(
   }
 
   public companion object {
+    /** Returns the default delivery-pipeline configuration. */
     public fun default(): MessagingConfig {
       return MessagingConfig(
         rateLimitWindowMillis = 1_000L,

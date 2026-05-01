@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transport
 
+/** Small LRU-style filter for recently seen mesh hashes. */
 public class MeshHashFilter(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
   private val entries: MutableList<String> = mutableListOf()
 
@@ -7,6 +8,7 @@ public class MeshHashFilter(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
     require(maxEntries > 0) { "MeshHashFilter maxEntries must be greater than 0." }
   }
 
+  /** Returns true when the hash was observed recently enough to count as a duplicate. */
   public fun isDuplicate(meshHash: ByteArray): Boolean {
     require(meshHash.isNotEmpty()) { "MeshHashFilter meshHash must not be empty." }
 

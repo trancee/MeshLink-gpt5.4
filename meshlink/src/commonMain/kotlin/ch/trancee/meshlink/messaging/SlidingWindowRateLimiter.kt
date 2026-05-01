@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.messaging
 
+/** Per-peer-pair sliding-window limiter used by the delivery pipeline. */
 public class SlidingWindowRateLimiter(
   private val windowMillis: Long,
   private val maxMessagesPerWindow: Int,
@@ -13,6 +14,7 @@ public class SlidingWindowRateLimiter(
     }
   }
 
+  /** Returns true when another message can be admitted for the peer pair at the given timestamp. */
   public fun tryAcquire(peerPair: PeerPair, nowEpochMillis: Long): Boolean {
     require(nowEpochMillis >= 0) {
       "SlidingWindowRateLimiter nowEpochMillis must be greater than or equal to 0."
@@ -28,6 +30,7 @@ public class SlidingWindowRateLimiter(
     return true
   }
 
+  /** Number of timestamps currently retained for the peer pair. */
   public fun inFlightCount(peerPair: PeerPair): Int {
     return timestampsByPeerPair[peerPair]?.size ?: 0
   }

@@ -1,5 +1,11 @@
 package ch.trancee.meshlink.api
 
+/**
+ * Hex-encoded peer identifier used throughout the public API.
+ *
+ * Keeping the value wrapped avoids accidental mixing with arbitrary strings and gives the library
+ * one place to validate hex formatting.
+ */
 public data class PeerIdHex(public val value: String) {
   init {
     require(value.isNotEmpty()) { "PeerIdHex must not be empty." }
@@ -11,11 +17,13 @@ public data class PeerIdHex(public val value: String) {
     }
   }
 
+  /** Decodes the hex identifier into its raw byte representation. */
   public fun toByteArray(): ByteArray {
     return value.chunked(size = 2).map { chunk -> chunk.toInt(radix = 16).toByte() }.toByteArray()
   }
 
   public companion object {
+    /** Encodes raw peer-id bytes into the public hex representation. */
     public fun fromBytes(bytes: ByteArray): PeerIdHex {
       return PeerIdHex(
         value =

@@ -1,5 +1,11 @@
 package ch.trancee.meshlink.api
 
+/**
+ * Top-level configuration for a MeshLink runtime.
+ *
+ * The nested groups mirror the main runtime subsystems so callers can tune radio, routing,
+ * delivery, security, and diagnostics independently while still benefiting from sane presets.
+ */
 public data class MeshLinkConfig(
   public val applicationId: String,
   public val regulatoryRegion: RegulatoryRegion,
@@ -13,15 +19,18 @@ public data class MeshLinkConfig(
   public val diagnostics: DiagnosticsConfig,
 ) {
   public companion object {
+    /** Returns the balanced default configuration. */
     public fun default(): MeshLinkConfig {
       return Builder().build()
     }
 
+    /** Convenience DSL entry point. */
     public operator fun invoke(block: Builder.() -> Unit): MeshLinkConfig {
       return Builder().apply(block).build()
     }
   }
 
+  /** Builder that starts from the balanced preset and allows targeted overrides. */
   public class Builder {
     public var applicationId: String = DEFAULT_APPLICATION_ID
     public var regulatoryRegion: RegulatoryRegion = RegulatoryRegion.WORLDWIDE
@@ -36,9 +45,16 @@ public data class MeshLinkConfig(
     private val diagnosticsBuilder: DiagnosticsConfig.Builder = DiagnosticsConfig.Builder()
 
     init {
+      // Seed every nested builder from a preset so callers only need to override the
+      // handful of knobs that differ from the default operating profile.
       preset(preset = Preset.BALANCED)
     }
 
+    /**
+     * Applies a coarse operating profile across all nested configuration groups.
+     *
+     * Callers can still override individual sections after selecting a preset.
+     */
     public fun preset(preset: Preset): Unit {
       advertisingBuilder.intervalMs = preset.advertisingIntervalMs
       scanningBuilder.scanDutyCyclePercent = preset.scanDutyCyclePercent
@@ -83,6 +99,12 @@ public data class MeshLinkConfig(
       diagnosticsBuilder.apply(block)
     }
 
+    /**
+     * Materializes the immutable configuration.
+     *
+     * Region-sensitive radio settings are clamped at build time so the resulting config is already
+     * normalized before it reaches transport code.
+     */
     public fun build(): MeshLinkConfig {
       require(applicationId.isNotBlank()) { "MeshLinkConfig applicationId must not be blank." }
 
@@ -105,6 +127,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Advertising cadence for peer discovery beacons. */
   public data class AdvertisingConfig(public val intervalMs: Int) {
     public class Builder {
       public var intervalMs: Int = 200
@@ -117,6 +140,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Scan duty cycle expressed as a percentage of wall-clock time. */
   public data class ScanningConfig(public val scanDutyCyclePercent: Int) {
     public class Builder {
       public var scanDutyCyclePercent: Int = 50
@@ -130,6 +154,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Connection fan-out limits used by the transport and power layers. */
   public data class ConnectionsConfig(public val maxPeerCount: Int) {
     public class Builder {
       public var maxPeerCount: Int = 8
@@ -142,6 +167,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Messaging-specific bounds enforced before payloads enter the delivery pipeline. */
   public data class MessagingConfig(public val maxPayloadBytes: Int) {
     public class Builder {
       public var maxPayloadBytes: Int = 100_000
@@ -154,6 +180,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Transfer-level chunk sizing used by the reliable bulk transfer subsystem. */
   public data class TransfersConfig(public val chunkSizeBytes: Int) {
     public class Builder {
       public var chunkSizeBytes: Int = 1_024
@@ -166,6 +193,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Routing table bounds used to keep memory consumption predictable. */
   public data class RoutingConfig(public val maxRouteCount: Int) {
     public class Builder {
       public var maxRouteCount: Int = 128
@@ -178,6 +206,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Security posture applied to trust establishment. */
   public data class SecurityConfig(public val trustMode: TrustMode) {
     public class Builder {
       public var trustMode: TrustMode = TrustMode.TOFU
@@ -188,6 +217,7 @@ public data class MeshLinkConfig(
     }
   }
 
+  /** Diagnostic buffering and redaction behavior. */
   public data class DiagnosticsConfig(
     public val bufferSize: Int,
     public val redactPeerIds: Boolean,
@@ -207,6 +237,12 @@ public data class MeshLinkConfig(
     }
   }
 
+  /**
+   * High-level operating profiles.
+   *
+   * These presets trade battery life, throughput, observability, and privacy in predictable ways
+   * while still allowing per-field overrides afterward.
+   */
   public enum class Preset(
     public val advertisingIntervalMs: Int,
     public val scanDutyCyclePercent: Int,

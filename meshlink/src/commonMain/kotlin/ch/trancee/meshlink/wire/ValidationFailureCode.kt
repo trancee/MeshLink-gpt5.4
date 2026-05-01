@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.wire
 
+/** Machine-readable reason why structural frame validation failed. */
 public enum class ValidationFailureCode {
   TRUNCATED_HEADER,
   UNKNOWN_MESSAGE_TYPE,

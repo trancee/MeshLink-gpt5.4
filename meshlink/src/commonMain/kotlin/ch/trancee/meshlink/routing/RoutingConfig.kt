@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.routing
 
+/** Timeouts and hop constraints for the routing subsystem. */
 public data class RoutingConfig(
   public val routeExpiryMillis: Long,
   public val peerTimeoutMillis: Long,
@@ -12,6 +13,7 @@ public data class RoutingConfig(
   }
 
   public companion object {
+    /** Returns the default routing policy. */
     public fun default(): RoutingConfig {
       return RoutingConfig(routeExpiryMillis = 30_000L, peerTimeoutMillis = 15_000L, hopLimit = 8)
     }

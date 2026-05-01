@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transport
 
+/** Transport-level scan, connect, and advertising timings. */
 public data class BleTransportConfig(
   public val scanIntervalMillis: Int,
   public val scanWindowMillis: Int,
@@ -23,6 +24,7 @@ public data class BleTransportConfig(
   }
 
   public companion object {
+    /** Returns the default BLE transport timings. */
     public fun default(): BleTransportConfig {
       return BleTransportConfig(
         scanIntervalMillis = 5_000,

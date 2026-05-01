@@ -5,7 +5,14 @@ import ch.trancee.meshlink.wire.messages.HelloMessageCodec
 import ch.trancee.meshlink.wire.messages.RotationAnnouncementMessageCodec
 import ch.trancee.meshlink.wire.messages.UpdateMessageCodec
 
+/**
+ * Performs cheap structural validation on encoded frames before full decoding.
+ *
+ * This lets callers reject malformed or obviously dangerous input without allocating message
+ * objects for every invalid packet.
+ */
 public class InboundValidator(private val maxPayloadSize: Int = DEFAULT_MAX_PAYLOAD_SIZE) {
+  /** Validates the frame header first, then applies message-type-specific size checks. */
   public fun validate(encoded: ByteArray): ValidationResult {
     if (encoded.size < HEADER_SIZE) {
       return ValidationResult.Invalid(

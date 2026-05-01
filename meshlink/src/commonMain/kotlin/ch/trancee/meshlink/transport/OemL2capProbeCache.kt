@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transport
 
+/** LRU-style cache of observed L2CAP support by device model. */
 public class OemL2capProbeCache(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
   private val entries: MutableList<OemL2capProbeCacheEntry> = mutableListOf()
 
@@ -7,6 +8,7 @@ public class OemL2capProbeCache(private val maxEntries: Int = DEFAULT_MAX_ENTRIE
     require(maxEntries > 0) { "OemL2capProbeCache maxEntries must be greater than 0." }
   }
 
+  /** Returns the cached probe result for the device model, if known. */
   public fun get(deviceModel: String): Boolean? {
     val normalizedDeviceModel: String = deviceModel.normalizeDeviceModel()
     val existingIndex: Int =
@@ -20,6 +22,7 @@ public class OemL2capProbeCache(private val maxEntries: Int = DEFAULT_MAX_ENTRIE
     return existingEntry.supportsL2cap
   }
 
+  /** Records whether the device model supports L2CAP. */
   public fun record(deviceModel: String, supportsL2cap: Boolean): Unit {
     val normalizedDeviceModel: String = deviceModel.normalizeDeviceModel()
     val existingIndex: Int =

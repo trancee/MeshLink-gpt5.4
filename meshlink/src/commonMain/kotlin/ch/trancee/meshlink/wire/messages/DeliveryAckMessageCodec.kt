@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [DeliveryAckMessage]. */
 public object DeliveryAckMessageCodec {
   private const val PAYLOAD_SIZE: Int = Long.SIZE_BYTES
 

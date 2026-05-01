@@ -2,6 +2,7 @@ package ch.trancee.meshlink.routing
 
 import ch.trancee.meshlink.api.PeerIdHex
 
+/** Tracks which peers are considered present based on recent observations. */
 public class PresenceTracker(private val timeoutMillis: Long = DEFAULT_TIMEOUT_MILLIS) {
   private val peersById: MutableMap<String, Long> = mutableMapOf()
 
@@ -9,6 +10,10 @@ public class PresenceTracker(private val timeoutMillis: Long = DEFAULT_TIMEOUT_M
     require(timeoutMillis > 0) { "PresenceTracker timeoutMillis must be greater than 0." }
   }
 
+  /**
+   * Records a sighting of the peer and returns an [PresenceEvent.Appeared] only when the peer
+   * transitions from absent to present.
+   */
   public fun observe(peerId: PeerIdHex, nowEpochMillis: Long): PresenceEvent? {
     require(nowEpochMillis >= 0) {
       "PresenceTracker nowEpochMillis must be greater than or equal to 0."
@@ -22,6 +27,7 @@ public class PresenceTracker(private val timeoutMillis: Long = DEFAULT_TIMEOUT_M
     }
   }
 
+  /** Expires peers that have not been observed within the timeout window. */
   public fun sweep(nowEpochMillis: Long): List<PresenceEvent> {
     require(nowEpochMillis >= 0) {
       "PresenceTracker nowEpochMillis must be greater than or equal to 0."
@@ -37,6 +43,7 @@ public class PresenceTracker(private val timeoutMillis: Long = DEFAULT_TIMEOUT_M
     return disappearedPeers.map { peerId -> PresenceEvent.Disappeared(peerId = peerId) }
   }
 
+  /** Returns the current presence set. */
   public fun presentPeers(): Set<PeerIdHex> {
     return peersById.keys.mapTo(destination = linkedSetOf()) { peerId -> PeerIdHex(value = peerId) }
   }
@@ -46,6 +53,7 @@ public class PresenceTracker(private val timeoutMillis: Long = DEFAULT_TIMEOUT_M
   }
 }
 
+/** Presence transition emitted by [PresenceTracker]. */
 public sealed class PresenceEvent {
   public data class Appeared(public val peerId: PeerIdHex) : PresenceEvent()
 

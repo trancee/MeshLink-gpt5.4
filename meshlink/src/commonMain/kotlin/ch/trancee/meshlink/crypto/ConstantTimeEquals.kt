@@ -1,5 +1,11 @@
 package ch.trancee.meshlink.crypto
 
+/**
+ * Constant-time byte-array comparison helper.
+ *
+ * The loop always processes the maximum input length so callers do not leak early mismatch
+ * positions through timing differences.
+ */
 public object ConstantTimeEquals {
   public fun bytes(left: ByteArray, right: ByteArray): Boolean {
     val maxLength: Int = maxOf(left.size, right.size)

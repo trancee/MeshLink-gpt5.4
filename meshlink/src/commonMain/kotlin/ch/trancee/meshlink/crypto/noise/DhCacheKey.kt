@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.crypto.noise
 
+/** Byte-array-aware cache key for a DH input pair. */
 internal data class DhCacheKey(
   private val privateKey: ByteArray,
   private val publicKey: ByteArray,

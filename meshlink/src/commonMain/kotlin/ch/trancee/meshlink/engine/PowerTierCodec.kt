@@ -2,6 +2,7 @@ package ch.trancee.meshlink.engine
 
 import ch.trancee.meshlink.transport.AdvertisementPowerTier
 
+/** Stable byte encoding for advertised power tiers. */
 public object PowerTierCodec {
   public fun encode(powerTier: AdvertisementPowerTier): Byte {
     return when (powerTier) {

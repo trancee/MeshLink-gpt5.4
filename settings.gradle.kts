@@ -1,3 +1,5 @@
+// Settings script defines plugin/dependency repositories and the project graph. It also
+// contains a temporary version-catalog parsing workaround for buildscript constraints.
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -9,6 +11,8 @@ pluginManagement {
 buildscript {
     val versionCatalogText: String = settingsDir.resolve("gradle/libs.versions.toml").readText()
 
+    // buildscript{} cannot use the generated version-catalog accessors yet, so we read the
+    // TOML directly to keep the forced classpath versions aligned with libs.versions.toml.
     fun versionFromCatalog(name: String): String {
         val match = Regex("^${name}\\s*=\\s*\"([^\"]+)\"$", RegexOption.MULTILINE).find(versionCatalogText)
         return match?.groupValues?.get(1) ?: error("Missing version '$name' in gradle/libs.versions.toml")
@@ -62,6 +66,8 @@ buildscript {
     }
 }
 
+// Enforce repository declaration at the settings level so subprojects do not drift in
+// dependency resolution behavior.
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

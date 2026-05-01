@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.api
 
+/** Stable diagnostic event catalog exposed to observers. */
 public enum class DiagnosticCode(public val severity: DiagnosticSeverity) {
   ENGINE_STARTED(DiagnosticSeverity.INFO),
   ENGINE_STOPPED(DiagnosticSeverity.INFO),

@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transfer
 
+/** Computes byte offsets for resumed transfers from chunk acknowledgements. */
 public object ResumeCalculator {
   public fun resumeOffsetBytes(
     sackTracker: SackTracker,

@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.wire
 
+/** Top-level frame types carried by the MeshLink wire envelope. */
 public enum class MessageType(public val code: UByte) {
   HELLO(0x01u),
   HANDSHAKE(0x02u),
@@ -15,6 +16,7 @@ public enum class MessageType(public val code: UByte) {
   ROTATION_ANNOUNCEMENT(0x0Cu);
 
   public companion object {
+    /** Decodes the one-byte wire code into a typed message kind. */
     public fun fromCode(code: UByte): MessageType {
       return entries.firstOrNull { entry -> entry.code == code }
         ?: throw IllegalArgumentException(

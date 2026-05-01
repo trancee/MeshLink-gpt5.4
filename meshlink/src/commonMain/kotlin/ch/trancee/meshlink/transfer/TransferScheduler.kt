@@ -1,9 +1,11 @@
 package ch.trancee.meshlink.transfer
 
+/** Priority queue for pending transfers. */
 public class TransferScheduler {
   private val queuedTransfers: MutableList<ScheduledTransfer> = mutableListOf()
   private var nextSequence: Long = 0L
 
+  /** Enqueues or reprioritizes a transfer. */
   public fun enqueue(transferId: String, priority: Priority): Unit {
     require(transferId.isNotBlank()) { "TransferScheduler transferId must not be blank." }
 
@@ -18,6 +20,7 @@ public class TransferScheduler {
     queuedTransfers.sortWith(scheduledTransferOrdering)
   }
 
+  /** Returns the next transfer to service, if any. */
   public fun dequeue(): String? {
     return queuedTransfers.removeFirstOrNull()?.transferId
   }

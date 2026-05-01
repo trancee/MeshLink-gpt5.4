@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.routing
 
+/** Time-bounded deduplication set for recently seen routing/message keys. */
 public class DedupSet(
   private val maxEntries: Int = DEFAULT_MAX_ENTRIES,
   private val expiryMillis: Long = DEFAULT_EXPIRY_MILLIS,
@@ -11,6 +12,7 @@ public class DedupSet(
     require(expiryMillis > 0) { "DedupSet expiryMillis must be greater than 0." }
   }
 
+  /** Returns true if the key has been seen recently enough to count as a duplicate. */
   public fun isDuplicate(key: ByteArray, nowEpochMillis: Long): Boolean {
     require(key.isNotEmpty()) { "DedupSet key must not be empty." }
     require(nowEpochMillis >= 0) { "DedupSet nowEpochMillis must be greater than or equal to 0." }

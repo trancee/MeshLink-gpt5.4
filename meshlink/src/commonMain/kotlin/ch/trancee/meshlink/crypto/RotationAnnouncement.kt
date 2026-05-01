@@ -1,10 +1,12 @@
 package ch.trancee.meshlink.crypto
 
+/** Signed announcement linking an old identity key to its replacement. */
 public data class RotationAnnouncement(
   public val previousPublicKey: ByteArray,
   public val nextPublicKey: ByteArray,
   public val signature: ByteArray,
 ) {
+  /** Verifies that the previous key signed the transition to the next key. */
   public fun verify(provider: CryptoProvider): Boolean {
     validatePublicKey(name = "previousPublicKey", value = previousPublicKey)
     validatePublicKey(name = "nextPublicKey", value = nextPublicKey)
@@ -20,6 +22,7 @@ public data class RotationAnnouncement(
   public companion object {
     public const val SIGNATURE_SIZE: Int = 64
 
+    /** Creates a signed key-rotation announcement. */
     public fun create(
       provider: CryptoProvider,
       previousIdentity: Identity,

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/** Zero-overhead sink for callers that want to ignore diagnostics entirely. */
 public data object NoOpDiagnosticSink : DiagnosticSink {
   private val mutableDiagnosticEvents = MutableSharedFlow<DiagnosticEvent>(replay = 0)
 

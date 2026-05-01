@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transfer
 
+/** Bulk-transfer retransmission and windowing policy. */
 public data class TransferConfig(
   public val timeoutMillis: Long,
   public val retransmitLimit: Int,
@@ -14,6 +15,7 @@ public data class TransferConfig(
   }
 
   public companion object {
+    /** Returns the default transfer policy. */
     public fun default(): TransferConfig {
       return TransferConfig(timeoutMillis = 5_000L, retransmitLimit = 3, windowSize = 8)
     }

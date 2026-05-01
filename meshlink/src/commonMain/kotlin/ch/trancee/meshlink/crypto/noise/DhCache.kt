@@ -1,9 +1,11 @@
 package ch.trancee.meshlink.crypto.noise
 
+/** Small LRU-style cache for Diffie-Hellman results. */
 public class DhCache(maxEntries: Int = DEFAULT_MAX_ENTRIES) {
   private val capacity: Int = maxEntries.coerceAtLeast(minimumValue = 1)
   private val entries: MutableList<Pair<DhCacheKey, ByteArray>> = mutableListOf()
 
+  /** Returns a cached DH result when present, otherwise computes and stores it. */
   public fun getOrCompute(
     privateKey: ByteArray,
     publicKey: ByteArray,
