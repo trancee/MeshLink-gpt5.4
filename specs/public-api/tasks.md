@@ -29,9 +29,9 @@
 
 ## Phase 4: API Interface & Factory
 
-- [ ] T017 Define `MeshLinkApi` interface (start, stop, pause, resume, send, peers, messages, diagnostics)
-- [ ] T018 Implement `MeshLink` companion (create factory, Flow mapping)
-- [ ] T019 Write `MeshLinkTest` — factory creation, Flow mapping
+- [x] T017 Define `MeshLinkApi` interface (start, stop, pause, resume, send, peers, messages, diagnostics)
+- [x] T018 Implement `MeshLink` companion (create factory, Flow mapping)
+- [x] T019 Write `MeshLinkTest` — factory creation, Flow mapping
 - [x] T020 Write `MeshLinkStateTest` — transition validation
 - [x] T021 Write `PeerStateTest`, `PeerIdHexExtTest`
 
@@ -42,8 +42,8 @@
 
 ## Phase 6: Integration
 
-- [ ] T024 Write `StubApiWiringIntegrationTest`
-- [ ] T025 Write `PeerLifecycleIntegrationTest`
+- [x] T024 Write `StubApiWiringIntegrationTest`
+- [x] T025 Write `PeerLifecycleIntegrationTest`
 
 ## Verification
 
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-18 actionable tasks complete, 7 remain pending.
+23 actionable tasks complete, 2 remain pending.
