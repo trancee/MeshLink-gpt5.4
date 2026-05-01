@@ -41,17 +41,19 @@ public class MeshLinkServiceTest {
   }
 
   @Test
-  public fun clearTransport_removesTheInstalledTransport(): Unit {
+  public fun clearTransport_stopsAdvertisingBeforeRemovingTheInstalledTransport(): Unit {
     // Arrange
-    val service =
-      MeshLinkService(transport = AndroidBleTransport(localPeerId = PeerIdHex(value = "00112233")))
+    val transport = AndroidBleTransport(localPeerId = PeerIdHex(value = "00112233"))
+    val service = MeshLinkService(transport = transport)
+    service.startAdvertising()
 
     // Act
     service.clearTransport()
-    val actual = service.stopAdvertising()
+    val stopResultAfterClear = service.stopAdvertising()
 
     // Assert
     assertFalse(actual = service.hasTransport())
-    assertFalse(actual = actual)
+    assertFalse(actual = transport.isAdvertising.value)
+    assertFalse(actual = stopResultAfterClear)
   }
 }

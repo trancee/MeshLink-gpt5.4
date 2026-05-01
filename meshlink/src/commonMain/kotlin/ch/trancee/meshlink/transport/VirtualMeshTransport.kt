@@ -86,7 +86,7 @@ public class VirtualMeshTransport(
     )
   }
 
-  private fun receiveFromPeer(remotePeerId: PeerIdHex, payload: ByteArray): Unit {
+  internal fun receiveFromPeer(remotePeerId: PeerIdHex, payload: ByteArray): Unit {
     mutableReceivedFrames.tryEmit(payload.copyOf())
     diagnosticSink.emit(code = DiagnosticCode.MESSAGE_DELIVERED) {
       DiagnosticPayload.PeerLifecycle(peerId = remotePeerId, state = PeerState.Connected)

@@ -24,26 +24,59 @@ public class AndroidBleTransportTest {
   }
 
   @Test
-  public fun connectAndSend_delegateToTheVirtualTransportImplementation(): Unit {
+  public fun connectAndSend_exchangeFramesBetweenAndroidPeersWithoutVirtualDelegation(): Unit {
     // Arrange
     val localPeerId = PeerIdHex(value = "00112233")
     val remotePeerId = PeerIdHex(value = "44556677")
     val localTransport = AndroidBleTransport(localPeerId = localPeerId)
-    val remoteTransport = VirtualMeshTransport(localPeerId = remotePeerId)
+    val remoteTransport = AndroidBleTransport(localPeerId = remotePeerId)
     localTransport.attachPeer(peerId = remotePeerId, transport = remoteTransport)
+    remoteTransport.attachPeer(peerId = localPeerId, transport = localTransport)
+    remoteTransport.advertise(enabled = true)
     val payload = byteArrayOf(0x01, 0x02)
 
     // Act
     localTransport.connect(peerId = remotePeerId)
     localTransport.send(peerId = remotePeerId, payload = payload)
     val actualPayload = remoteTransport.receivedFrames.replayCache.single()
-    val connectedState = localTransport.isConnected(peerId = remotePeerId)
+    val localConnectedState = localTransport.isConnected(peerId = remotePeerId)
+    val remoteConnectedState = remoteTransport.isConnected(peerId = localPeerId)
     localTransport.disconnect(peerId = remotePeerId)
-    val disconnectedState = localTransport.isConnected(peerId = remotePeerId)
+    val localDisconnectedState = localTransport.isConnected(peerId = remotePeerId)
+    val remoteDisconnectedState = remoteTransport.isConnected(peerId = localPeerId)
 
     // Assert
-    assertTrue(actual = connectedState)
-    assertFalse(actual = disconnectedState)
+    assertTrue(actual = localConnectedState)
+    assertTrue(actual = remoteConnectedState)
+    assertFalse(actual = localDisconnectedState)
+    assertFalse(actual = remoteDisconnectedState)
     assertContentEquals(expected = payload, actual = actualPayload)
+  }
+
+  @Test
+  public fun connect_ignoresPeersThatAreNotAdvertising(): Unit {
+    // Arrange
+    val localPeerId = PeerIdHex(value = "00112233")
+    val remotePeerId = PeerIdHex(value = "44556677")
+    val localTransport = AndroidBleTransport(localPeerId = localPeerId)
+    val remoteTransport = AndroidBleTransport(localPeerId = remotePeerId)
+    localTransport.attachPeer(peerId = remotePeerId, transport = remoteTransport)
+    remoteTransport.attachPeer(peerId = localPeerId, transport = localTransport)
+
+    // Act
+    localTransport.connect(peerId = remotePeerId)
+    val localConnectedState = localTransport.isConnected(peerId = remotePeerId)
+    val remoteConnectedState = remoteTransport.isConnected(peerId = localPeerId)
+
+    // Assert
+    assertFalse(
+      actual = localConnectedState,
+      message = "AndroidBleTransport should only connect to peers that are advertising.",
+    )
+    assertFalse(
+      actual = remoteConnectedState,
+      message =
+        "AndroidBleTransport should not mark the remote peer connected when discovery fails.",
+    )
   }
 }
