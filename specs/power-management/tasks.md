@@ -13,13 +13,13 @@
 
 ## Phase 2: Power Engine
 
-- [ ] T007 Implement `PowerModeEngine` (tier state machine, hysteresis)
-- [ ] T008 Implement `PowerManager` (orchestrator: battery poll → tier evaluation → policy enforcement)
-- [ ] T009 [P] Implement `BleConnectionParameterPolicy` (BLE params per tier)
-- [ ] T010 [P] Implement `ConnectionLimiter` (max connections per tier)
-- [ ] T011 [P] Implement `TieredShedder` (shed connections under pressure)
-- [ ] T012 [P] Define `ManagedConnection`, `PeerKey`, `TransferStatus` types
-- [ ] T013 Write `PowerManagerTest`
+- [x] T007 Implement `PowerModeEngine` (tier state machine, hysteresis)
+- [x] T008 Implement `PowerManager` (orchestrator: battery poll → tier evaluation → policy enforcement)
+- [x] T009 [P] Implement `BleConnectionParameterPolicy` (BLE params per tier)
+- [x] T010 [P] Implement `ConnectionLimiter` (max connections per tier)
+- [x] T011 [P] Implement `TieredShedder` (shed connections under pressure)
+- [x] T012 [P] Define `ManagedConnection`, `PeerKey`, `TransferStatus` types
+- [x] T013 Write `PowerManagerTest`
 
 ## Phase 3: Graceful Drain
 
@@ -32,4 +32,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-6 actionable tasks complete, 9 remain pending.
+13 actionable tasks complete, 2 remain pending.
