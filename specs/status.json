@@ -1,0 +1,1830 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-01T12:49:53Z",
+  "generated_by": "speckit.orchestrator.sync",
+  "summary": {
+    "total_features": 11,
+    "in_spec": 1,
+    "in_plan": 0,
+    "in_tasks": 0,
+    "in_implementation": 0,
+    "complete": 10,
+    "stalled": 0,
+    "total_conflicts": 0
+  },
+  "features": [
+    {
+      "id": "001-codebase-spec-analysis",
+      "phase": "spec",
+      "progress": 0.0,
+      "total_tasks": 0,
+      "completed_tasks": 0,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T07:22:54+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": false,
+        "checklists": false,
+        "tasks": false,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": false,
+        "tasks_structure": false
+      },
+      "files_touched": [],
+      "tasks": []
+    },
+    {
+      "id": "babel-routing",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 18,
+      "completed_tasks": 18,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T11:34:23+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `RoutingConfig` (timeouts, thresholds, hop limit)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `PeerInfo` data class (neighbor state)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Define `OutboundFrame` (queued transmission frame)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Write `RoutingConfigTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Implement `RoutingTable` (route storage, metric comparison, best-route selection)",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `RoutingEngine` (Babel update processing, route installation, withdrawal)",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `RouteCoordinator` (seqno management, feasibility conditions, starvation recovery)",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Write `RoutingTableTest` \u2014 multi-route scenarios, metric ordering",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Write `RoutingEngineTest` \u2014 update processing, convergence",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Write `RouteCoordinatorSeqNoTest` \u2014 feasibility, starvation",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Write `RouteCoordinatorDiagnosticTest` \u2014 diagnostic emissions",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Write `RoutingTest` \u2014 end-to-end routing scenarios",
+          "phase": "Routing Core",
+          "parallel": false
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Implement `PresenceTracker` (timeout-based presence, events)",
+          "phase": "Presence & Dedup",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `DedupSet` (LRU-bounded deduplication)",
+          "phase": "Presence & Dedup",
+          "parallel": true
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Write `PresenceTrackerTest`",
+          "phase": "Presence & Dedup",
+          "parallel": false
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Write `DedupSetTest`",
+          "phase": "Presence & Dedup",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Add `RoutingBenchmark` \u2014 route lookup throughput",
+          "phase": "Benchmarks",
+          "parallel": true
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Add `DedupBenchmark` \u2014 dedup check throughput",
+          "phase": "Benchmarks",
+          "parallel": true
+        }
+      ]
+    },
+    {
+      "id": "ble-transport",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 22,
+      "completed_tasks": 22,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T10:18:57+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `BleTransport` interface (connect, disconnect, send, receive, advertise)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `BleTransportConfig` (scan intervals, connection timeouts, advertisement settings)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Define `GattConstants` (service UUID, characteristic UUIDs)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Write `BleTransportConfigTest`, `GattConstantsTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Implement `L2capFrameCodec` (length-prefixed frame encoding/decoding)",
+          "phase": "L2CAP & Frame Codec",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `L2capRetryScheduler` (exponential backoff with jitter)",
+          "phase": "L2CAP & Frame Codec",
+          "parallel": true
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Write `L2capFrameCodecTest`",
+          "phase": "L2CAP & Frame Codec",
+          "parallel": false
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Write `L2capRetrySchedulerTest`",
+          "phase": "L2CAP & Frame Codec",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Implement `AdvertisementCodec` (pseudonym + power tier in BLE advertisement)",
+          "phase": "Discovery & Connection",
+          "parallel": false
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Implement `ConnectionInitiationPolicy` (deterministic initiator from peer IDs)",
+          "phase": "Discovery & Connection",
+          "parallel": true
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Implement `MeshHashFilter` (advertisement dedup)",
+          "phase": "Discovery & Connection",
+          "parallel": true
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Implement `OemL2capProbeCache` (device model \u2192 capability cache)",
+          "phase": "Discovery & Connection",
+          "parallel": true
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Implement `OemSlotTracker` (advertisement slot management)",
+          "phase": "Discovery & Connection",
+          "parallel": true
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `WriteLatencyTracker`",
+          "phase": "Discovery & Connection",
+          "parallel": true
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Write `AdvertisementCodecTest`, `ConnectionInitiationPolicyTest`",
+          "phase": "Discovery & Connection",
+          "parallel": false
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Write `MeshHashFilterTest`, `OemL2capProbeCacheTest`, `OemSlotTrackerTest`",
+          "phase": "Discovery & Connection",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Write `WriteLatencyTrackerTest`",
+          "phase": "Discovery & Connection",
+          "parallel": false
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Implement `AndroidBleTransport` (BluetoothGatt, BluetoothLeScanner, L2CAP)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        },
+        {
+          "id": "T020",
+          "state": "completed",
+          "text": "Implement `MeshLinkService` (Android foreground service for BLE)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        },
+        {
+          "id": "T021",
+          "state": "completed",
+          "text": "Implement `VirtualMeshTransport` (test double for integration tests)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        },
+        {
+          "id": "T022",
+          "state": "completed",
+          "text": "Write `VirtualMeshTransportTest`",
+          "phase": "Platform Actuals",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "crypto-noise-protocol",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 31,
+      "completed_tasks": 31,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T09:11:32+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `CryptoProvider` interface (X25519, Ed25519, ChaCha20-Poly1305, HKDF, HMAC-SHA256)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Implement `CryptoProviderFactory` expect/actual pattern",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Implement `ConstantTimeEquals` utility",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Define `KeyPair` and `Identity` data classes",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Write `CryptoProviderTest` validating all primitives",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `SymmetricState` (MixKey, MixHash, EncryptAndHash, DecryptAndHash)",
+          "phase": "Noise Protocol Core",
+          "parallel": false
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `CipherState` (InitializeKey, EncryptWithAd, DecryptWithAd, nonce tracking)",
+          "phase": "Noise Protocol Core",
+          "parallel": true
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Implement `HandshakeState` (XX pattern state machine)",
+          "phase": "Noise Protocol Core",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Implement `NoiseXXHandshake` (3-message initiator/responder flow)",
+          "phase": "Noise Protocol Core",
+          "parallel": false
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Implement `DhCache` (LRU memoization of X25519 results)",
+          "phase": "Noise Protocol Core",
+          "parallel": true
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Implement `NoiseSession` (established session with send/recv CipherState pair)",
+          "phase": "Noise Protocol Core",
+          "parallel": true
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Write `NoiseXXHandshakeTest` \u2014 full handshake round-trip",
+          "phase": "Noise Protocol Core",
+          "parallel": false
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Write `SymmetricStateTest`, `CipherStateTest`, `DhCacheTest`",
+          "phase": "Noise Protocol Core",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `NoiseKSeal` (encrypt payload with sender CipherState)",
+          "phase": "Noise K Payload Encryption",
+          "parallel": false
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Implement `NoiseKOpen` (decrypt payload with receiver CipherState)",
+          "phase": "Noise K Payload Encryption",
+          "parallel": true
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Write `NoiseKSealOpenTest` \u2014 round-trip seal/open with nonce advancement",
+          "phase": "Noise K Payload Encryption",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Implement `ReplayGuard` (64-entry sliding bitmap window)",
+          "phase": "Replay Protection",
+          "parallel": false
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Write `ReplayGuardTest` \u2014 duplicates, out-of-order, window advance",
+          "phase": "Replay Protection",
+          "parallel": false
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Implement `Identity` (Ed25519 key generation, keyHash derivation)",
+          "phase": "Identity & Trust",
+          "parallel": false
+        },
+        {
+          "id": "T020",
+          "state": "completed",
+          "text": "Implement `TrustStore` (TOFU/STRICT/PROMPT pinning, key conflict handling)",
+          "phase": "Identity & Trust",
+          "parallel": false
+        },
+        {
+          "id": "T021",
+          "state": "completed",
+          "text": "Implement `RotationAnnouncement` (signed proof of key rotation)",
+          "phase": "Identity & Trust",
+          "parallel": true
+        },
+        {
+          "id": "T022",
+          "state": "completed",
+          "text": "Write `IdentityTest`, `TrustStoreTest`",
+          "phase": "Identity & Trust",
+          "parallel": false
+        },
+        {
+          "id": "T023",
+          "state": "completed",
+          "text": "Add `WycheproofAeadVectors` \u2014 ChaCha20-Poly1305 test vectors",
+          "phase": "Wycheproof Validation",
+          "parallel": true
+        },
+        {
+          "id": "T024",
+          "state": "completed",
+          "text": "Add `WycheproofEd25519Vectors` \u2014 Ed25519 signing vectors",
+          "phase": "Wycheproof Validation",
+          "parallel": true
+        },
+        {
+          "id": "T025",
+          "state": "completed",
+          "text": "Add `WycheproofX25519Vectors` \u2014 X25519 DH vectors",
+          "phase": "Wycheproof Validation",
+          "parallel": true
+        },
+        {
+          "id": "T026",
+          "state": "completed",
+          "text": "Add `WycheproofHkdfVectors` \u2014 HKDF-SHA256 vectors",
+          "phase": "Wycheproof Validation",
+          "parallel": true
+        },
+        {
+          "id": "T027",
+          "state": "completed",
+          "text": "Write `WycheproofCryptoTest` \u2014 runner for all vector files",
+          "phase": "Wycheproof Validation",
+          "parallel": false
+        },
+        {
+          "id": "T028",
+          "state": "completed",
+          "text": "Write `HmacSha256Test` \u2014 HMAC correctness",
+          "phase": "Wycheproof Validation",
+          "parallel": false
+        },
+        {
+          "id": "T029",
+          "state": "completed",
+          "text": "Implement `AndroidCryptoProvider` (libsodium JNI via SodiumJni)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        },
+        {
+          "id": "T030",
+          "state": "completed",
+          "text": "Implement `IosCryptoProvider` (libsodium cinterop)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        },
+        {
+          "id": "T031",
+          "state": "completed",
+          "text": "Implement `JvmCryptoProvider` (JDK shim for test infrastructure)",
+          "phase": "Platform Actuals",
+          "parallel": true
+        }
+      ]
+    },
+    {
+      "id": "mesh-engine",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 22,
+      "completed_tasks": 22,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T12:21:02+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `MeshEngineConfig` (aggregate config for all subsystems)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `HandshakeConfig` (timeout, retry settings)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Implement `PowerTierCodec` (encode/decode power tier byte)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Write `PowerTierCodecTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Implement `PseudonymRotator` (HMAC-SHA-256, epoch boundaries, deterministic stagger)",
+          "phase": "Pseudonym Rotation",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Write `PseudonymRotatorTest` \u2014 epoch computation, stagger, rotation timer",
+          "phase": "Pseudonym Rotation",
+          "parallel": false
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Write `PseudonymVerificationTest` \u2014 \u00b11 epoch tolerance verification",
+          "phase": "Pseudonym Rotation",
+          "parallel": false
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Implement `NoiseHandshakeManager` (per-peer Noise XX orchestration)",
+          "phase": "Handshake Management",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Write `NoiseHandshakeManagerDiagnosticTest`",
+          "phase": "Handshake Management",
+          "parallel": false
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Implement `MeshStateManager` (periodic sweep: stale peers, expired routes)",
+          "phase": "State Management",
+          "parallel": false
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Write `MeshStateManagerTest`",
+          "phase": "State Management",
+          "parallel": false
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Implement `MeshEngine.create()` factory (wire all subsystems)",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Implement lifecycle management (start, stop, pause, resume)",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement inbound message routing (handshake vs data path)",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Implement outbound message scheduling (via DeliveryPipeline)",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Write `MeshEngineTest` \u2014 9 scenarios covering all paths",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Write `MeshEngineApiLifecycleTest`",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Write `MeshEngineApiIdentityTest`",
+          "phase": "Engine Core",
+          "parallel": false
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Write `MeshEngineIntegrationTest` (multi-node via MeshTestHarness)",
+          "phase": "Integration",
+          "parallel": false
+        },
+        {
+          "id": "T020",
+          "state": "completed",
+          "text": "Write `PeerLifecycleIntegrationTest`",
+          "phase": "Integration",
+          "parallel": false
+        },
+        {
+          "id": "T021",
+          "state": "completed",
+          "text": "Write `PseudonymRotationIntegrationTest`",
+          "phase": "Integration",
+          "parallel": false
+        },
+        {
+          "id": "T022",
+          "state": "completed",
+          "text": "Write `StubApiWiringIntegrationTest`",
+          "phase": "Integration",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "messaging-delivery",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 19,
+      "completed_tasks": 19,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T11:43:42+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `MessagingConfig` (rate limits, timeouts, buffer sizes, appIdHash)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `MessageIdKey`, `PeerPair`, `InboundMessage` types",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Define `DeliveryOutcome` sealed hierarchy (Delivered, DeliveryFailed)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Define `SendResult`, `QueuedReason` types",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Write `MessagingFoundationTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `DeliveryPipeline` (send, receive, ack, timeout orchestration)",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `SlidingWindowRateLimiter` (per-peer-pair enforcement)",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Write `DeliveryPipelineTest` \u2014 core send/receive/ack cycle",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Write `DeliveryPipelineCancelTest` \u2014 cancellation behavior",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Write `DeliveryPipelineDiagnosticTest` \u2014 diagnostic emissions",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Write `DeliveryPipelineBranchCoverageTest` \u2014 edge paths",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Write `DeliveryOutcomeMapperTest`",
+          "phase": "Delivery Pipeline",
+          "parallel": false
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Implement `CutThroughBuffer` (FlatBuffer byte surgery, visited_hops append)",
+          "phase": "Cut-Through Relay",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Wire cut-through into DeliveryPipeline relay path",
+          "phase": "Cut-Through Relay",
+          "parallel": false
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Write `CutThroughBufferTest` \u2014 byte surgery correctness",
+          "phase": "Cut-Through Relay",
+          "parallel": false
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Write `CutThroughBufferDiagnosticTest`",
+          "phase": "Cut-Through Relay",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Write `DeliveryPipelineCutThroughTest`",
+          "phase": "Cut-Through Relay",
+          "parallel": false
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Write `CutThroughRelayIntegrationTest` (MeshTestHarness, 3+ nodes)",
+          "phase": "Integration",
+          "parallel": false
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Write `DiagnosticEmissionIntegrationTest`",
+          "phase": "Integration",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "platform-distribution",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 27,
+      "completed_tasks": 27,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T14:46:02+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Implement `AndroidBleTransport` (BluetoothGatt, L2CAP, scanning, advertising)",
+          "phase": "Android Platform",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `MeshLinkService` (foreground service for background BLE)",
+          "phase": "Android Platform",
+          "parallel": true
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `AndroidSecureStorage` (DataStore preferences)",
+          "phase": "Android Platform",
+          "parallel": true
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Implement `MeshLinkAndroidFactory` (wires all Android actuals)",
+          "phase": "Android Platform",
+          "parallel": false
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)",
+          "phase": "iOS Platform",
+          "parallel": false
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Implement `IosSecureStorage`",
+          "phase": "iOS Platform",
+          "parallel": true
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `MeshNode` (iOS-specific helper)",
+          "phase": "iOS Platform",
+          "parallel": true
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Implement `MeshLinkIosFactory`",
+          "phase": "iOS Platform",
+          "parallel": false
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Implement `JvmCryptoProvider` (JDK shim for test execution)",
+          "phase": "JVM Infrastructure",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Add `DedupBenchmark`, `RoutingBenchmark`, `TransferBenchmark`, `WireFormatBenchmark`",
+          "phase": "JVM Infrastructure",
+          "parallel": true
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Configure `maven-publish` + `signing` in meshlink/build.gradle.kts",
+          "phase": "Build & Publish",
+          "parallel": false
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Configure XCFramework assembly (XCFrameworkConfig)",
+          "phase": "Build & Publish",
+          "parallel": true
+        },
+        {
+          "id": "T020",
+          "state": "completed",
+          "text": "Create `Package.swift` (SPM binary target manifest)",
+          "phase": "Build & Publish",
+          "parallel": true
+        },
+        {
+          "id": "T021",
+          "state": "completed",
+          "text": "Create `consumer-rules.pro` (ProGuard keep rules)",
+          "phase": "Build & Publish",
+          "parallel": true
+        },
+        {
+          "id": "T022",
+          "state": "completed",
+          "text": "Configure Dokka javadoc JAR generation (supports FR-001 and FR-002 publication requirements)",
+          "phase": "Build & Publish",
+          "parallel": false
+        },
+        {
+          "id": "T023",
+          "state": "completed",
+          "text": "Create `ci.yml` (ktfmt, detekt, jvmTest, koverVerify, apiCheck, CI-shortened benchmark, coverage summary)",
+          "phase": "CI Pipelines",
+          "parallel": false
+        },
+        {
+          "id": "T024",
+          "state": "completed",
+          "text": "Create `release.yml` (publish-android, publish-ios, publish-xcframework)",
+          "phase": "CI Pipelines",
+          "parallel": true
+        },
+        {
+          "id": "T025",
+          "state": "completed",
+          "text": "Create `codeql.yml` (weekly security scan: actions, c-cpp, java-kotlin)",
+          "phase": "CI Pipelines",
+          "parallel": true
+        },
+        {
+          "id": "T026",
+          "state": "completed",
+          "text": "Configure `.githooks/pre-commit` (ktfmt + detekt; supports constitution quality gates and FR-005 CI hygiene)",
+          "phase": "CI Pipelines",
+          "parallel": true
+        },
+        {
+          "id": "T027",
+          "state": "completed",
+          "text": "Configure BCV (JVM .api + KLib ABI tracking)",
+          "phase": "API Compatibility",
+          "parallel": false
+        },
+        {
+          "id": "T028",
+          "state": "completed",
+          "text": "Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)",
+          "phase": "API Compatibility",
+          "parallel": false
+        },
+        {
+          "id": "T029",
+          "state": "completed",
+          "text": "Configure SKIE for Swift interop (exhaustive enums, AsyncStream)",
+          "phase": "API Compatibility",
+          "parallel": false
+        },
+        {
+          "id": "T030",
+          "state": "completed",
+          "text": "Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)",
+          "phase": "API Compatibility",
+          "parallel": false
+        },
+        {
+          "id": "T031",
+          "state": "completed",
+          "text": "Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction",
+          "phase": "Constitution & CI Alignment",
+          "parallel": false
+        },
+        {
+          "id": "T032",
+          "state": "completed",
+          "text": "Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction",
+          "phase": "Constitution & CI Alignment",
+          "parallel": true
+        },
+        {
+          "id": "T033",
+          "state": "completed",
+          "text": "Verify released Android and iOS publication outputs contain no third-party crypto binaries or native crypto payloads using `scripts/verify-publish.sh`",
+          "phase": "Constitution & CI Alignment",
+          "parallel": false
+        },
+        {
+          "id": "T034",
+          "state": "completed",
+          "text": "Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005",
+          "phase": "Constitution & CI Alignment",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "power-management",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 15,
+      "completed_tasks": 15,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T12:18:00+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `PowerTier` enum (HIGH, NORMAL, LOW)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `PowerConfig` (thresholds, intervals, connection limits)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Define `PowerProfile` (per-tier scan/connection parameters)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Define `BatteryMonitor` interface",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Implement `FixedBatteryMonitor` (test utility)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Write `FixedBatteryMonitorTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `PowerModeEngine` (tier state machine, hysteresis)",
+          "phase": "Power Engine",
+          "parallel": false
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Implement `PowerManager` (orchestrator: battery poll \u2192 tier evaluation \u2192 policy enforcement)",
+          "phase": "Power Engine",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Implement `BleConnectionParameterPolicy` (BLE params per tier)",
+          "phase": "Power Engine",
+          "parallel": true
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Implement `ConnectionLimiter` (max connections per tier)",
+          "phase": "Power Engine",
+          "parallel": true
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Implement `TieredShedder` (shed connections under pressure)",
+          "phase": "Power Engine",
+          "parallel": true
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Define `ManagedConnection`, `PeerKey`, `TransferStatus` types",
+          "phase": "Power Engine",
+          "parallel": true
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Write `PowerManagerTest`",
+          "phase": "Power Engine",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `GracefulDrainManager` (complete in-flight transfers before disconnect)",
+          "phase": "Graceful Drain",
+          "parallel": false
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Write `GracefulDrainIntegrationTest` (MeshTestHarness)",
+          "phase": "Graceful Drain",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "public-api",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 25,
+      "completed_tasks": 25,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T09:57:53+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `MeshLinkState` enum (UNINITIALIZED, RUNNING, PAUSED, STOPPED, RECOVERABLE, TERMINAL)",
+          "phase": "Core Types",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `PeerIdHex` value class (type-safe peer identifier)",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Define `TrustMode` enum (TOFU, STRICT, PROMPT)",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Define `RegulatoryRegion` enum with parameter clamping",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Define `PeerState` sealed hierarchy",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Define `PeerDetail` data class",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Define `RoutingSnapshot` data class",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Define `ExperimentalMeshLinkApi` opt-in annotation",
+          "phase": "Core Types",
+          "parallel": true
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Define `DiagnosticCode` enum (26 codes with severity levels)",
+          "phase": "Diagnostic System",
+          "parallel": false
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Define `DiagnosticPayload` sealed hierarchy (typed payloads)",
+          "phase": "Diagnostic System",
+          "parallel": true
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Implement `DiagnosticSink` (SharedFlow ring buffer, DROP_OLDEST, lazy eval)",
+          "phase": "Diagnostic System",
+          "parallel": false
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Implement `NoOpDiagnosticSink` (zero-overhead opt-out)",
+          "phase": "Diagnostic System",
+          "parallel": true
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Write `DiagnosticSinkTest`",
+          "phase": "Diagnostic System",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `MeshLinkConfig` builder DSL (validation, clamping, sub-configs)",
+          "phase": "Configuration",
+          "parallel": false
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Write `MeshLinkConfigTest` \u2014 validation, defaults, clamping",
+          "phase": "Configuration",
+          "parallel": false
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Write `RegulatoryRegionClampingTest`",
+          "phase": "Configuration",
+          "parallel": false
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Define `MeshLinkApi` interface (start, stop, pause, resume, send, peers, messages, diagnostics)",
+          "phase": "API Interface & Factory",
+          "parallel": false
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Implement `MeshLink` companion (create factory, Flow mapping)",
+          "phase": "API Interface & Factory",
+          "parallel": false
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Write `MeshLinkTest` \u2014 factory creation, Flow mapping",
+          "phase": "API Interface & Factory",
+          "parallel": false
+        },
+        {
+          "id": "T020",
+          "state": "completed",
+          "text": "Write `MeshLinkStateTest` \u2014 transition validation",
+          "phase": "API Interface & Factory",
+          "parallel": false
+        },
+        {
+          "id": "T021",
+          "state": "completed",
+          "text": "Write `PeerStateTest`, `PeerIdHexExtTest`",
+          "phase": "API Interface & Factory",
+          "parallel": false
+        },
+        {
+          "id": "T022",
+          "state": "completed",
+          "text": "Implement `MeshLinkAndroidFactory` (androidMain)",
+          "phase": "Platform Factories",
+          "parallel": true
+        },
+        {
+          "id": "T023",
+          "state": "completed",
+          "text": "Implement `MeshLinkIosFactory` (iosMain)",
+          "phase": "Platform Factories",
+          "parallel": true
+        },
+        {
+          "id": "T024",
+          "state": "completed",
+          "text": "Write `StubApiWiringIntegrationTest`",
+          "phase": "Integration",
+          "parallel": false
+        },
+        {
+          "id": "T025",
+          "state": "completed",
+          "text": "Write `PeerLifecycleIntegrationTest`",
+          "phase": "Integration",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "sack-transfer",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 14,
+      "completed_tasks": 14,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T12:05:29+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `TransferConfig` (timeouts, retransmit limits, window size)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Define `Priority` enum (HIGH, NORMAL, LOW)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Define `ChunkSizePolicy` (GATT vs L2CAP sizing)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Define `FailureReason`, `TransferEvent` types",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Write `TransferFoundationTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `SackTracker` (selective acknowledgment state)",
+          "phase": "Transfer Core",
+          "parallel": false
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `TransferSession` (per-transfer state machine: chunking, acking, completing)",
+          "phase": "Transfer Core",
+          "parallel": false
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Implement `TransferEngine` (orchestrator: send, receive, retransmit, complete)",
+          "phase": "Transfer Core",
+          "parallel": false
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Implement `ObservationRateController` (adaptive rate from ACK timing)",
+          "phase": "Transfer Core",
+          "parallel": true
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Implement `ResumeCalculator` (offset from SACK state after disconnect)",
+          "phase": "Transfer Core",
+          "parallel": true
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Implement `TransferScheduler` (priority-ordered queue)",
+          "phase": "Transfer Core",
+          "parallel": true
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Write `TransferSessionTest`",
+          "phase": "Transfer Core",
+          "parallel": false
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Write `TransferEngineTest` \u2014 multi-chunk, retransmit, complete",
+          "phase": "Transfer Core",
+          "parallel": false
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Add `TransferBenchmark` \u2014 chunk processing throughput",
+          "phase": "Benchmark",
+          "parallel": false
+        }
+      ]
+    },
+    {
+      "id": "wire-format",
+      "phase": "complete",
+      "progress": 1.0,
+      "total_tasks": 22,
+      "completed_tasks": 22,
+      "blocked_tasks": 0,
+      "last_activity": "2026-05-01T08:12:55+02:00",
+      "stalled": false,
+      "artifacts": {
+        "spec": true,
+        "clarifications": false,
+        "plan": true,
+        "checklists": false,
+        "tasks": true,
+        "analyze_done": true,
+        "review": false,
+        "verify_done": true
+      },
+      "integrity": {
+        "spec_sections": true,
+        "plan_sections": true,
+        "tasks_structure": true
+      },
+      "files_touched": [],
+      "tasks": [
+        {
+          "id": "T001",
+          "state": "completed",
+          "text": "Define `MessageType` enum (1-byte tag for all message types)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T002",
+          "state": "completed",
+          "text": "Implement `ReadBuffer` (little-endian reader with bounds checking)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T003",
+          "state": "completed",
+          "text": "Implement `WriteBuffer` (little-endian writer with auto-grow)",
+          "phase": "Foundation",
+          "parallel": true
+        },
+        {
+          "id": "T004",
+          "state": "completed",
+          "text": "Define `ValidationResult` sealed type (Valid/Invalid)",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T005",
+          "state": "completed",
+          "text": "Write `ReadWriteBufferTest`",
+          "phase": "Foundation",
+          "parallel": false
+        },
+        {
+          "id": "T006",
+          "state": "completed",
+          "text": "Implement `Hello` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T007",
+          "state": "completed",
+          "text": "Implement `Handshake` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T008",
+          "state": "completed",
+          "text": "Implement `Update` encode/decode (Babel routing update)",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T009",
+          "state": "completed",
+          "text": "Implement `Chunk` encode/decode (transfer payload)",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T010",
+          "state": "completed",
+          "text": "Implement `ChunkAck` encode/decode (SACK)",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T011",
+          "state": "completed",
+          "text": "Implement `DeliveryAck` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T012",
+          "state": "completed",
+          "text": "Implement `Nack` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T013",
+          "state": "completed",
+          "text": "Implement `Keepalive` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T014",
+          "state": "completed",
+          "text": "Implement `Broadcast` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T015",
+          "state": "completed",
+          "text": "Implement `RoutedMessage` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T016",
+          "state": "completed",
+          "text": "Implement `ResumeRequest` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T017",
+          "state": "completed",
+          "text": "Implement `RotationAnnouncementMessage` encode/decode",
+          "phase": "Message Codecs",
+          "parallel": true
+        },
+        {
+          "id": "T018",
+          "state": "completed",
+          "text": "Implement `WireCodec` (encode/decode dispatcher by MessageType)",
+          "phase": "Codec Dispatcher & Validation",
+          "parallel": false
+        },
+        {
+          "id": "T019",
+          "state": "completed",
+          "text": "Implement `InboundValidator` (length bounds, hop limits, field constraints)",
+          "phase": "Codec Dispatcher & Validation",
+          "parallel": false
+        },
+        {
+          "id": "T020",
+          "state": "completed",
+          "text": "Write `WireFormatTest` \u2014 round-trip all message types",
+          "phase": "Codec Dispatcher & Validation",
+          "parallel": false
+        },
+        {
+          "id": "T021",
+          "state": "completed",
+          "text": "Write `InboundValidatorTest` \u2014 boundary conditions",
+          "phase": "Codec Dispatcher & Validation",
+          "parallel": false
+        },
+        {
+          "id": "T022",
+          "state": "completed",
+          "text": "Add `WireFormatBenchmark` in jvmMain \u2014 encode+decode throughput",
+          "phase": "Benchmark",
+          "parallel": false
+        }
+      ]
+    }
+  ],
+  "conflicts": []
+}
