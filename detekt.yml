@@ -1,0 +1,33 @@
+complexity:
+  CyclomaticComplexMethod:
+    active: false
+  LongMethod:
+    active: false
+  LongParameterList:
+    active: false
+  NestedBlockDepth:
+    active: false
+  TooManyFunctions:
+    active: false
+
+naming:
+  FunctionNaming:
+    active: false
+
+style:
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    active: false
+  ReturnCount:
+    active: false
+  ThrowsCount:
+    active: false
+  UnusedParameter:
+    active: false
+  UnusedPrivateProperty:
+    active: false
+  UseCheckOrError:
+    active: false
+  UseRequire:
+    active: false

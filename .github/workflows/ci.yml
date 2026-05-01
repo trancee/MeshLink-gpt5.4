@@ -1,0 +1,63 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Check formatting
+        run: ./gradlew :meshlink:ktfmtCheck
+
+      - name: Run detekt
+        run: ./gradlew :meshlink:detekt
+
+      - name: Run JVM and Android host tests
+        run: ./gradlew :meshlink:jvmTest :meshlink:testAndroidHostTest
+
+      - name: Verify coverage
+        run: ./gradlew :meshlink:koverVerify :meshlink:koverLogJvm :meshlink:koverLogAndroid
+
+      - name: Verify binary compatibility
+        run: ./gradlew :meshlink:apiCheck
+
+      - name: Run CI benchmark suite
+        run: ./gradlew :meshlink:jvmCiBenchmark
+
+  ios-compile:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compile iOS target
+        run: ./gradlew :meshlink:compileKotlinIosArm64

@@ -1,0 +1,21 @@
+.build/
+.gradle/
+.kotlin/
+build/
+
+# Android Studio
+.idea/
+local.properties
+
+# iOS
+.swiftpm/
+xcuserdata/
+
+# Pi
+.context/
+.pi/
+
+# Extension system
+.specify/extensions/.cache/
+.specify/extensions/.backup/
+.specify/extensions/*/local-config.yml

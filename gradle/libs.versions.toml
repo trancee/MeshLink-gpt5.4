@@ -1,0 +1,28 @@
+[versions]
+agp = "9.2.0"
+benchmark = "0.4.16"
+kotlin = "2.3.20"
+mockito = "5.23.0"
+coroutines = "1.10.2"
+serialization = "1.9.0"
+detekt = "1.23.8"
+spotless = "8.4.0"
+dokka = "2.2.0"
+skie = "0.10.11"
+
+[libraries]
+kotlinx-benchmark-runtime = { group = "org.jetbrains.kotlinx", name = "kotlinx-benchmark-runtime", version.ref = "benchmark" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+
+[plugins]
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "benchmark" }
+kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.8" }
+binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.18.1" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }
