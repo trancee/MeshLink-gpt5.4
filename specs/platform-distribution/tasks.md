@@ -39,8 +39,8 @@
 ## Phase 5: CI Pipelines
 
 - [ ] T023 Create `ci.yml` (ktfmt, detekt, jvmTest, koverVerify, apiCheck, CI-shortened benchmark, coverage summary)
-- [ ] T024 [P] Create `release.yml` (publish-android, publish-ios, publish-xcframework)
-- [ ] T025 [P] Create `codeql.yml` (weekly security scan: actions, c-cpp, java-kotlin)
+- [x] T024 [P] Create `release.yml` (publish-android, publish-ios, publish-xcframework)
+- [x] T025 [P] Create `codeql.yml` (weekly security scan: actions, c-cpp, java-kotlin)
 - [ ] T026 [P] Configure `.githooks/pre-commit` (ktfmt + detekt; supports constitution quality gates and FR-005 CI hygiene)
 
 ## Phase 6: API Compatibility
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 17 of the 27 actionable tasks are now complete while 10 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 19 of the 27 actionable tasks are now complete while 8 remain pending.
