@@ -13,12 +13,12 @@
 ## Phase 2: Transfer Core
 
 - [x] T006 Implement `SackTracker` (selective acknowledgment state)
-- [ ] T007 Implement `TransferSession` (per-transfer state machine: chunking, acking, completing)
+- [x] T007 Implement `TransferSession` (per-transfer state machine: chunking, acking, completing)
 - [ ] T008 Implement `TransferEngine` (orchestrator: send, receive, retransmit, complete)
 - [x] T009 [P] Implement `ObservationRateController` (adaptive rate from ACK timing)
 - [x] T010 [P] Implement `ResumeCalculator` (offset from SACK state after disconnect)
 - [x] T011 [P] Implement `TransferScheduler` (priority-ordered queue)
-- [ ] T012 Write `TransferSessionTest`
+- [x] T012 Write `TransferSessionTest`
 - [ ] T013 Write `TransferEngineTest` — multi-chunk, retransmit, complete
 
 ## Phase 3: Benchmark
@@ -31,4 +31,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-9 actionable tasks complete, 5 remain pending.
+11 actionable tasks complete, 3 remain pending.
