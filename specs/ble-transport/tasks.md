@@ -21,7 +21,7 @@
 - [x] T009 Implement `AdvertisementCodec` (pseudonym + power tier in BLE advertisement)
 - [x] T010 [P] Implement `ConnectionInitiationPolicy` (deterministic initiator from peer IDs)
 - [x] T011 [P] Implement `MeshHashFilter` (advertisement dedup)
-- [ ] T012 [P] Implement `OemL2capProbeCache` (device model → capability cache)
+- [x] T012 [P] Implement `OemL2capProbeCache` (device model → capability cache)
 - [ ] T013 [P] Implement `OemSlotTracker` (advertisement slot management)
 - [x] T014 [P] Implement `WriteLatencyTracker`
 - [x] T015 Write `AdvertisementCodecTest`, `ConnectionInitiationPolicyTest`
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-14 actionable tasks complete, 8 remain pending.
+15 actionable tasks complete, 7 remain pending.
