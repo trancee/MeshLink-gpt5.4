@@ -1,13 +1,13 @@
 # Tasks: Crypto & Noise Protocol
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — foundation types and constant-time utility bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `CryptoProvider` interface (X25519, Ed25519, ChaCha20-Poly1305, HKDF, HMAC-SHA256)
+- [x] T001 Define `CryptoProvider` interface (X25519, Ed25519, ChaCha20-Poly1305, HKDF, HMAC-SHA256)
 - [ ] T002 [P] Implement `CryptoProviderFactory` expect/actual pattern
-- [ ] T003 [P] Implement `ConstantTimeEquals` utility
-- [ ] T004 [P] Define `KeyPair` and `Identity` data classes
+- [x] T003 [P] Implement `ConstantTimeEquals` utility
+- [x] T004 [P] Define `KeyPair` and `Identity` data classes
 - [ ] T005 Write `CryptoProviderTest` validating all primitives
 
 ## Phase 2: Noise Protocol Core
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-All 31 actionable tasks are now pending.
+3 actionable tasks complete, 28 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
