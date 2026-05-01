@@ -9,10 +9,18 @@ import ch.trancee.meshlink.api.PeerDetail
 import ch.trancee.meshlink.api.PeerIdHex
 import ch.trancee.meshlink.crypto.CryptoProvider
 import ch.trancee.meshlink.crypto.CryptoProviderFactory
+import ch.trancee.meshlink.crypto.noise.HandshakeRole
 import ch.trancee.meshlink.transport.BleTransport
+import ch.trancee.meshlink.wire.WireMessage
+import ch.trancee.meshlink.wire.messages.BroadcastMessage
+import ch.trancee.meshlink.wire.messages.HandshakeMessage
+import ch.trancee.meshlink.wire.messages.RoutedMessage
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 public class MeshEngine private constructor(
@@ -25,12 +33,17 @@ public class MeshEngine private constructor(
 ) : MeshLinkApi {
     private val mutableState = MutableStateFlow(MeshLinkState.UNINITIALIZED)
     private val mutablePeers = MutableStateFlow<List<PeerDetail>>(emptyList())
+    private val mutableMessages = MutableSharedFlow<ByteArray>(
+        replay = 1,
+        extraBufferCapacity = 0,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     override val state: StateFlow<MeshLinkState> = mutableState.asStateFlow()
 
     override val peers: StateFlow<List<PeerDetail>> = mutablePeers.asStateFlow()
 
-    override val messages: SharedFlow<ByteArray> = transport.receivedFrames
+    override val messages: SharedFlow<ByteArray> = mutableMessages.asSharedFlow()
 
     override val diagnosticEvents: SharedFlow<DiagnosticEvent> = diagnosticSink.diagnosticEvents
 
@@ -71,6 +84,45 @@ public class MeshEngine private constructor(
         payload: ByteArray,
     ): Unit {
         transport.send(peerId = peerId, payload = payload)
+    }
+
+    public fun beginHandshake(
+        peerId: PeerIdHex,
+        role: HandshakeRole,
+        payload: ByteArray,
+    ): HandshakeMessage {
+        return handshakeManager.beginHandshake(
+            peerId = peerId,
+            role = role,
+            payload = payload,
+        )
+    }
+
+    public fun continueHandshake(
+        peerId: PeerIdHex,
+        payload: ByteArray,
+    ): HandshakeMessage {
+        return handshakeManager.createOutboundMessage(
+            peerId = peerId,
+            payload = payload,
+        )
+    }
+
+    public fun receiveInboundMessage(
+        peerId: PeerIdHex,
+        message: WireMessage,
+        handshakeRole: HandshakeRole = HandshakeRole.RESPONDER,
+    ): Unit {
+        when (message) {
+            is HandshakeMessage -> handshakeManager.receiveHandshakeMessage(
+                peerId = peerId,
+                role = handshakeRole,
+                message = message,
+            )
+            is RoutedMessage -> mutableMessages.tryEmit(message.payload.copyOf())
+            is BroadcastMessage -> mutableMessages.tryEmit(message.payload.copyOf())
+            else -> Unit
+        }
     }
 
     private fun transitionTo(
