@@ -9,6 +9,10 @@ import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.HelloMessageCodec
 import ch.trancee.meshlink.wire.messages.KeepaliveMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessageCodec
+import ch.trancee.meshlink.wire.messages.NackMessage
+import ch.trancee.meshlink.wire.messages.NackMessageCodec
+import ch.trancee.meshlink.wire.messages.ResumeRequestMessage
+import ch.trancee.meshlink.wire.messages.ResumeRequestMessageCodec
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessageCodec
 import ch.trancee.meshlink.wire.messages.UpdateMessage
@@ -281,6 +285,94 @@ public class WireCodecTest {
     }
 
     @Test
+    public fun encodeAndDecode_roundTripNackMessageThroughDispatcher(): Unit {
+        // Arrange
+        val message = NackMessage(
+            messageId = 0x1020304050607080,
+            reasonCode = 503,
+        )
+
+        // Act
+        val decoded: NackMessage = assertIs<NackMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = 0x1020304050607080,
+            actual = decoded.messageId,
+            message = "WireCodec should preserve the NACK message identifier through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 503,
+            actual = decoded.reasonCode,
+            message = "WireCodec should preserve the NACK reason code through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesNackTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = NackMessage(
+            messageId = 0x0102030405060708,
+            reasonCode = 404,
+        )
+        val expectedPayload: ByteArray = NackMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.NACK.code.toByte(), 0x0C, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame NACK messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripResumeRequestMessageThroughDispatcher(): Unit {
+        // Arrange
+        val message = ResumeRequestMessage(
+            transferId = 0x0102030405060708,
+            resumeOffset = 0x1112131415161718,
+        )
+
+        // Act
+        val decoded: ResumeRequestMessage = assertIs<ResumeRequestMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = 0x0102030405060708,
+            actual = decoded.transferId,
+            message = "WireCodec should preserve the RESUME_REQUEST transfer identifier through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 0x1112131415161718,
+            actual = decoded.resumeOffset,
+            message = "WireCodec should preserve the RESUME_REQUEST offset through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesResumeRequestTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = ResumeRequestMessage(
+            transferId = 0x2122232425262728,
+            resumeOffset = 0x3132333435363738,
+        )
+        val expectedPayload: ByteArray = ResumeRequestMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.RESUME_REQUEST.code.toByte(), 0x10, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame RESUME_REQUEST messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
     public fun encode_throwsWhenMessageImplementationIsNotYetSupported(): Unit {
         // Arrange
         val message: WireMessage = UnsupportedWireMessage
@@ -369,7 +461,7 @@ public class WireCodecTest {
     public fun decode_throwsWhenMessageTypeIsRecognizedButCodecIsNotYetImplemented(): Unit {
         // Arrange
         val encoded: ByteArray = byteArrayOf(
-            MessageType.NACK.code.toByte(),
+            MessageType.BROADCAST.code.toByte(),
             0x00,
             0x00,
             0x00,
@@ -383,7 +475,7 @@ public class WireCodecTest {
 
         // Assert
         assertEquals(
-            expected = "WireCodec does not yet support decoding NACK messages.",
+            expected = "WireCodec does not yet support decoding BROADCAST messages.",
             actual = error.message,
             message = "WireCodec should surface unsupported message types until their specific codecs are implemented",
         )

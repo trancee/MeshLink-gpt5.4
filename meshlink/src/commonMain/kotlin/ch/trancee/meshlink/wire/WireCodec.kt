@@ -8,6 +8,10 @@ import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.HelloMessageCodec
 import ch.trancee.meshlink.wire.messages.KeepaliveMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessageCodec
+import ch.trancee.meshlink.wire.messages.NackMessage
+import ch.trancee.meshlink.wire.messages.NackMessageCodec
+import ch.trancee.meshlink.wire.messages.ResumeRequestMessage
+import ch.trancee.meshlink.wire.messages.ResumeRequestMessageCodec
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessageCodec
 import ch.trancee.meshlink.wire.messages.UpdateMessage
@@ -44,6 +48,14 @@ public object WireCodec {
             is DeliveryAckMessage -> {
                 frameType = MessageType.DELIVERY_ACK
                 payload = DeliveryAckMessageCodec.encode(message = message)
+            }
+            is NackMessage -> {
+                frameType = MessageType.NACK
+                payload = NackMessageCodec.encode(message = message)
+            }
+            is ResumeRequestMessage -> {
+                frameType = MessageType.RESUME_REQUEST
+                payload = ResumeRequestMessageCodec.encode(message = message)
             }
             else -> throw UnsupportedOperationException(
                 "WireCodec does not yet support encoding ${message::class.simpleName} messages.",
@@ -84,6 +96,8 @@ public object WireCodec {
             MessageType.ROUTED_MESSAGE -> RoutedMessageCodec.decode(payload = payload)
             MessageType.UPDATE -> UpdateMessageCodec.decode(payload = payload)
             MessageType.DELIVERY_ACK -> DeliveryAckMessageCodec.decode(payload = payload)
+            MessageType.NACK -> NackMessageCodec.decode(payload = payload)
+            MessageType.RESUME_REQUEST -> ResumeRequestMessageCodec.decode(payload = payload)
             else -> throw UnsupportedOperationException(
                 "WireCodec does not yet support decoding ${type.name} messages.",
             )

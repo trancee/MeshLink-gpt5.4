@@ -5,6 +5,8 @@ import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessage
+import ch.trancee.meshlink.wire.messages.NackMessage
+import ch.trancee.meshlink.wire.messages.ResumeRequestMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import ch.trancee.meshlink.wire.messages.UpdateMessage
 import kotlin.test.Test
@@ -36,6 +38,14 @@ public class WireFormatTest {
                 seqno = 8,
             ),
             DeliveryAckMessage(messageId = 0x0102030405060708),
+            NackMessage(
+                messageId = 0x2122232425262728,
+                reasonCode = 502,
+            ),
+            ResumeRequestMessage(
+                transferId = 0x3132333435363738,
+                resumeOffset = 0x4142434445464748,
+            ),
         )
 
         // Act
