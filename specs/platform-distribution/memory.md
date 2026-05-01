@@ -2,7 +2,7 @@
 
 ## Scope Notes
 - Refreshed planning context for `platform-distribution` on 2026-05-01.
-- Current work focuses on making `spec.md`, `plan.md`, and `tasks.md` execution-ready after pre-implementation review.
+- Current work is in closeout: `spec.md`, `plan.md`, and `tasks.md` now reflect an implemented and verified feature.
 - iOS BLE distribution is intentionally **physical-device only**; simulator execution is out of scope for this feature.
 
 ## Relevant Durable Memory

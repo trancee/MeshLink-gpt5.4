@@ -1,6 +1,6 @@
 # Feature Specification: Platform & Distribution
 
-**Status**: Refreshed after pre-implementation review  
+**Status**: Implemented and verified
 **Spec References**: `spec/03-transport-ble.md`, `spec/12-platform-and-testing.md`, `spec/13-distribution-api-compliance.md`  
 **Subsystem**: Platform source sets + build infrastructure
 

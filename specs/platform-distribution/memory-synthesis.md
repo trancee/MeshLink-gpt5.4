@@ -1,10 +1,10 @@
 # Memory Synthesis
 
 feature: platform-distribution
-status: active
+status: complete
 hard_conflicts: 0
 soft_conflicts: 0
-assumptions_to_confirm: 2
+assumptions_to_confirm: 0
 
 ## Current Constraints
 - [C1] Read `.specify/memory/constitution.md` and `docs/memory/*` before continuing work on this feature.
@@ -27,15 +27,14 @@ assumptions_to_confirm: 2
 - [none]
 
 ## Assumptions Requiring Confirmation
-- [Q1] Confirm the final GitHub release URL pattern used for the remote SwiftPM `binaryTarget`.
-- [Q2] Confirm whether checksum insertion into `Package.swift` is owned by `scripts/update-package-swift.sh`, `release.yml`, or both.
+- [none]
 
 ## Implementation Watchpoints
-- [W1] Reorder tasks so crypto providers are implemented before factory wiring.
-- [W2] Keep tasks specific, file-scoped, and parallel only when files do not overlap.
-- [W3] Do not add simulator-based iOS BLE verification.
+- [W1] Keep tasks specific, file-scoped, and parallel only when files do not overlap.
+- [W2] Do not add simulator-based iOS BLE verification.
 
 ## Verification Watchpoints
 - [V1] Run the full Gradle verification gate plus `jvmCiBenchmark` before completion claims.
 - [V2] Validate release artifacts with `scripts/verify-publish.sh`.
 - [V3] Validate the SwiftPM checksum against the produced `MeshLink.xcframework.zip` on macOS.
+- [V4] Keep `Package.swift` aligned with the tagged release URL and checksum before publishing.
