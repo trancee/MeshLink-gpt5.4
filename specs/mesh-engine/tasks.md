@@ -11,9 +11,9 @@
 
 ## Phase 2: Pseudonym Rotation
 
-- [ ] T005 Implement `PseudonymRotator` (HMAC-SHA-256, epoch boundaries, deterministic stagger)
-- [ ] T006 Write `PseudonymRotatorTest` — epoch computation, stagger, rotation timer
-- [ ] T007 Write `PseudonymVerificationTest` — ±1 epoch tolerance verification
+- [x] T005 Implement `PseudonymRotator` (HMAC-SHA-256, epoch boundaries, deterministic stagger)
+- [x] T006 Write `PseudonymRotatorTest` — epoch computation, stagger, rotation timer
+- [x] T007 Write `PseudonymVerificationTest` — ±1 epoch tolerance verification
 
 ## Phase 3: Handshake Management
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-4 actionable tasks complete, 18 remain pending.
+7 actionable tasks complete, 15 remain pending.
