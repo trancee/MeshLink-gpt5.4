@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+./gradlew :meshlink:ktfmtCheck :meshlink:detekt

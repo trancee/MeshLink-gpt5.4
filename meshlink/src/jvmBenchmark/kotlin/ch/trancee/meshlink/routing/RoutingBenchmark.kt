@@ -12,21 +12,23 @@ import kotlinx.benchmark.State
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(kotlinx.benchmark.BenchmarkTimeUnit.MICROSECONDS)
 public open class RoutingBenchmark {
-    private val destinationPeerId = PeerIdHex(value = "00112233")
-    private val routingEngine = RoutingEngine(config = RoutingConfig.default()).apply {
-        processUpdate(
-            update = RoutingUpdate(
-                destinationPeerId = destinationPeerId,
-                nextHopPeerId = PeerIdHex(value = "44556677"),
-                metric = 1,
-                sequenceNumber = 1,
-                expiresAtEpochMillis = 1_000L,
-            ),
-        )
+  private val destinationPeerId = PeerIdHex(value = "00112233")
+  private val routingEngine =
+    RoutingEngine(config = RoutingConfig.default()).apply {
+      processUpdate(
+        update =
+          RoutingUpdate(
+            destinationPeerId = destinationPeerId,
+            nextHopPeerId = PeerIdHex(value = "44556677"),
+            metric = 1,
+            sequenceNumber = 1,
+            expiresAtEpochMillis = 1_000L,
+          )
+      )
     }
 
-    @Benchmark
-    public open fun lookupBestRoute(): PeerIdHex? {
-        return routingEngine.nextHopFor(destinationPeerId = destinationPeerId)
-    }
+  @Benchmark
+  public open fun lookupBestRoute(): PeerIdHex? {
+    return routingEngine.nextHopFor(destinationPeerId = destinationPeerId)
+  }
 }

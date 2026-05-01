@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.benchmark) apply false
     alias(libs.plugins.kover) apply false
+    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.dokka) apply false
     alias(libs.plugins.binary.compatibility.validator)
 }
 

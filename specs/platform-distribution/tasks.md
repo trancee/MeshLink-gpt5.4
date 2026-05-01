@@ -34,14 +34,14 @@
 - [x] T019 [P] Configure XCFramework assembly (XCFrameworkConfig)
 - [x] T020 [P] Create `Package.swift` (SPM binary target manifest)
 - [x] T021 [P] Create `consumer-rules.pro` (ProGuard keep rules)
-- [ ] T022 Configure Dokka javadoc JAR generation (supports FR-001 and FR-002 publication requirements)
+- [x] T022 Configure Dokka javadoc JAR generation (supports FR-001 and FR-002 publication requirements)
 
 ## Phase 5: CI Pipelines
 
-- [ ] T023 Create `ci.yml` (ktfmt, detekt, jvmTest, koverVerify, apiCheck, CI-shortened benchmark, coverage summary)
+- [x] T023 Create `ci.yml` (ktfmt, detekt, jvmTest, koverVerify, apiCheck, CI-shortened benchmark, coverage summary)
 - [x] T024 [P] Create `release.yml` (publish-android, publish-ios, publish-xcframework)
 - [x] T025 [P] Create `codeql.yml` (weekly security scan: actions, c-cpp, java-kotlin)
-- [ ] T026 [P] Configure `.githooks/pre-commit` (ktfmt + detekt; supports constitution quality gates and FR-005 CI hygiene)
+- [x] T026 [P] Configure `.githooks/pre-commit` (ktfmt + detekt; supports constitution quality gates and FR-005 CI hygiene)
 
 ## Phase 6: API Compatibility
 
@@ -58,7 +58,7 @@
 - [ ] T031 Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
 - [ ] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
 - [ ] T033 Verify released Android and iOS publication outputs contain no third-party crypto binaries or native crypto payloads using `scripts/verify-publish.sh`
-- [ ] T034 Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005
+- [x] T034 Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005
 
 ## Verification
 
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 19 of the 27 actionable tasks are now complete while 8 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 23 of the 27 actionable tasks are now complete while 4 remain pending.

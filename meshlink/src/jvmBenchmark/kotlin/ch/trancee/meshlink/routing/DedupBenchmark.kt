@@ -11,15 +11,15 @@ import kotlinx.benchmark.State
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(kotlinx.benchmark.BenchmarkTimeUnit.MICROSECONDS)
 public open class DedupBenchmark {
-    private val dedupSet = DedupSet(maxEntries = 256, expiryMillis = 60_000L)
-    private var nowEpochMillis: Long = 0L
+  private val dedupSet = DedupSet(maxEntries = 256, expiryMillis = 60_000L)
+  private var nowEpochMillis: Long = 0L
 
-    @Benchmark
-    public open fun checkDuplicateKey(): Boolean {
-        nowEpochMillis += 1L
-        return dedupSet.isDuplicate(
-            key = byteArrayOf(0x01, 0x02, 0x03, 0x04),
-            nowEpochMillis = nowEpochMillis,
-        )
-    }
+  @Benchmark
+  public open fun checkDuplicateKey(): Boolean {
+    nowEpochMillis += 1L
+    return dedupSet.isDuplicate(
+      key = byteArrayOf(0x01, 0x02, 0x03, 0x04),
+      nowEpochMillis = nowEpochMillis,
+    )
+  }
 }
