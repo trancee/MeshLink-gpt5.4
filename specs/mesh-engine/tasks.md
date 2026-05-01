@@ -33,7 +33,7 @@
 - [ ] T015 Implement outbound message scheduling (via DeliveryPipeline)
 - [ ] T016 Write `MeshEngineTest` — 9 scenarios covering all paths
 - [x] T017 Write `MeshEngineApiLifecycleTest`
-- [ ] T018 Write `MeshEngineApiIdentityTest`
+- [x] T018 Write `MeshEngineApiIdentityTest`
 
 ## Phase 6: Integration
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-15 actionable tasks complete, 7 remain pending.
+16 actionable tasks complete, 6 remain pending.

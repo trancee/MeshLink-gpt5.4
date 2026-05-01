@@ -125,6 +125,28 @@ public class MeshEngine private constructor(
         }
     }
 
+    public fun pseudonymAt(
+        identityKey: ByteArray,
+        timestampMillis: Long,
+    ): ByteArray {
+        return pseudonymRotator.pseudonymAt(
+            identityKey = identityKey,
+            timestampMillis = timestampMillis,
+        )
+    }
+
+    public fun verifyPseudonym(
+        candidate: ByteArray,
+        identityKey: ByteArray,
+        timestampMillis: Long,
+    ): Boolean {
+        return pseudonymRotator.isValidForCurrentWindow(
+            candidate = candidate,
+            identityKey = identityKey,
+            timestampMillis = timestampMillis,
+        )
+    }
+
     private fun transitionTo(
         target: MeshLinkState,
         diagnosticCode: DiagnosticCode,
