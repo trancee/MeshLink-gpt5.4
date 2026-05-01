@@ -3,9 +3,121 @@ package ch.trancee.meshlink.crypto
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 public class JvmCryptoProviderTest {
+    @Test
+    public fun generateEd25519KeyPair_returnsExpectedKeyLengths(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val actual: KeyPair = provider.generateEd25519KeyPair()
+
+        // Assert
+        assertEquals(
+            expected = Identity.PUBLIC_KEY_SIZE,
+            actual = actual.publicKey.size,
+            message = "JvmCryptoProvider should expose raw 32-byte Ed25519 public keys",
+        )
+        assertEquals(
+            expected = Identity.SECRET_KEY_SIZE,
+            actual = actual.secretKey.size,
+            message = "JvmCryptoProvider should expose 64-byte Ed25519 secret keys",
+        )
+    }
+
+    @Test
+    public fun ed25519SignAndVerify_roundTripSignature(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+        val keyPair: KeyPair = provider.generateEd25519KeyPair()
+        val message: ByteArray = "meshlink".encodeToByteArray()
+
+        // Act
+        val signature: ByteArray = provider.ed25519Sign(
+            privateKey = keyPair.secretKey,
+            message = message,
+        )
+        val actual: Boolean = provider.ed25519Verify(
+            publicKey = keyPair.publicKey,
+            message = message,
+            signature = signature,
+        )
+
+        // Assert
+        assertTrue(
+            actual = actual,
+            message = "JvmCryptoProvider should verify signatures produced by its Ed25519 signing implementation",
+        )
+    }
+
+    @Test
+    public fun ed25519Verify_returnsFalseForTamperedMessage(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+        val keyPair: KeyPair = provider.generateEd25519KeyPair()
+        val signature: ByteArray = provider.ed25519Sign(
+            privateKey = keyPair.secretKey,
+            message = "meshlink".encodeToByteArray(),
+        )
+
+        // Act
+        val actual: Boolean = provider.ed25519Verify(
+            publicKey = keyPair.publicKey,
+            message = "tampered".encodeToByteArray(),
+            signature = signature,
+        )
+
+        // Assert
+        assertFalse(
+            actual = actual,
+            message = "JvmCryptoProvider should reject Ed25519 signatures when the signed message changes",
+        )
+    }
+
+    @Test
+    public fun ed25519Sign_throwsWhenSecretKeyLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.ed25519Sign(privateKey = byteArrayOf(0x01), message = byteArrayOf(0x02))
+        }
+
+        // Assert
+        assertEquals(
+            expected = "Ed25519 secretKey must be exactly 64 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed Ed25519 secret keys",
+        )
+    }
+
+    @Test
+    public fun ed25519Verify_throwsWhenPublicKeyLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.ed25519Verify(
+                publicKey = byteArrayOf(0x01),
+                message = byteArrayOf(0x02),
+                signature = byteArrayOf(0x03),
+            )
+        }
+
+        // Assert
+        assertEquals(
+            expected = "Ed25519 publicKey must be exactly 32 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed Ed25519 public keys",
+        )
+    }
+
     @Test
     public fun hkdfSha256_matchesRfc5869TestVector(): Unit {
         // Arrange
@@ -88,17 +200,8 @@ public class JvmCryptoProviderTest {
         val generateX25519Error = assertFailsWith<UnsupportedOperationException> {
             provider.generateX25519KeyPair()
         }
-        val generateEd25519Error = assertFailsWith<UnsupportedOperationException> {
-            provider.generateEd25519KeyPair()
-        }
         val x25519Error = assertFailsWith<UnsupportedOperationException> {
             provider.x25519(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02))
-        }
-        val signError = assertFailsWith<UnsupportedOperationException> {
-            provider.ed25519Sign(privateKey = byteArrayOf(0x03), message = byteArrayOf(0x04))
-        }
-        val verifyError = assertFailsWith<UnsupportedOperationException> {
-            provider.ed25519Verify(publicKey = byteArrayOf(0x05), message = byteArrayOf(0x06), signature = byteArrayOf(0x07))
         }
         val encryptError = assertFailsWith<UnsupportedOperationException> {
             provider.chaCha20Poly1305Encrypt(
@@ -120,10 +223,7 @@ public class JvmCryptoProviderTest {
         // Assert
         val expectedMessage = "JvmCryptoProvider primitive is not implemented yet."
         assertEquals(expected = expectedMessage, actual = generateX25519Error.message)
-        assertEquals(expected = expectedMessage, actual = generateEd25519Error.message)
         assertEquals(expected = expectedMessage, actual = x25519Error.message)
-        assertEquals(expected = expectedMessage, actual = signError.message)
-        assertEquals(expected = expectedMessage, actual = verifyError.message)
         assertEquals(expected = expectedMessage, actual = encryptError.message)
         assertEquals(expected = expectedMessage, actual = decryptError.message)
     }
