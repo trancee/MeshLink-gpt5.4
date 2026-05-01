@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
  * Android BLE transport façade that models Android-central to peripheral connection lifecycle.
  *
  * Host-side tests can attach either another [AndroidBleTransport] or a legacy
- * [VirtualMeshTransport] bridge, but the transport now owns its own connection state rather than
- * delegating the full implementation to a virtual transport instance.
+ * [VirtualMeshTransport] bridge, while the transport owns capability-aware L2CAP to GATT fallback
+ * decisions instead of delegating the full implementation to a virtual transport instance.
  */
 public class AndroidBleTransport(
   private val localPeerId: PeerIdHex,
@@ -25,6 +25,8 @@ public class AndroidBleTransport(
   private val attachedAndroidPeers: MutableMap<String, AndroidBleTransport> = mutableMapOf()
   private val attachedVirtualPeers: MutableMap<String, VirtualMeshTransport> = mutableMapOf()
   private val connectedPeers: MutableSet<String> = mutableSetOf()
+  private val activeDataPaths: MutableMap<String, TransportDataPath> = mutableMapOf()
+  private val l2capProbeCache: OemL2capProbeCache = OemL2capProbeCache()
   private val mutableIsAdvertising = MutableStateFlow(false)
   private val mutableReceivedFrames =
     MutableSharedFlow<ByteArray>(
@@ -32,6 +34,9 @@ public class AndroidBleTransport(
       extraBufferCapacity = 0,
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
+  private var deviceModel: String = DEFAULT_DEVICE_MODEL
+  private var supportsL2cap: Boolean = true
+  private val nowEpochMillis: Long = 0L
 
   override val isAdvertising: StateFlow<Boolean> = mutableIsAdvertising.asStateFlow()
 
@@ -47,6 +52,15 @@ public class AndroidBleTransport(
     attachedAndroidPeers[peerId.value] = transport
   }
 
+  internal fun configureTransportCapabilities(deviceModel: String, supportsL2cap: Boolean): Unit {
+    this.deviceModel = deviceModel
+    this.supportsL2cap = supportsL2cap
+  }
+
+  internal fun activeDataPath(peerId: PeerIdHex): TransportDataPath? {
+    return activeDataPaths[peerId.value]
+  }
+
   public fun isConnected(peerId: PeerIdHex): Boolean {
     return peerId.value in connectedPeers
   }
@@ -57,8 +71,15 @@ public class AndroidBleTransport(
       if (!androidPeer.isAdvertising.value) {
         return
       }
+      val selectedDataPath: TransportDataPath =
+        negotiateDataPath(
+          peerId = peerId,
+          remoteDeviceModel = androidPeer.deviceModel,
+          remoteSupportsL2cap = androidPeer.supportsL2cap,
+        )
       connectedPeers += peerId.value
-      androidPeer.onPeerConnected(peerId = localPeerId)
+      activeDataPaths[peerId.value] = selectedDataPath
+      androidPeer.onPeerConnected(peerId = localPeerId, dataPath = selectedDataPath)
       return
     }
 
@@ -67,6 +88,7 @@ public class AndroidBleTransport(
       return
     }
     connectedPeers += peerId.value
+    activeDataPaths[peerId.value] = TransportDataPath.GATT
     virtualPeer.connect(peerId = localPeerId)
   }
 
@@ -75,6 +97,7 @@ public class AndroidBleTransport(
       return
     }
 
+    activeDataPaths.remove(peerId.value)
     attachedAndroidPeers[peerId.value]?.onPeerDisconnected(peerId = localPeerId)
     attachedVirtualPeers[peerId.value]?.disconnect(peerId = localPeerId)
   }
@@ -95,15 +118,53 @@ public class AndroidBleTransport(
     mutableIsAdvertising.value = enabled
   }
 
-  private fun onPeerConnected(peerId: PeerIdHex): Unit {
+  private fun negotiateDataPath(
+    peerId: PeerIdHex,
+    remoteDeviceModel: String,
+    remoteSupportsL2cap: Boolean,
+  ): TransportDataPath {
+    val cachedCapability: OemL2capProbeResult? =
+      l2capProbeCache.probe(deviceModel = remoteDeviceModel, nowEpochMillis = nowEpochMillis)
+    val preferredDataPath: TransportDataPath =
+      ConnectionInitiationPolicy.preferredDataPath(
+        preferL2cap = supportsL2cap,
+        cachedCapability = cachedCapability,
+      )
+
+    return if (preferredDataPath == TransportDataPath.L2CAP && !remoteSupportsL2cap) {
+      l2capProbeCache.recordProbe(
+        deviceModel = remoteDeviceModel,
+        supportsL2cap = false,
+        observedAtEpochMillis = nowEpochMillis,
+      )
+      ConnectionInitiationPolicy.fallbackDataPath(failedDataPath = preferredDataPath)
+    } else {
+      if (preferredDataPath == TransportDataPath.L2CAP) {
+        l2capProbeCache.recordProbe(
+          deviceModel = remoteDeviceModel,
+          supportsL2cap = true,
+          observedAtEpochMillis = nowEpochMillis,
+        )
+      }
+      preferredDataPath
+    }
+  }
+
+  private fun onPeerConnected(peerId: PeerIdHex, dataPath: TransportDataPath): Unit {
     connectedPeers += peerId.value
+    activeDataPaths[peerId.value] = dataPath
   }
 
   private fun onPeerDisconnected(peerId: PeerIdHex): Unit {
     connectedPeers.remove(peerId.value)
+    activeDataPaths.remove(peerId.value)
   }
 
   private fun receiveFromPeer(peerId: PeerIdHex, payload: ByteArray): Unit {
     mutableReceivedFrames.tryEmit(payload.copyOf())
+  }
+
+  private companion object {
+    private const val DEFAULT_DEVICE_MODEL: String = "android-generic"
   }
 }

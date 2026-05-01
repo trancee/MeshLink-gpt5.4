@@ -24,6 +24,8 @@ public class IosBleTransport(
   private val attachedIosPeers: MutableMap<String, IosBleTransport> = mutableMapOf()
   private val attachedVirtualPeers: MutableMap<String, VirtualMeshTransport> = mutableMapOf()
   private val connectedPeers: MutableSet<String> = mutableSetOf()
+  private val activeDataPaths: MutableMap<String, TransportDataPath> = mutableMapOf()
+  private val l2capProbeCache: OemL2capProbeCache = OemL2capProbeCache()
   private val mutableIsAdvertising = MutableStateFlow(false)
   private val mutableReceivedFrames =
     MutableSharedFlow<ByteArray>(
@@ -31,6 +33,9 @@ public class IosBleTransport(
       extraBufferCapacity = 0,
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
+  private var deviceModel: String = DEFAULT_DEVICE_MODEL
+  private var supportsL2cap: Boolean = true
+  private val nowEpochMillis: Long = 0L
 
   override val isAdvertising: StateFlow<Boolean> = mutableIsAdvertising.asStateFlow()
 
@@ -46,6 +51,15 @@ public class IosBleTransport(
     attachedIosPeers[peerId.value] = transport
   }
 
+  internal fun configureTransportCapabilities(deviceModel: String, supportsL2cap: Boolean): Unit {
+    this.deviceModel = deviceModel
+    this.supportsL2cap = supportsL2cap
+  }
+
+  internal fun activeDataPath(peerId: PeerIdHex): TransportDataPath? {
+    return activeDataPaths[peerId.value]
+  }
+
   public fun isConnected(peerId: PeerIdHex): Boolean {
     return peerId.value in connectedPeers
   }
@@ -56,8 +70,15 @@ public class IosBleTransport(
       if (!iosPeer.isAdvertising.value) {
         return
       }
+      val selectedDataPath: TransportDataPath =
+        negotiateDataPath(
+          peerId = peerId,
+          remoteDeviceModel = iosPeer.deviceModel,
+          remoteSupportsL2cap = iosPeer.supportsL2cap,
+        )
       connectedPeers += peerId.value
-      iosPeer.onPeerConnected(peerId = localPeerId)
+      activeDataPaths[peerId.value] = selectedDataPath
+      iosPeer.onPeerConnected(peerId = localPeerId, dataPath = selectedDataPath)
       return
     }
 
@@ -66,6 +87,7 @@ public class IosBleTransport(
       return
     }
     connectedPeers += peerId.value
+    activeDataPaths[peerId.value] = TransportDataPath.GATT
     virtualPeer.connect(peerId = localPeerId)
   }
 
@@ -74,6 +96,7 @@ public class IosBleTransport(
       return
     }
 
+    activeDataPaths.remove(peerId.value)
     attachedIosPeers[peerId.value]?.onPeerDisconnected(peerId = localPeerId)
     attachedVirtualPeers[peerId.value]?.disconnect(peerId = localPeerId)
   }
@@ -94,15 +117,53 @@ public class IosBleTransport(
     mutableIsAdvertising.value = enabled
   }
 
-  private fun onPeerConnected(peerId: PeerIdHex): Unit {
+  private fun negotiateDataPath(
+    peerId: PeerIdHex,
+    remoteDeviceModel: String,
+    remoteSupportsL2cap: Boolean,
+  ): TransportDataPath {
+    val cachedCapability: OemL2capProbeResult? =
+      l2capProbeCache.probe(deviceModel = remoteDeviceModel, nowEpochMillis = nowEpochMillis)
+    val preferredDataPath: TransportDataPath =
+      ConnectionInitiationPolicy.preferredDataPath(
+        preferL2cap = supportsL2cap,
+        cachedCapability = cachedCapability,
+      )
+
+    return if (preferredDataPath == TransportDataPath.L2CAP && !remoteSupportsL2cap) {
+      l2capProbeCache.recordProbe(
+        deviceModel = remoteDeviceModel,
+        supportsL2cap = false,
+        observedAtEpochMillis = nowEpochMillis,
+      )
+      ConnectionInitiationPolicy.fallbackDataPath(failedDataPath = preferredDataPath)
+    } else {
+      if (preferredDataPath == TransportDataPath.L2CAP) {
+        l2capProbeCache.recordProbe(
+          deviceModel = remoteDeviceModel,
+          supportsL2cap = true,
+          observedAtEpochMillis = nowEpochMillis,
+        )
+      }
+      preferredDataPath
+    }
+  }
+
+  private fun onPeerConnected(peerId: PeerIdHex, dataPath: TransportDataPath): Unit {
     connectedPeers += peerId.value
+    activeDataPaths[peerId.value] = dataPath
   }
 
   private fun onPeerDisconnected(peerId: PeerIdHex): Unit {
     connectedPeers.remove(peerId.value)
+    activeDataPaths.remove(peerId.value)
   }
 
   private fun receiveFromPeer(peerId: PeerIdHex, payload: ByteArray): Unit {
     mutableReceivedFrames.tryEmit(payload.copyOf())
+  }
+
+  private companion object {
+    private const val DEFAULT_DEVICE_MODEL: String = "ios-generic"
   }
 }

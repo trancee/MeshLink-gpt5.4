@@ -111,4 +111,62 @@ public class ConnectionInitiationPolicyTest {
     assertEquals(expected = true, actual = firstDecision)
     assertEquals(expected = false, actual = secondDecision)
   }
+
+  @Test
+  public fun preferredDataPath_usesGattWhenFreshCacheMarksL2capUnsupported(): Unit {
+    // Arrange
+    val cachedCapability = OemL2capProbeResult(supportsL2cap = false, isStale = false)
+
+    // Act
+    val actual =
+      ConnectionInitiationPolicy.preferredDataPath(
+        preferL2cap = true,
+        cachedCapability = cachedCapability,
+      )
+
+    // Assert
+    assertEquals(
+      expected = TransportDataPath.GATT,
+      actual = actual,
+      message =
+        "ConnectionInitiationPolicy should fall back to GATT when a fresh cache entry says L2CAP is unavailable.",
+    )
+  }
+
+  @Test
+  public fun preferredDataPath_retriesL2capWhenTheNegativeCacheEntryIsStale(): Unit {
+    // Arrange
+    val cachedCapability = OemL2capProbeResult(supportsL2cap = false, isStale = true)
+
+    // Act
+    val actual =
+      ConnectionInitiationPolicy.preferredDataPath(
+        preferL2cap = true,
+        cachedCapability = cachedCapability,
+      )
+
+    // Assert
+    assertEquals(
+      expected = TransportDataPath.L2CAP,
+      actual = actual,
+      message =
+        "ConnectionInitiationPolicy should retry L2CAP once the cached negative capability has gone stale.",
+    )
+  }
+
+  @Test
+  public fun fallbackDataPath_demotesL2capFailuresToGatt(): Unit {
+    // Arrange
+    val failedDataPath = TransportDataPath.L2CAP
+
+    // Act
+    val actual = ConnectionInitiationPolicy.fallbackDataPath(failedDataPath = failedDataPath)
+
+    // Assert
+    assertEquals(
+      expected = TransportDataPath.GATT,
+      actual = actual,
+      message = "ConnectionInitiationPolicy should demote failed L2CAP attempts to GATT.",
+    )
+  }
 }

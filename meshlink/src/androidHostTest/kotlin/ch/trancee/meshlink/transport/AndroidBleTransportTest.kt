@@ -3,6 +3,7 @@ package ch.trancee.meshlink.transport
 import ch.trancee.meshlink.api.PeerIdHex
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -77,6 +78,35 @@ public class AndroidBleTransportTest {
       actual = remoteConnectedState,
       message =
         "AndroidBleTransport should not mark the remote peer connected when discovery fails.",
+    )
+  }
+
+  @Test
+  public fun connect_fallsBackToGattWhenThePeerCannotAcceptL2cap(): Unit {
+    // Arrange
+    val localPeerId = PeerIdHex(value = "00112233")
+    val remotePeerId = PeerIdHex(value = "44556677")
+    val localTransport = AndroidBleTransport(localPeerId = localPeerId)
+    val remoteTransport = AndroidBleTransport(localPeerId = remotePeerId)
+    localTransport.attachPeer(peerId = remotePeerId, transport = remoteTransport)
+    remoteTransport.attachPeer(peerId = localPeerId, transport = localTransport)
+    localTransport.configureTransportCapabilities(deviceModel = "Pixel 9", supportsL2cap = true)
+    remoteTransport.configureTransportCapabilities(
+      deviceModel = "Legacy OEM",
+      supportsL2cap = false,
+    )
+    remoteTransport.advertise(enabled = true)
+
+    // Act
+    localTransport.connect(peerId = remotePeerId)
+    val actual = localTransport.activeDataPath(peerId = remotePeerId)
+
+    // Assert
+    assertEquals(
+      expected = TransportDataPath.GATT,
+      actual = actual,
+      message =
+        "AndroidBleTransport should fall back to GATT when the remote peer cannot accept L2CAP.",
     )
   }
 }
