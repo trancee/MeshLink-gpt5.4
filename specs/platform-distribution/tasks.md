@@ -55,7 +55,7 @@
 > This phase closes constitution and CI alignment for FR-005, FR-010, SC-004, and SC-005.
 > Execution note: implement `T031` and `T032` before running `T033`; complete `T034` before considering FR-005 and SC-004 fully satisfied.
 
-- [ ] T031 Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
+- [x] T031 Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
 - [ ] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
 - [ ] T033 Verify released Android and iOS publication outputs contain no third-party crypto binaries or native crypto payloads using `scripts/verify-publish.sh`
 - [x] T034 Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 23 of the 27 actionable tasks are now complete while 4 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 24 of the 27 actionable tasks are now complete while 3 remain pending.
