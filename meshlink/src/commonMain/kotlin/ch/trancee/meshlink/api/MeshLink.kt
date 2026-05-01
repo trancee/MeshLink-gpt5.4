@@ -1,5 +1,7 @@
 package ch.trancee.meshlink.api
 
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+@OptIn(ExperimentalObjCName::class)
+@ObjCName(name = "MeshLinkRuntime", swiftName = "MeshLinkRuntime", exact = true)
 public object MeshLink {
   public fun create(): MeshLinkApi {
     return create(config = MeshLinkConfig.default())
