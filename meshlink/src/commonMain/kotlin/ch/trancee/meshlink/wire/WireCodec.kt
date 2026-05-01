@@ -2,6 +2,10 @@ package ch.trancee.meshlink.wire
 
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
 import ch.trancee.meshlink.wire.messages.BroadcastMessageCodec
+import ch.trancee.meshlink.wire.messages.ChunkAckMessage
+import ch.trancee.meshlink.wire.messages.ChunkAckMessageCodec
+import ch.trancee.meshlink.wire.messages.ChunkMessage
+import ch.trancee.meshlink.wire.messages.ChunkMessageCodec
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessageCodec
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
@@ -65,6 +69,14 @@ public object WireCodec {
                 frameType = MessageType.BROADCAST
                 payload = BroadcastMessageCodec.encode(message = message)
             }
+            is ChunkMessage -> {
+                frameType = MessageType.CHUNK
+                payload = ChunkMessageCodec.encode(message = message)
+            }
+            is ChunkAckMessage -> {
+                frameType = MessageType.CHUNK_ACK
+                payload = ChunkAckMessageCodec.encode(message = message)
+            }
             is RotationAnnouncementMessage -> {
                 frameType = MessageType.ROTATION_ANNOUNCEMENT
                 payload = RotationAnnouncementMessageCodec.encode(message = message)
@@ -111,10 +123,9 @@ public object WireCodec {
             MessageType.NACK -> NackMessageCodec.decode(payload = payload)
             MessageType.RESUME_REQUEST -> ResumeRequestMessageCodec.decode(payload = payload)
             MessageType.BROADCAST -> BroadcastMessageCodec.decode(payload = payload)
+            MessageType.CHUNK -> ChunkMessageCodec.decode(payload = payload)
+            MessageType.CHUNK_ACK -> ChunkAckMessageCodec.decode(payload = payload)
             MessageType.ROTATION_ANNOUNCEMENT -> RotationAnnouncementMessageCodec.decode(payload = payload)
-            else -> throw UnsupportedOperationException(
-                "WireCodec does not yet support decoding ${type.name} messages.",
-            )
         }
     }
 }

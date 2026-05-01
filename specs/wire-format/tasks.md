@@ -15,8 +15,8 @@
 - [x] T006 [P] Implement `Hello` encode/decode
 - [x] T007 [P] Implement `Handshake` encode/decode
 - [x] T008 [P] Implement `Update` encode/decode (Babel routing update)
-- [ ] T009 [P] Implement `Chunk` encode/decode (transfer payload)
-- [ ] T010 [P] Implement `ChunkAck` encode/decode (SACK)
+- [x] T009 [P] Implement `Chunk` encode/decode (transfer payload)
+- [x] T010 [P] Implement `ChunkAck` encode/decode (SACK)
 - [x] T011 [P] Implement `DeliveryAck` encode/decode
 - [x] T012 [P] Implement `Nack` encode/decode
 - [x] T013 [P] Implement `Keepalive` encode/decode
@@ -27,9 +27,9 @@
 
 ## Phase 3: Codec Dispatcher & Validation
 
-- [ ] T018 Implement `WireCodec` (encode/decode dispatcher by MessageType)
+- [x] T018 Implement `WireCodec` (encode/decode dispatcher by MessageType)
 - [ ] T019 Implement `InboundValidator` (length bounds, hop limits, field constraints)
-- [ ] T020 Write `WireFormatTest` — round-trip all message types
+- [x] T020 Write `WireFormatTest` — round-trip all message types
 - [ ] T021 Write `InboundValidatorTest` — boundary conditions
 
 ## Phase 4: Benchmark
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-15 actionable tasks complete, 7 remain pending. Current JVM and Android host-test coverage verify at 100%.
+19 actionable tasks complete, 3 remain pending. Current JVM and Android host-test coverage verify at 100%.

@@ -1,6 +1,8 @@
 package ch.trancee.meshlink.wire
 
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
+import ch.trancee.meshlink.wire.messages.ChunkAckMessage
+import ch.trancee.meshlink.wire.messages.ChunkMessage
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
@@ -58,6 +60,16 @@ public class WireFormatTest {
                 previousPublicKey = ByteArray(size = 32) { index -> (index + 1).toByte() },
                 nextPublicKey = ByteArray(size = 32) { index -> (index + 33).toByte() },
                 signature = ByteArray(size = 64) { index -> (index + 65).toByte() },
+            ),
+            ChunkMessage(
+                transferId = 0x5152535455565758,
+                chunkIndex = 6,
+                payload = byteArrayOf(0x71, 0x72, 0x73),
+            ),
+            ChunkAckMessage(
+                transferId = 0x6162636465666768,
+                highestContiguousChunkIndex = 5,
+                selectiveAckBitmap = byteArrayOf(0x01, 0x00, 0x01),
             ),
         )
 

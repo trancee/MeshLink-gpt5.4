@@ -2,6 +2,10 @@ package ch.trancee.meshlink.wire
 
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
 import ch.trancee.meshlink.wire.messages.BroadcastMessageCodec
+import ch.trancee.meshlink.wire.messages.ChunkAckMessage
+import ch.trancee.meshlink.wire.messages.ChunkAckMessageCodec
+import ch.trancee.meshlink.wire.messages.ChunkMessage
+import ch.trancee.meshlink.wire.messages.ChunkMessageCodec
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessageCodec
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
@@ -493,6 +497,110 @@ public class WireCodecTest {
     }
 
     @Test
+    public fun encodeAndDecode_roundTripChunkMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedPayload: ByteArray = byteArrayOf(0x11, 0x12, 0x13)
+        val message = ChunkMessage(
+            transferId = 0x1112131415161718,
+            chunkIndex = 2,
+            payload = expectedPayload,
+        )
+
+        // Act
+        val decoded: ChunkMessage = assertIs<ChunkMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = 0x1112131415161718,
+            actual = decoded.transferId,
+            message = "WireCodec should preserve the CHUNK transfer identifier through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 2,
+            actual = decoded.chunkIndex,
+            message = "WireCodec should preserve the CHUNK chunk index through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedPayload,
+            actual = decoded.payload,
+            message = "WireCodec should preserve the CHUNK payload through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesChunkTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = ChunkMessage(
+            transferId = 0x2122232425262728,
+            chunkIndex = 3,
+            payload = byteArrayOf(0x21, 0x22),
+        )
+        val expectedPayload: ByteArray = ChunkMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.CHUNK.code.toByte(), 0x0E, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame CHUNK messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripChunkAckMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedBitmap: ByteArray = byteArrayOf(0x01, 0x00, 0x01)
+        val message = ChunkAckMessage(
+            transferId = 0x3132333435363738,
+            highestContiguousChunkIndex = 4,
+            selectiveAckBitmap = expectedBitmap,
+        )
+
+        // Act
+        val decoded: ChunkAckMessage = assertIs<ChunkAckMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = 0x3132333435363738,
+            actual = decoded.transferId,
+            message = "WireCodec should preserve the CHUNK_ACK transfer identifier through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 4,
+            actual = decoded.highestContiguousChunkIndex,
+            message = "WireCodec should preserve the CHUNK_ACK highest contiguous chunk index through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedBitmap,
+            actual = decoded.selectiveAckBitmap,
+            message = "WireCodec should preserve the CHUNK_ACK bitmap through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesChunkAckTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = ChunkAckMessage(
+            transferId = 0x4142434445464748,
+            highestContiguousChunkIndex = 5,
+            selectiveAckBitmap = byteArrayOf(0x01, 0x01),
+        )
+        val expectedPayload: ByteArray = ChunkAckMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.CHUNK_ACK.code.toByte(), 0x0E, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame CHUNK_ACK messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
     public fun encode_throwsWhenMessageImplementationIsNotYetSupported(): Unit {
         // Arrange
         val message: WireMessage = UnsupportedWireMessage
@@ -578,10 +686,10 @@ public class WireCodecTest {
     }
 
     @Test
-    public fun decode_throwsWhenMessageTypeIsRecognizedButCodecIsNotYetImplemented(): Unit {
+    public fun decode_throwsWhenMessageTypeCodeIsUnknown(): Unit {
         // Arrange
         val encoded: ByteArray = byteArrayOf(
-            MessageType.CHUNK.code.toByte(),
+            0x7F,
             0x00,
             0x00,
             0x00,
@@ -589,15 +697,15 @@ public class WireCodecTest {
         )
 
         // Act
-        val error = assertFailsWith<UnsupportedOperationException> {
+        val error = assertFailsWith<IllegalArgumentException> {
             WireCodec.decode(encoded = encoded)
         }
 
         // Assert
         assertEquals(
-            expected = "WireCodec does not yet support decoding CHUNK messages.",
+            expected = "Unknown message type code: 0x7f.",
             actual = error.message,
-            message = "WireCodec should surface unsupported message types until their specific codecs are implemented",
+            message = "WireCodec should reject unknown one-byte message tags",
         )
     }
 
