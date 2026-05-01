@@ -22,9 +22,9 @@
 
 ## Phase 3: Presence & Dedup
 
-- [ ] T013 Implement `PresenceTracker` (timeout-based presence, events)
+- [x] T013 Implement `PresenceTracker` (timeout-based presence, events)
 - [ ] T014 [P] Implement `DedupSet` (LRU-bounded deduplication)
-- [ ] T015 Write `PresenceTrackerTest`
+- [x] T015 Write `PresenceTrackerTest`
 - [ ] T016 Write `DedupSetTest`
 
 ## Phase 4: Benchmarks
@@ -38,4 +38,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-6 actionable tasks complete, 12 remain pending.
+8 actionable tasks complete, 10 remain pending.
