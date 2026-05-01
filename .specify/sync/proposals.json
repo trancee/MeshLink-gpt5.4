@@ -1,0 +1,388 @@
+{
+  "generated": "2026-04-30T19:33:26+00:00",
+  "based_on": "2026-04-30T19:31:07+00:00",
+  "summary": {
+    "backfill": 0,
+    "align": 10,
+    "human_decision": 1,
+    "new_specs": 0,
+    "remove_from_spec": 1
+  },
+  "proposals": [
+    {
+      "id": "repo/implementation-baseline",
+      "direction": "HUMAN_DECISION",
+      "kind": "repository-decision",
+      "target": "repository",
+      "affected_specs": [
+        "babel-routing",
+        "ble-transport",
+        "crypto-noise-protocol",
+        "mesh-engine",
+        "messaging-delivery",
+        "platform-distribution",
+        "power-management",
+        "public-api",
+        "sack-transfer",
+        "wire-format"
+      ],
+      "current_state": {
+        "spec": "Subsystem specs, plans, and tasks describe a full MeshLink implementation, and most downstream artifacts claim migrated/complete status.",
+        "code": "No product implementation tree, root build files, or project-owned CI workflows exist in the repository."
+      },
+      "proposed_resolution": {
+        "options": [
+          "Option A \u2014 Implementation-bearing repo: keep subsystem specs authoritative, bootstrap the actual source/build tree, and treat current not-implemented findings as execution backlog.",
+          "Option B \u2014 Spec-only repo: keep the specs as design artifacts, but remove or clearly relabel migrated/complete plan and task statuses so they do not imply shipped code."
+        ],
+        "questions": [
+          "Is this repository intended to host the MeshLink product implementation, or only its design/spec artifacts?",
+          "If implementation lives elsewhere, should completed migrated plans/tasks remain here, or be archived/exported?",
+          "If implementation should live here, what module root should be created first (`meshlink/`, `src/`, or another layout)?"
+        ]
+      },
+      "rationale": "The absence of any product code makes all spec-to-code alignment proposals contingent on the repository\u2019s intended role. Deciding repo mode first prevents wasted implementation or cleanup work.",
+      "confidence": "LOW"
+    },
+    {
+      "id": "001-codebase-spec-analysis/FR-001..FR-024",
+      "direction": "REMOVE_FROM_SPEC",
+      "kind": "umbrella-cleanup",
+      "target": "specs/001-codebase-spec-analysis/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007",
+        "FR-008",
+        "FR-009",
+        "FR-010",
+        "FR-011",
+        "FR-012",
+        "FR-013",
+        "FR-014",
+        "FR-015",
+        "FR-016",
+        "FR-017",
+        "FR-018",
+        "FR-019",
+        "FR-020",
+        "FR-021",
+        "FR-022",
+        "FR-023",
+        "FR-024"
+      ],
+      "current_state": {
+        "spec": "The umbrella spec still carries 24 normative FR entries even though it now explicitly states that subsystem specs are canonical.",
+        "code": "No implementation exists here to justify keeping duplicated normative ownership in the umbrella document."
+      },
+      "proposed_resolution": {
+        "spec_update": "Replace the detailed FR-001..FR-024 block with a compact capability summary or a traceability table that points each capability to its canonical subsystem spec. Keep end-to-end user stories in 001, but remove duplicated normative requirement ownership.",
+        "acceptance_updates": [
+          "Retain the high-level user stories and success criteria that describe product-level behavior.",
+          "Add a capability-to-subsystem mapping table instead of duplicating full subsystem FR text."
+        ]
+      },
+      "rationale": "This removes the last major inter-spec conflict source. The subsystem specs are already declared canonical, so keeping duplicated normative FRs in 001 increases drift risk without adding executable guidance.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "babel-routing/FR-001..FR-006",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/babel-routing/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006"
+      ],
+      "current_state": {
+        "spec": "Babel Routing defines 6 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `babel-routing` subsystem according to `specs/babel-routing/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 18/18 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "ble-transport/FR-001..FR-007",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/ble-transport/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007"
+      ],
+      "current_state": {
+        "spec": "BLE Transport defines 7 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `ble-transport` subsystem according to `specs/ble-transport/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 22/22 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "crypto-noise-protocol/FR-001..FR-007",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/crypto-noise-protocol/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007"
+      ],
+      "current_state": {
+        "spec": "Crypto & Noise Protocol defines 7 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `crypto-noise-protocol` subsystem according to `specs/crypto-noise-protocol/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 31/31 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "mesh-engine/FR-001..FR-007",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/mesh-engine/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007"
+      ],
+      "current_state": {
+        "spec": "Mesh Engine defines 7 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `mesh-engine` subsystem according to `specs/mesh-engine/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 22/22 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "messaging-delivery/FR-001..FR-005",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/messaging-delivery/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005"
+      ],
+      "current_state": {
+        "spec": "Messaging & Delivery Pipeline defines 5 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `messaging-delivery` subsystem according to `specs/messaging-delivery/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 19/19 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "platform-distribution/FR-001..FR-009",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/platform-distribution/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007",
+        "FR-008",
+        "FR-009"
+      ],
+      "current_state": {
+        "spec": "Platform & Distribution defines 9 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `platform-distribution` subsystem according to `specs/platform-distribution/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 30/30 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "power-management/FR-001..FR-006",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/power-management/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006"
+      ],
+      "current_state": {
+        "spec": "Power Management defines 6 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `power-management` subsystem according to `specs/power-management/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 15/15 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "public-api/FR-001..FR-008",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/public-api/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007",
+        "FR-008"
+      ],
+      "current_state": {
+        "spec": "Public API & Diagnostics defines 8 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `public-api` subsystem according to `specs/public-api/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 25/25 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "sack-transfer/FR-001..FR-005",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/sack-transfer/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005"
+      ],
+      "current_state": {
+        "spec": "SACK Transfer defines 5 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `sack-transfer` subsystem according to `specs/sack-transfer/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 14/14 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "wire-format/FR-001..FR-005",
+      "direction": "ALIGN",
+      "kind": "not-implemented",
+      "target": "specs/wire-format/spec.md",
+      "affected_requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005"
+      ],
+      "current_state": {
+        "spec": "Wire Format & Codec defines 5 functional requirements and is supported by migrated planning artifacts.",
+        "code": "No corresponding product implementation files are present in the repository."
+      },
+      "proposed_resolution": {
+        "code_change": "Bootstrap and implement the `wire-format` subsystem according to `specs/wire-format/spec.md`, using the existing migrated plan/tasks as the starting backlog.",
+        "implementation_tasks": [
+          "Create the source/module skeleton for this subsystem in the product implementation tree.",
+          "Reopen or recreate the migrated tasks as executable work items unless code is imported from another repository.",
+          "Add tests and benchmarks required by the spec success criteria before marking the subsystem complete."
+        ],
+        "task_hint": "Existing artifacts: plan status = Migrated \u2014 implementation complete; tasks = 22/22 currently marked complete."
+      },
+      "rationale": "The spec is the only authoritative artifact available for this subsystem. With no code present, the correct resolution is to align the repository to the approved design rather than weaken the subsystem requirements.",
+      "confidence": "MEDIUM"
+    }
+  ]
+}
