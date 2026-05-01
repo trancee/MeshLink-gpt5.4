@@ -1,9 +1,8 @@
 package ch.trancee.meshlink.engine
 
 import ch.trancee.meshlink.api.MeshLinkState
-import ch.trancee.meshlink.api.PeerIdHex
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
-import ch.trancee.meshlink.transport.VirtualMeshTransport
+import ch.trancee.meshlink.harness.MeshTestHarness
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.RoutedMessage
@@ -84,47 +83,5 @@ public class MeshEngineIntegrationTest {
     assertFalse(
       actual = harness.secondEngine.handshakeManager.isHandshakeActive(peerId = harness.firstPeerId)
     )
-  }
-}
-
-private class MeshTestHarness
-private constructor(
-  val firstPeerId: PeerIdHex,
-  val secondPeerId: PeerIdHex,
-  val firstTransport: VirtualMeshTransport,
-  val secondTransport: VirtualMeshTransport,
-  val firstEngine: MeshEngine,
-  val secondEngine: MeshEngine,
-) {
-  companion object {
-    fun createConnected(): MeshTestHarness {
-      val firstPeerId = PeerIdHex(value = "00112233")
-      val secondPeerId = PeerIdHex(value = "44556677")
-      val firstTransport = VirtualMeshTransport(localPeerId = firstPeerId)
-      val secondTransport = VirtualMeshTransport(localPeerId = secondPeerId)
-      firstTransport.attachPeer(peerId = secondPeerId, transport = secondTransport)
-      secondTransport.attachPeer(peerId = firstPeerId, transport = firstTransport)
-      firstTransport.connect(peerId = secondPeerId)
-      secondTransport.connect(peerId = firstPeerId)
-
-      return MeshTestHarness(
-        firstPeerId = firstPeerId,
-        secondPeerId = secondPeerId,
-        firstTransport = firstTransport,
-        secondTransport = secondTransport,
-        firstEngine =
-          MeshEngine.create(
-            config = MeshEngineConfig.default(),
-            transport = firstTransport,
-            cryptoProvider = FakeCryptoProvider(),
-          ),
-        secondEngine =
-          MeshEngine.create(
-            config = MeshEngineConfig.default(),
-            transport = secondTransport,
-            cryptoProvider = FakeCryptoProvider(),
-          ),
-      )
-    }
   }
 }

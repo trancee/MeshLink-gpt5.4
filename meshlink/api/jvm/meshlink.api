@@ -185,6 +185,17 @@ public final class ch/trancee/meshlink/api/DiagnosticSink$DefaultImpls {
 public abstract interface annotation class ch/trancee/meshlink/api/ExperimentalMeshLinkApi : java/lang/annotation/Annotation {
 }
 
+public final class ch/trancee/meshlink/api/MeshHealthSnapshot {
+	public fun <init> (Ljava/util/List;IIILch/trancee/meshlink/power/PowerTier;)V
+	public final fun getActiveTransferCount ()I
+	public final fun getBufferedMessageCount ()I
+	public final fun getConnectedPeerCount ()I
+	public final fun getConnectedPeers ()Ljava/util/List;
+	public final fun getPowerTier ()Lch/trancee/meshlink/power/PowerTier;
+	public final fun getRoutingTableSize ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class ch/trancee/meshlink/api/MeshLink {
 	public static final field INSTANCE Lch/trancee/meshlink/api/MeshLink;
 	public final fun create ()Lch/trancee/meshlink/api/MeshLinkApi;

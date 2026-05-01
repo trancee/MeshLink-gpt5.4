@@ -590,6 +590,25 @@ final class ch.trancee.meshlink.api/DiagnosticEvent { // ch.trancee.meshlink.api
     final fun toString(): kotlin/String // ch.trancee.meshlink.api/DiagnosticEvent.toString|toString(){}[0]
 }
 
+final class ch.trancee.meshlink.api/MeshHealthSnapshot { // ch.trancee.meshlink.api/MeshHealthSnapshot|null[0]
+    constructor <init>(kotlin.collections/List<ch.trancee.meshlink.api/PeerDetail>, kotlin/Int, kotlin/Int, kotlin/Int, ch.trancee.meshlink.power/PowerTier) // ch.trancee.meshlink.api/MeshHealthSnapshot.<init>|<init>(kotlin.collections.List<ch.trancee.meshlink.api.PeerDetail>;kotlin.Int;kotlin.Int;kotlin.Int;ch.trancee.meshlink.power.PowerTier){}[0]
+
+    final val activeTransferCount // ch.trancee.meshlink.api/MeshHealthSnapshot.activeTransferCount|{}activeTransferCount[0]
+        final fun <get-activeTransferCount>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.activeTransferCount.<get-activeTransferCount>|<get-activeTransferCount>(){}[0]
+    final val bufferedMessageCount // ch.trancee.meshlink.api/MeshHealthSnapshot.bufferedMessageCount|{}bufferedMessageCount[0]
+        final fun <get-bufferedMessageCount>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.bufferedMessageCount.<get-bufferedMessageCount>|<get-bufferedMessageCount>(){}[0]
+    final val connectedPeerCount // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeerCount|{}connectedPeerCount[0]
+        final fun <get-connectedPeerCount>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeerCount.<get-connectedPeerCount>|<get-connectedPeerCount>(){}[0]
+    final val connectedPeers // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeers|{}connectedPeers[0]
+        final fun <get-connectedPeers>(): kotlin.collections/List<ch.trancee.meshlink.api/PeerDetail> // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeers.<get-connectedPeers>|<get-connectedPeers>(){}[0]
+    final val powerTier // ch.trancee.meshlink.api/MeshHealthSnapshot.powerTier|{}powerTier[0]
+        final fun <get-powerTier>(): ch.trancee.meshlink.power/PowerTier // ch.trancee.meshlink.api/MeshHealthSnapshot.powerTier.<get-powerTier>|<get-powerTier>(){}[0]
+    final val routingTableSize // ch.trancee.meshlink.api/MeshHealthSnapshot.routingTableSize|{}routingTableSize[0]
+        final fun <get-routingTableSize>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.routingTableSize.<get-routingTableSize>|<get-routingTableSize>(){}[0]
+
+    final fun toString(): kotlin/String // ch.trancee.meshlink.api/MeshHealthSnapshot.toString|toString(){}[0]
+}
+
 final class ch.trancee.meshlink.api/MeshLinkConfig { // ch.trancee.meshlink.api/MeshLinkConfig|null[0]
     constructor <init>(kotlin/String, ch.trancee.meshlink.api/RegulatoryRegion, ch.trancee.meshlink.api/MeshLinkConfig.AdvertisingConfig, ch.trancee.meshlink.api/MeshLinkConfig.ScanningConfig, ch.trancee.meshlink.api/MeshLinkConfig.ConnectionsConfig, ch.trancee.meshlink.api/MeshLinkConfig.MessagingConfig, ch.trancee.meshlink.api/MeshLinkConfig.TransfersConfig, ch.trancee.meshlink.api/MeshLinkConfig.RoutingConfig, ch.trancee.meshlink.api/MeshLinkConfig.SecurityConfig, ch.trancee.meshlink.api/MeshLinkConfig.DiagnosticsConfig) // ch.trancee.meshlink.api/MeshLinkConfig.<init>|<init>(kotlin.String;ch.trancee.meshlink.api.RegulatoryRegion;ch.trancee.meshlink.api.MeshLinkConfig.AdvertisingConfig;ch.trancee.meshlink.api.MeshLinkConfig.ScanningConfig;ch.trancee.meshlink.api.MeshLinkConfig.ConnectionsConfig;ch.trancee.meshlink.api.MeshLinkConfig.MessagingConfig;ch.trancee.meshlink.api.MeshLinkConfig.TransfersConfig;ch.trancee.meshlink.api.MeshLinkConfig.RoutingConfig;ch.trancee.meshlink.api.MeshLinkConfig.SecurityConfig;ch.trancee.meshlink.api.MeshLinkConfig.DiagnosticsConfig){}[0]
 
