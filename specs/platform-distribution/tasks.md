@@ -1,6 +1,6 @@
 # Tasks: Platform & Distribution
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — platform actuals and distribution scaffolding partially implemented on feature branch
 
 ## Phase 1: Android Platform
 
@@ -8,32 +8,32 @@
 - [x] ~~[REMOVED] T002 [P] Implement `SodiumJni` (JNI native method declarations)~~ — removed to align with the constitution ban on shipping external crypto libraries
 - [x] ~~[REMOVED] T003 [P] Build libsodium for Android (arm64-v8a, armeabi-v7a, x86_64) — `scripts/build-android-libsodium.sh`~~ — removed to align with the constitution ban on shipping external crypto libraries
 - [x] ~~[REMOVED] T004 [P] Build JNI bridge — `scripts/build-android-jni.sh`~~ — removed because the JNI bridge was only required for the deprecated external crypto packaging path
-- [ ] T005 Implement `AndroidBleTransport` (BluetoothGatt, L2CAP, scanning, advertising)
-- [ ] T006 [P] Implement `MeshLinkService` (foreground service for background BLE)
+- [x] T005 Implement `AndroidBleTransport` (BluetoothGatt, L2CAP, scanning, advertising)
+- [x] T006 [P] Implement `MeshLinkService` (foreground service for background BLE)
 - [ ] T007 [P] Implement `AndroidSecureStorage` (DataStore preferences)
-- [ ] T008 Implement `MeshLinkAndroidFactory` (wires all Android actuals)
+- [x] T008 Implement `MeshLinkAndroidFactory` (wires all Android actuals)
 
 ## Phase 2: iOS Platform
 
 - [x] ~~[REMOVED] T009 Build libsodium for iOS (arm64) — `scripts/build-ios-libsodium.sh`~~ — removed to align with the constitution ban on shipping external crypto libraries
 - [x] ~~[REMOVED] T010 Create `libsodium.def` cinterop definition~~ — removed to align with the constitution ban on shipping external crypto libraries
 - [x] ~~[REMOVED] T011 Implement `IosCryptoProvider` (libsodium cinterop)~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [ ] T012 Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)
+- [x] T012 Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)
 - [ ] T013 [P] Implement `IosSecureStorage`
 - [ ] T014 [P] Implement `MeshNode` (iOS-specific helper)
-- [ ] T015 Implement `MeshLinkIosFactory`
+- [x] T015 Implement `MeshLinkIosFactory`
 
 ## Phase 3: JVM Infrastructure
 
-- [ ] T016 Implement `JvmCryptoProvider` (JDK shim for test execution)
-- [ ] T017 [P] Add `DedupBenchmark`, `RoutingBenchmark`, `TransferBenchmark`, `WireFormatBenchmark`
+- [x] T016 Implement `JvmCryptoProvider` (JDK shim for test execution)
+- [x] T017 [P] Add `DedupBenchmark`, `RoutingBenchmark`, `TransferBenchmark`, `WireFormatBenchmark`
 
 ## Phase 4: Build & Publish
 
 - [ ] T018 Configure `maven-publish` + `signing` in meshlink/build.gradle.kts
 - [ ] T019 [P] Configure XCFramework assembly (XCFrameworkConfig)
-- [ ] T020 [P] Create `Package.swift` (SPM binary target manifest)
-- [ ] T021 [P] Create `consumer-rules.pro` (ProGuard keep rules)
+- [x] T020 [P] Create `Package.swift` (SPM binary target manifest)
+- [x] T021 [P] Create `consumer-rules.pro` (ProGuard keep rules)
 - [ ] T022 Configure Dokka javadoc JAR generation (supports FR-001 and FR-002 publication requirements)
 
 ## Phase 5: CI Pipelines
@@ -48,7 +48,7 @@
 - [ ] T027 Configure BCV (JVM .api + KLib ABI tracking)
 - [ ] T028 Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)
 - [ ] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream)
-- [ ] T030 Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)
+- [x] T030 Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)
 
 ## Phase 7: Constitution & CI Alignment
 
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and all 27 actionable tasks are now pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 10 of the 27 actionable tasks are now complete while 17 remain pending.

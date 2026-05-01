@@ -84,6 +84,12 @@ tasks.register("jvmBenchmark") {
     dependsOn("jvmBenchmarkBenchmark")
 }
 
+tasks.register("jvmCiBenchmark") {
+    group = "verification"
+    description = "Runs the CI-shortened JVM benchmark suite."
+    dependsOn("jvmBenchmarkBenchmark")
+}
+
 kover {
     reports {
         filters {
