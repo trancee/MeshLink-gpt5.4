@@ -63,6 +63,10 @@ kotlin {
   }
 }
 
+skie {
+  isEnabled.set(true)
+}
+
 benchmark {
   targets { register("jvmBenchmark") }
   configurations {

@@ -91,11 +91,11 @@ swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcfr
 
 ### Implementation
 
-- [ ] T026 [US3] Refresh the JVM BCV baseline in `meshlink/api/jvm/meshlink.api` via `./gradlew :meshlink:apiDump`.
-- [ ] T027 [US3] Refresh the iOS KLib baseline in `meshlink/api/meshlink.klib.api` via `./gradlew :meshlink:apiDump` on macOS.
-- [ ] T028 [US3] Configure or refine SKIE in `meshlink/build.gradle.kts`.
-- [ ] T029 [US3] Add Swift interop verification guidance for `MeshLinkState` and one public stream API in `docs/ios-crypto-bridge.md`.
-- [ ] T030 [US3] Verify API compatibility with `./gradlew :meshlink:apiCheck`.
+- [x] T026 [US3] Refresh the JVM BCV baseline in `meshlink/api/jvm/meshlink.api` via `./gradlew :meshlink:apiDump`.
+- [x] T027 [US3] Refresh the iOS KLib baseline in `meshlink/api/meshlink.klib.api` via `./gradlew :meshlink:apiDump` on macOS.
+- [x] T028 [US3] Configure or refine SKIE in `meshlink/build.gradle.kts`.
+- [x] T029 [US3] Add Swift interop verification guidance for `MeshLinkState` and one public stream API in `docs/ios-crypto-bridge.md`.
+- [x] T030 [US3] Verify API compatibility with `./gradlew :meshlink:apiCheck`.
 
 **Checkpoint**: Public API baselines are committed and Swift-facing behavior is explicitly verified.
 

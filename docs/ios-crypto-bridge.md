@@ -79,6 +79,48 @@ final class MeshCryptoDelegate: NSObject, MeshLinkIosCryptoDelegate {
 MeshLinkIosFactory.shared.installCryptoDelegate(delegate: MeshCryptoDelegate())
 ```
 
+## Swift interop verification
+
+Use the generated framework in a physical-device iOS build and verify both of the SKIE-backed behaviors below before shipping a release.
+
+### 1. Exhaustive `MeshLinkState` switching
+
+`MeshLinkState` should bridge into Swift as an exhaustive enum, so a `switch` over the state should not need a `default` branch.
+
+```swift
+func render(state: MeshLinkState) {
+    switch state {
+    case .uninitialized:
+        print("boot")
+    case .running:
+        print("running")
+    case .paused:
+        print("paused")
+    case .stopped:
+        print("stopped")
+    case .recoverable:
+        print("recoverable")
+    case .terminal:
+        print("terminal")
+    }
+}
+```
+
+### 2. `diagnosticEvents` as `AsyncSequence`
+
+`MeshLinkApi.diagnosticEvents` should bridge into Swift as an `AsyncSequence`, so consumers can iterate with `for await`.
+
+```swift
+@MainActor
+func observeDiagnostics(api: MeshLinkApi) async {
+    for await event in api.diagnosticEvents {
+        print("diagnostic code: \(event.code)")
+    }
+}
+```
+
+If either of these checks regresses, re-run the release framework build and inspect the generated Swift interface before publishing.
+
 ## Release packaging notes
 
 1. Build the device XCFramework on macOS:
