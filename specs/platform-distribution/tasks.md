@@ -45,8 +45,8 @@
 
 ## Phase 6: API Compatibility
 
-- [ ] T027 Configure BCV (JVM .api + KLib ABI tracking)
-- [ ] T028 Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)
+- [x] T027 Configure BCV (JVM .api + KLib ABI tracking)
+- [x] T028 Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)
 - [ ] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream)
 - [x] T030 Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)
 
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 13 of the 27 actionable tasks are now complete while 14 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 15 of the 27 actionable tasks are now complete while 12 remain pending.

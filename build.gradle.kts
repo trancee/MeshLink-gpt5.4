@@ -5,11 +5,20 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.benchmark) apply false
     alias(libs.plugins.kover) apply false
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 allprojects {
     group = "ch.trancee.meshlink"
     version = "0.1.0-SNAPSHOT"
+}
+
+apiValidation {
+    @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
+    klib {
+        enabled = true
+        strictValidation = true
+    }
 }
 
 tasks.wrapper {
