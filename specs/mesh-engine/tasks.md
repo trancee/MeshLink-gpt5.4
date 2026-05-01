@@ -31,7 +31,7 @@
 - [x] T013 Implement lifecycle management (start, stop, pause, resume)
 - [x] T014 Implement inbound message routing (handshake vs data path)
 - [ ] T015 Implement outbound message scheduling (via DeliveryPipeline)
-- [ ] T016 Write `MeshEngineTest` — 9 scenarios covering all paths
+- [x] T016 Write `MeshEngineTest` — 9 scenarios covering all paths
 - [x] T017 Write `MeshEngineApiLifecycleTest`
 - [x] T018 Write `MeshEngineApiIdentityTest`
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-16 actionable tasks complete, 6 remain pending.
+17 actionable tasks complete, 5 remain pending.
