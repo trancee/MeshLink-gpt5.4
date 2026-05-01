@@ -7,6 +7,8 @@ import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.HelloMessageCodec
 import ch.trancee.meshlink.wire.messages.KeepaliveMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessageCodec
+import ch.trancee.meshlink.wire.messages.RoutedMessage
+import ch.trancee.meshlink.wire.messages.RoutedMessageCodec
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -134,6 +136,58 @@ public class WireCodecTest {
             expected = byteArrayOf(MessageType.KEEPALIVE.code.toByte(), 0x00, 0x00, 0x00, 0x00) + expectedPayload,
             actual = encoded,
             message = "WireCodec should frame KEEPALIVE messages with a zero-length payload",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripRoutedMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedPayload: ByteArray = byteArrayOf(0x71, 0x72)
+        val message = RoutedMessage(
+            hopCount = 1u,
+            maxHops = 4u,
+            payload = expectedPayload,
+        )
+
+        // Act
+        val decoded: RoutedMessage = assertIs<RoutedMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = 1u,
+            actual = decoded.hopCount,
+            message = "WireCodec should preserve routed hopCount through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 4u,
+            actual = decoded.maxHops,
+            message = "WireCodec should preserve routed maxHops through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedPayload,
+            actual = decoded.payload,
+            message = "WireCodec should preserve routed payload bytes through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesRoutedMessageTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = RoutedMessage(
+            hopCount = 2u,
+            maxHops = 5u,
+            payload = byteArrayOf(0x21, 0x22, 0x23),
+        )
+        val expectedPayload: ByteArray = RoutedMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.ROUTED_MESSAGE.code.toByte(), 0x05, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame ROUTED_MESSAGE messages with the correct type tag and payload length",
         )
     }
 

@@ -21,7 +21,7 @@
 - [ ] T012 [P] Implement `Nack` encode/decode
 - [x] T013 [P] Implement `Keepalive` encode/decode
 - [ ] T014 [P] Implement `Broadcast` encode/decode
-- [ ] T015 [P] Implement `RoutedMessage` encode/decode
+- [x] T015 [P] Implement `RoutedMessage` encode/decode
 - [ ] T016 [P] Implement `ResumeRequest` encode/decode
 - [ ] T017 [P] Implement `RotationAnnouncementMessage` encode/decode
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-8 actionable tasks complete, 14 remain pending. Current JVM and Android host-test coverage verify at 100%.
+9 actionable tasks complete, 13 remain pending. Current JVM and Android host-test coverage verify at 100%.

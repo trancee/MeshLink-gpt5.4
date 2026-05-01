@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HelloMessage
+import ch.trancee.meshlink.wire.messages.RoutedMessage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -200,6 +201,86 @@ public class InboundValidatorTest {
             expected = ValidationResult.Valid,
             actual = actual,
             message = "InboundValidator should allow currently unconstrained message types when their frame header is well formed",
+        )
+    }
+
+    @Test
+    public fun validate_returnsValidForRoutedMessagesBelowHopLimit(): Unit {
+        // Arrange
+        val validator = InboundValidator()
+        val encoded: ByteArray = WireCodec.encode(
+            message = RoutedMessage(
+                hopCount = 1u,
+                maxHops = 3u,
+                payload = byteArrayOf(0x41),
+            ),
+        )
+
+        // Act
+        val actual: ValidationResult = validator.validate(encoded = encoded)
+
+        // Assert
+        assertEquals(
+            expected = ValidationResult.Valid,
+            actual = actual,
+            message = "InboundValidator should accept routed messages whose hopCount remains below maxHops",
+        )
+    }
+
+    @Test
+    public fun validate_rejectsRoutedMessagesWithoutHopHeader(): Unit {
+        // Arrange
+        val validator = InboundValidator()
+        val encoded: ByteArray = byteArrayOf(
+            MessageType.ROUTED_MESSAGE.code.toByte(),
+            0x01,
+            0x00,
+            0x00,
+            0x00,
+            0x7F,
+        )
+
+        // Act
+        val actual: ValidationResult.Invalid = assertIs<ValidationResult.Invalid>(validator.validate(encoded = encoded))
+
+        // Assert
+        assertEquals(
+            expected = ValidationFailureCode.ROUTED_MESSAGE_PAYLOAD_TOO_SHORT,
+            actual = actual.code,
+            message = "InboundValidator should reject routed messages that do not contain both hop header bytes",
+        )
+        assertEquals(
+            expected = "ROUTED_MESSAGE payload must contain hopCount and maxHops bytes.",
+            actual = actual.reason,
+            message = "InboundValidator should explain routed-message header truncation clearly",
+        )
+    }
+
+    @Test
+    public fun validate_rejectsRoutedMessagesAtHopLimit(): Unit {
+        // Arrange
+        val validator = InboundValidator()
+        val encoded: ByteArray = WireCodec.encode(
+            message = RoutedMessage(
+                hopCount = 3u,
+                maxHops = 3u,
+                payload = byteArrayOf(0x51),
+            ),
+        )
+
+        // Act
+        val actual: ValidationResult.Invalid = assertIs<ValidationResult.Invalid>(validator.validate(encoded = encoded))
+
+        // Assert
+        assertEquals(
+            expected = ValidationFailureCode.HOP_LIMIT_EXCEEDED,
+            actual = actual.code,
+            message = "InboundValidator should reject routed messages once the hop limit is reached",
+        )
+        assertEquals(
+            expected = "ROUTED_MESSAGE hopCount must stay below maxHops.",
+            actual = actual.reason,
+            message = "InboundValidator should explain hop-limit violations clearly",
         )
     }
 

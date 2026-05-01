@@ -50,6 +50,7 @@ public class InboundValidator(
         return when (type) {
             MessageType.HELLO -> validateHello(payloadSize = payloadSize)
             MessageType.HANDSHAKE -> validateHandshake(payloadSize = payloadSize)
+            MessageType.ROUTED_MESSAGE -> validateRoutedMessage(encoded = encoded, payloadSize = payloadSize)
             else -> ValidationResult.Valid
         }
     }
@@ -76,8 +77,31 @@ public class InboundValidator(
         }
     }
 
+    private fun validateRoutedMessage(encoded: ByteArray, payloadSize: Int): ValidationResult {
+        if (payloadSize < ROUTED_HEADER_SIZE) {
+            return ValidationResult.Invalid(
+                code = ValidationFailureCode.ROUTED_MESSAGE_PAYLOAD_TOO_SHORT,
+                reason = "ROUTED_MESSAGE payload must contain hopCount and maxHops bytes.",
+            )
+        }
+
+        val payloadOffset: Int = HEADER_SIZE
+        val hopCount: UByte = encoded[payloadOffset].toUByte()
+        val maxHops: UByte = encoded[payloadOffset + 1].toUByte()
+
+        return if (hopCount < maxHops) {
+            ValidationResult.Valid
+        } else {
+            ValidationResult.Invalid(
+                code = ValidationFailureCode.HOP_LIMIT_EXCEEDED,
+                reason = "ROUTED_MESSAGE hopCount must stay below maxHops.",
+            )
+        }
+    }
+
     public companion object {
         public const val DEFAULT_MAX_PAYLOAD_SIZE: Int = 512
         private const val HEADER_SIZE: Int = 1 + Int.SIZE_BYTES
+        private const val ROUTED_HEADER_SIZE: Int = 2
     }
 }
