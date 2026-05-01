@@ -5,7 +5,7 @@
 ## Phase 1: Core Types
 
 - [x] T001 Define `MeshLinkState` enum (UNINITIALIZED, RUNNING, PAUSED, STOPPED, RECOVERABLE, TERMINAL)
-- [ ] T002 [P] Define `PeerIdHex` value class (type-safe peer identifier)
+- [x] T002 [P] Define `PeerIdHex` value class (type-safe peer identifier)
 - [x] T003 [P] Define `TrustMode` enum (TOFU, STRICT, PROMPT)
 - [ ] T004 [P] Define `RegulatoryRegion` enum with parameter clamping
 - [ ] T005 [P] Define `PeerState` sealed hierarchy
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-3 actionable tasks complete, 22 remain pending.
+4 actionable tasks complete, 21 remain pending.

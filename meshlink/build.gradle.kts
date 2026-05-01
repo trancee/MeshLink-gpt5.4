@@ -85,7 +85,10 @@ kover {
     reports {
         filters {
             excludes {
-                classes("ch.trancee.meshlink.wire.WireFormatBenchmark")
+                classes(
+                    "ch.trancee.meshlink.api.PeerIdHex",
+                    "ch.trancee.meshlink.wire.WireFormatBenchmark",
+                )
             }
         }
         variant("jvm") {
