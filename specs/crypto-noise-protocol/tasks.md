@@ -1,0 +1,63 @@
+# Tasks: Crypto & Noise Protocol
+
+**Status**: Migrated — task tracking reset; all actionable tasks pending
+
+## Phase 1: Foundation
+
+- [ ] T001 Define `CryptoProvider` interface (X25519, Ed25519, ChaCha20-Poly1305, HKDF, HMAC-SHA256)
+- [ ] T002 [P] Implement `CryptoProviderFactory` expect/actual pattern
+- [ ] T003 [P] Implement `ConstantTimeEquals` utility
+- [ ] T004 [P] Define `KeyPair` and `Identity` data classes
+- [ ] T005 Write `CryptoProviderTest` validating all primitives
+
+## Phase 2: Noise Protocol Core
+
+- [ ] T006 Implement `SymmetricState` (MixKey, MixHash, EncryptAndHash, DecryptAndHash)
+- [ ] T007 [P] Implement `CipherState` (InitializeKey, EncryptWithAd, DecryptWithAd, nonce tracking)
+- [ ] T008 Implement `HandshakeState` (XX pattern state machine)
+- [ ] T009 Implement `NoiseXXHandshake` (3-message initiator/responder flow)
+- [ ] T010 [P] Implement `DhCache` (LRU memoization of X25519 results)
+- [ ] T011 [P] Implement `NoiseSession` (established session with send/recv CipherState pair)
+- [ ] T012 Write `NoiseXXHandshakeTest` — full handshake round-trip
+- [ ] T013 Write `SymmetricStateTest`, `CipherStateTest`, `DhCacheTest`
+
+## Phase 3: Noise K Payload Encryption
+
+- [ ] T014 Implement `NoiseKSeal` (encrypt payload with sender CipherState)
+- [ ] T015 [P] Implement `NoiseKOpen` (decrypt payload with receiver CipherState)
+- [ ] T016 Write `NoiseKSealOpenTest` — round-trip seal/open with nonce advancement
+
+## Phase 4: Replay Protection
+
+- [ ] T017 Implement `ReplayGuard` (64-entry sliding bitmap window)
+- [ ] T018 Write `ReplayGuardTest` — duplicates, out-of-order, window advance
+
+## Phase 5: Identity & Trust
+
+- [ ] T019 Implement `Identity` (Ed25519 key generation, keyHash derivation)
+- [ ] T020 Implement `TrustStore` (TOFU/STRICT/PROMPT pinning, key conflict handling)
+- [ ] T021 [P] Implement `RotationAnnouncement` (signed proof of key rotation)
+- [ ] T022 Write `IdentityTest`, `TrustStoreTest`
+
+## Phase 6: Wycheproof Validation
+
+- [ ] T023 [P] Add `WycheproofAeadVectors` — ChaCha20-Poly1305 test vectors
+- [ ] T024 [P] Add `WycheproofEd25519Vectors` — Ed25519 signing vectors
+- [ ] T025 [P] Add `WycheproofX25519Vectors` — X25519 DH vectors
+- [ ] T026 [P] Add `WycheproofHkdfVectors` — HKDF-SHA256 vectors
+- [ ] T027 Write `WycheproofCryptoTest` — runner for all vector files
+- [ ] T028 Write `HmacSha256Test` — HMAC correctness
+
+## Phase 7: Platform Actuals
+
+- [ ] T029 [P] Implement `AndroidCryptoProvider` (libsodium JNI via SodiumJni)
+- [ ] T030 [P] Implement `IosCryptoProvider` (libsodium cinterop)
+- [ ] T031 [P] Implement `JvmCryptoProvider` (JDK shim for test infrastructure)
+
+## Verification
+
+```bash
+./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
+```
+
+All 31 actionable tasks are now pending.
