@@ -30,7 +30,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect native sources
+        if: matrix.language == 'c-cpp'
+        id: detect_native
+        run: |
+          if find . -type f \( \
+            -name '*.c' -o \
+            -name '*.cc' -o \
+            -name '*.cpp' -o \
+            -name '*.cxx' -o \
+            -name '*.h' -o \
+            -name '*.hh' -o \
+            -name '*.hpp' -o \
+            -name '*.hxx' -o \
+            -name '*.m' -o \
+            -name '*.mm' \
+          \) | grep -q .; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report skipped native analysis
+        if: matrix.language == 'c-cpp' && steps.detect_native.outputs.present != 'true'
+        run: echo "No C/C++/Objective-C sources found; skipping c-cpp CodeQL analysis."
+
       - name: Initialize CodeQL
+        if: matrix.language != 'c-cpp' || steps.detect_native.outputs.present == 'true'
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
@@ -51,10 +77,11 @@ jobs:
         run: ./gradlew :meshlink:compileKotlinJvm :meshlink:compileAndroidMain :meshlink:compileKotlinIosArm64
 
       - name: Autobuild native sources
-        if: matrix.language == 'c-cpp'
+        if: matrix.language == 'c-cpp' && steps.detect_native.outputs.present == 'true'
         uses: github/codeql-action/autobuild@v3
 
       - name: Analyze
+        if: matrix.language != 'c-cpp' || steps.detect_native.outputs.present == 'true'
         uses: github/codeql-action/analyze@v3
         with:
           category: /language:${{ matrix.language }}
