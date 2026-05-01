@@ -1,5 +1,7 @@
 package ch.trancee.meshlink.wire
 
+import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
+import ch.trancee.meshlink.wire.messages.DeliveryAckMessageCodec
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeMessageCodec
 import ch.trancee.meshlink.wire.messages.HelloMessage
@@ -39,6 +41,10 @@ public object WireCodec {
                 frameType = MessageType.UPDATE
                 payload = UpdateMessageCodec.encode(message = message)
             }
+            is DeliveryAckMessage -> {
+                frameType = MessageType.DELIVERY_ACK
+                payload = DeliveryAckMessageCodec.encode(message = message)
+            }
             else -> throw UnsupportedOperationException(
                 "WireCodec does not yet support encoding ${message::class.simpleName} messages.",
             )
@@ -77,6 +83,7 @@ public object WireCodec {
             MessageType.KEEPALIVE -> KeepaliveMessageCodec.decode(payload = payload)
             MessageType.ROUTED_MESSAGE -> RoutedMessageCodec.decode(payload = payload)
             MessageType.UPDATE -> UpdateMessageCodec.decode(payload = payload)
+            MessageType.DELIVERY_ACK -> DeliveryAckMessageCodec.decode(payload = payload)
             else -> throw UnsupportedOperationException(
                 "WireCodec does not yet support decoding ${type.name} messages.",
             )

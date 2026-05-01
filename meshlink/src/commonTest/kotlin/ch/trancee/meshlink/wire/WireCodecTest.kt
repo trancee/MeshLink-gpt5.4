@@ -1,5 +1,7 @@
 package ch.trancee.meshlink.wire
 
+import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
+import ch.trancee.meshlink.wire.messages.DeliveryAckMessageCodec
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HandshakeMessageCodec
@@ -242,6 +244,39 @@ public class WireCodecTest {
             expected = byteArrayOf(MessageType.UPDATE.code.toByte(), 0x14, 0x00, 0x00, 0x00) + expectedPayload,
             actual = encoded,
             message = "WireCodec should frame UPDATE messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripDeliveryAckMessageThroughDispatcher(): Unit {
+        // Arrange
+        val message = DeliveryAckMessage(messageId = 0x8877665544332211uL.toLong())
+
+        // Act
+        val decoded: DeliveryAckMessage = assertIs<DeliveryAckMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = 0x8877665544332211uL.toLong(),
+            actual = decoded.messageId,
+            message = "WireCodec should preserve the DELIVERY_ACK message identifier through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesDeliveryAckTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = DeliveryAckMessage(messageId = 0x0102030405060708)
+        val expectedPayload: ByteArray = DeliveryAckMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.DELIVERY_ACK.code.toByte(), 0x08, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame DELIVERY_ACK messages with the correct type tag and payload length",
         )
     }
 

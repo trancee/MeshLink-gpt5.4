@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.wire
 
+import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HelloMessage
@@ -34,6 +35,7 @@ public class WireFormatTest {
                 metric = 77,
                 seqno = 8,
             ),
+            DeliveryAckMessage(messageId = 0x0102030405060708),
         )
 
         // Act
