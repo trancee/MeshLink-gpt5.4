@@ -1,14 +1,14 @@
 # Tasks: SACK Transfer
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — transfer foundation types bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `TransferConfig` (timeouts, retransmit limits, window size)
-- [ ] T002 [P] Define `Priority` enum (HIGH, NORMAL, LOW)
-- [ ] T003 [P] Define `ChunkSizePolicy` (GATT vs L2CAP sizing)
-- [ ] T004 [P] Define `FailureReason`, `TransferEvent` types
-- [ ] T005 Write `TransferFoundationTest`
+- [x] T001 Define `TransferConfig` (timeouts, retransmit limits, window size)
+- [x] T002 [P] Define `Priority` enum (HIGH, NORMAL, LOW)
+- [x] T003 [P] Define `ChunkSizePolicy` (GATT vs L2CAP sizing)
+- [x] T004 [P] Define `FailureReason`, `TransferEvent` types
+- [x] T005 Write `TransferFoundationTest`
 
 ## Phase 2: Transfer Core
 
@@ -31,4 +31,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-All 14 actionable tasks are now pending.
+5 actionable tasks complete, 9 remain pending.
