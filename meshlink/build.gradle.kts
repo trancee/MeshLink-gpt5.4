@@ -91,6 +91,12 @@ tasks.register("jvmCiBenchmark") {
   dependsOn("jvmBenchmarkBenchmark")
 }
 
+tasks.register("androidHostTest") {
+  group = "verification"
+  description = "Runs Android host tests through the Kotlin Multiplatform Android host-test task."
+  dependsOn("testAndroidHostTest")
+}
+
 detekt {
   buildUponDefaultConfig = true
   parallel = true
