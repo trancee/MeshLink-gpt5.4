@@ -1,6 +1,6 @@
 # Tasks: Power Management
 
-**Status**: In progress — power foundation types bootstrapped
+**Status**: Complete — power tiers, policies, manager, and graceful drain implemented
 
 ## Phase 1: Foundation
 
@@ -23,8 +23,8 @@
 
 ## Phase 3: Graceful Drain
 
-- [ ] T014 Implement `GracefulDrainManager` (complete in-flight transfers before disconnect)
-- [ ] T015 Write `GracefulDrainIntegrationTest` (MeshTestHarness)
+- [x] T014 Implement `GracefulDrainManager` (complete in-flight transfers before disconnect)
+- [x] T015 Write `GracefulDrainIntegrationTest` (MeshTestHarness)
 
 ## Verification
 
@@ -32,4 +32,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-13 actionable tasks complete, 2 remain pending.
+15 actionable tasks complete, 0 remain pending.
