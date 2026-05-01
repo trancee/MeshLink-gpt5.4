@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.spotless) apply false
     alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.skie) apply false
     alias(libs.plugins.binary.compatibility.validator)
 }
 

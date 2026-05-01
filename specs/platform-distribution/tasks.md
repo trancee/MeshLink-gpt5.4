@@ -1,6 +1,6 @@
 # Tasks: Platform & Distribution
 
-**Status**: In progress — distribution scaffolding is complete; SKIE and iOS crypto remain blocked on external toolchain/platform constraints
+**Status**: In progress — distribution scaffolding and SKIE interop are complete; iOS crypto remains blocked on platform interop constraints
 
 ## Phase 1: Android Platform
 
@@ -47,7 +47,7 @@
 
 - [x] T027 Configure BCV (JVM .api + KLib ABI tracking)
 - [x] T028 Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)
-- [ ] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream) — blocked: SKIE 0.10.11 rejects Kotlin 2.3.21 and currently supports up to 2.3.20
+- [x] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream)
 - [x] T030 Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)
 
 ## Phase 7: Constitution & CI Alignment
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 25 of the 27 actionable tasks are now complete while 2 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 26 of the 27 actionable tasks are now complete while 1 remains pending.

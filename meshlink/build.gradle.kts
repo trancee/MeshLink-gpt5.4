@@ -15,6 +15,7 @@ plugins {
   alias(libs.plugins.detekt)
   alias(libs.plugins.spotless)
   alias(libs.plugins.dokka)
+  alias(libs.plugins.skie)
   id("maven-publish")
   id("signing")
 }
