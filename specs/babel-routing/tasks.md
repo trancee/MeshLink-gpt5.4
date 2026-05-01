@@ -1,6 +1,6 @@
 # Tasks: Babel Routing
 
-**Status**: In progress — routing foundation types bootstrapped
+**Status**: Complete — routing core, presence, dedup, and benchmarks implemented
 
 ## Phase 1: Foundation
 
@@ -29,8 +29,8 @@
 
 ## Phase 4: Benchmarks
 
-- [ ] T017 [P] Add `RoutingBenchmark` — route lookup throughput
-- [ ] T018 [P] Add `DedupBenchmark` — dedup check throughput
+- [x] T017 [P] Add `RoutingBenchmark` — route lookup throughput
+- [x] T018 [P] Add `DedupBenchmark` — dedup check throughput
 
 ## Verification
 
@@ -38,4 +38,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-16 actionable tasks complete, 2 remain pending.
+18 actionable tasks complete, 0 remain pending.

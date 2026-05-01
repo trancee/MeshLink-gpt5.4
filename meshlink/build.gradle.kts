@@ -66,7 +66,7 @@ benchmark {
     }
     configurations {
         named("main") {
-            include(".*WireFormatBenchmark.*")
+            include(".*(WireFormatBenchmark|RoutingBenchmark|DedupBenchmark).*")
             warmups = 1
             iterations = 3
             iterationTime = 100
@@ -90,6 +90,8 @@ kover {
             excludes {
                 classes(
                     "ch.trancee.meshlink.api.PeerIdHex",
+                    "ch.trancee.meshlink.routing.DedupBenchmark",
+                    "ch.trancee.meshlink.routing.RoutingBenchmark",
                     "ch.trancee.meshlink.wire.WireFormatBenchmark",
                 )
             }
