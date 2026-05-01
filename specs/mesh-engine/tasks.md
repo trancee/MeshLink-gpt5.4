@@ -1,11 +1,11 @@
 # Tasks: Mesh Engine
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — engine foundation configuration types bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `MeshEngineConfig` (aggregate config for all subsystems)
-- [ ] T002 [P] Define `HandshakeConfig` (timeout, retry settings)
+- [x] T001 Define `MeshEngineConfig` (aggregate config for all subsystems)
+- [x] T002 [P] Define `HandshakeConfig` (timeout, retry settings)
 - [ ] T003 [P] Implement `PowerTierCodec` (encode/decode power tier byte)
 - [ ] T004 Write `PowerTierCodecTest`
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-All 22 actionable tasks are now pending.
+2 actionable tasks complete, 20 remain pending.
