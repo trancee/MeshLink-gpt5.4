@@ -1,6 +1,6 @@
 # Tasks: Mesh Engine
 
-**Status**: In progress — engine core and integrations implemented; outbound scheduling remains pending on DeliveryPipeline wiring
+**Status**: Complete — engine lifecycle, routing, delivery scheduling, and integrations implemented
 
 ## Phase 1: Foundation
 
@@ -30,7 +30,7 @@
 - [x] T012 Implement `MeshEngine.create()` factory (wire all subsystems)
 - [x] T013 Implement lifecycle management (start, stop, pause, resume)
 - [x] T014 Implement inbound message routing (handshake vs data path)
-- [ ] T015 Implement outbound message scheduling (via DeliveryPipeline)
+- [x] T015 Implement outbound message scheduling (via DeliveryPipeline)
 - [x] T016 Write `MeshEngineTest` — 9 scenarios covering all paths
 - [x] T017 Write `MeshEngineApiLifecycleTest`
 - [x] T018 Write `MeshEngineApiIdentityTest`
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-21 actionable tasks complete, 1 remain pending.
+22 actionable tasks complete, 0 remain pending.

@@ -11,6 +11,9 @@ import ch.trancee.meshlink.api.PeerState
 import ch.trancee.meshlink.crypto.CryptoProvider
 import ch.trancee.meshlink.crypto.CryptoProviderFactory
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
+import ch.trancee.meshlink.messaging.DeliveryPipeline
+import ch.trancee.meshlink.messaging.MessagingConfig
+import ch.trancee.meshlink.messaging.SendResult
 import ch.trancee.meshlink.transport.BleTransport
 import ch.trancee.meshlink.wire.WireMessage
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
@@ -30,6 +33,7 @@ public class MeshEngine private constructor(
     public val handshakeManager: NoiseHandshakeManager,
     public val stateManager: MeshStateManager,
     public val pseudonymRotator: PseudonymRotator,
+    public val deliveryPipeline: DeliveryPipeline,
     private val diagnosticSink: DiagnosticSink,
 ) : MeshLinkApi {
     private val mutableState = MutableStateFlow(MeshLinkState.UNINITIALIZED)
@@ -84,7 +88,15 @@ public class MeshEngine private constructor(
         peerId: PeerIdHex,
         payload: ByteArray,
     ): Unit {
-        transport.send(peerId = peerId, payload = payload)
+        val result: SendResult = deliveryPipeline.send(
+            senderPeerId = ENGINE_SENDER_PEER_ID,
+            recipientPeerId = peerId,
+            payload = payload,
+            nowEpochMillis = 0L,
+        )
+        if (result is SendResult.Sent) {
+            transport.send(peerId = peerId, payload = payload)
+        }
     }
 
     public fun beginHandshake(
@@ -208,8 +220,14 @@ public class MeshEngine private constructor(
                 handshakeManager = NoiseHandshakeManager(diagnosticSink = diagnosticSink),
                 stateManager = MeshStateManager(),
                 pseudonymRotator = PseudonymRotator(cryptoProvider = cryptoProvider),
+                deliveryPipeline = DeliveryPipeline(
+                    config = MessagingConfig.default(),
+                    diagnosticSink = diagnosticSink,
+                ),
                 diagnosticSink = diagnosticSink,
             )
         }
+
+        private val ENGINE_SENDER_PEER_ID: PeerIdHex = PeerIdHex(value = "00000000")
     }
 }
