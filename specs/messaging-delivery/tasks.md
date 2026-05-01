@@ -13,7 +13,7 @@
 ## Phase 2: Delivery Pipeline
 
 - [ ] T006 Implement `DeliveryPipeline` (send, receive, ack, timeout orchestration)
-- [ ] T007 Implement `SlidingWindowRateLimiter` (per-peer-pair enforcement)
+- [x] T007 Implement `SlidingWindowRateLimiter` (per-peer-pair enforcement)
 - [ ] T008 Write `DeliveryPipelineTest` — core send/receive/ack cycle
 - [ ] T009 Write `DeliveryPipelineCancelTest` — cancellation behavior
 - [ ] T010 Write `DeliveryPipelineDiagnosticTest` — diagnostic emissions
@@ -39,4 +39,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-5 actionable tasks complete, 14 remain pending.
+6 actionable tasks complete, 13 remain pending.
