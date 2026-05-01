@@ -1,6 +1,6 @@
 # Tasks: Messaging & Delivery Pipeline
 
-**Status**: In progress — messaging foundation types bootstrapped
+**Status**: Complete — delivery pipeline, cut-through relay, diagnostics, and integrations implemented
 
 ## Phase 1: Foundation
 
@@ -30,8 +30,8 @@
 
 ## Phase 4: Integration
 
-- [ ] T018 Write `CutThroughRelayIntegrationTest` (MeshTestHarness, 3+ nodes)
-- [ ] T019 Write `DiagnosticEmissionIntegrationTest`
+- [x] T018 Write `CutThroughRelayIntegrationTest` (MeshTestHarness, 3+ nodes)
+- [x] T019 Write `DiagnosticEmissionIntegrationTest`
 
 ## Verification
 
@@ -39,4 +39,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-17 actionable tasks complete, 2 remain pending.
+19 actionable tasks complete, 0 remain pending.
