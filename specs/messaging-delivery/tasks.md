@@ -1,14 +1,14 @@
 # Tasks: Messaging & Delivery Pipeline
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — messaging foundation types bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `MessagingConfig` (rate limits, timeouts, buffer sizes, appIdHash)
-- [ ] T002 [P] Define `MessageIdKey`, `PeerPair`, `InboundMessage` types
-- [ ] T003 [P] Define `DeliveryOutcome` sealed hierarchy (Delivered, DeliveryFailed)
-- [ ] T004 [P] Define `SendResult`, `QueuedReason` types
-- [ ] T005 Write `MessagingFoundationTest`
+- [x] T001 Define `MessagingConfig` (rate limits, timeouts, buffer sizes, appIdHash)
+- [x] T002 [P] Define `MessageIdKey`, `PeerPair`, `InboundMessage` types
+- [x] T003 [P] Define `DeliveryOutcome` sealed hierarchy (Delivered, DeliveryFailed)
+- [x] T004 [P] Define `SendResult`, `QueuedReason` types
+- [x] T005 Write `MessagingFoundationTest`
 
 ## Phase 2: Delivery Pipeline
 
@@ -39,4 +39,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-All 19 actionable tasks are now pending.
+5 actionable tasks complete, 14 remain pending.
