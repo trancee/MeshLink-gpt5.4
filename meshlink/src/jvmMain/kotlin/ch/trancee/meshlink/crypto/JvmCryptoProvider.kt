@@ -10,7 +10,9 @@ import java.security.spec.EdECPoint
 import java.security.spec.EdECPrivateKeySpec
 import java.security.spec.EdECPublicKeySpec
 import java.security.spec.NamedParameterSpec
+import javax.crypto.Cipher
 import javax.crypto.Mac
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 public class JvmCryptoProvider : CryptoProvider {
@@ -79,14 +81,40 @@ public class JvmCryptoProvider : CryptoProvider {
         nonce: ByteArray,
         aad: ByteArray,
         plaintext: ByteArray,
-    ): ByteArray = unsupported()
+    ): ByteArray {
+        require(key.size == CHACHA20_KEY_SIZE) {
+            "ChaCha20-Poly1305 key must be exactly $CHACHA20_KEY_SIZE bytes."
+        }
+        require(nonce.size == CHACHA20_NONCE_SIZE) {
+            "ChaCha20-Poly1305 nonce must be exactly $CHACHA20_NONCE_SIZE bytes."
+        }
+        val cipher = Cipher.getInstance("ChaCha20-Poly1305")
+        cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, "ChaCha20"), IvParameterSpec(nonce))
+        if (aad.isNotEmpty()) {
+            cipher.updateAAD(aad)
+        }
+        return cipher.doFinal(plaintext)
+    }
 
     override fun chaCha20Poly1305Decrypt(
         key: ByteArray,
         nonce: ByteArray,
         aad: ByteArray,
         ciphertext: ByteArray,
-    ): ByteArray = unsupported()
+    ): ByteArray {
+        require(key.size == CHACHA20_KEY_SIZE) {
+            "ChaCha20-Poly1305 key must be exactly $CHACHA20_KEY_SIZE bytes."
+        }
+        require(nonce.size == CHACHA20_NONCE_SIZE) {
+            "ChaCha20-Poly1305 nonce must be exactly $CHACHA20_NONCE_SIZE bytes."
+        }
+        val cipher = Cipher.getInstance("ChaCha20-Poly1305")
+        cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "ChaCha20"), IvParameterSpec(nonce))
+        if (aad.isNotEmpty()) {
+            cipher.updateAAD(aad)
+        }
+        return cipher.doFinal(ciphertext)
+    }
 
     override fun hkdfSha256(
         ikm: ByteArray,
@@ -175,6 +203,8 @@ public class JvmCryptoProvider : CryptoProvider {
 
     public companion object {
         private const val HASH_OUTPUT_SIZE: Int = 32
+        private const val CHACHA20_KEY_SIZE: Int = 32
+        private const val CHACHA20_NONCE_SIZE: Int = 12
         private val BIG_INTEGER_255: BigInteger = BigInteger.valueOf(0xFF)
     }
 }

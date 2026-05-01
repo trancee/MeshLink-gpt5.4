@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.crypto
 
+import javax.crypto.AEADBadTagException
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -192,6 +193,189 @@ public class JvmCryptoProviderTest {
     }
 
     @Test
+    public fun chaCha20Poly1305_encryptAndDecrypt_roundTripPlaintext(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+        val key: ByteArray = ByteArray(size = 32) { index -> index.toByte() }
+        val nonce: ByteArray = ByteArray(size = 12) { index -> (index + 1).toByte() }
+        val aad: ByteArray = byteArrayOf(0x01, 0x02, 0x03)
+        val plaintext: ByteArray = byteArrayOf(0x11, 0x12, 0x13, 0x14)
+
+        // Act
+        val ciphertext: ByteArray = provider.chaCha20Poly1305Encrypt(
+            key = key,
+            nonce = nonce,
+            aad = aad,
+            plaintext = plaintext,
+        )
+        val actual: ByteArray = provider.chaCha20Poly1305Decrypt(
+            key = key,
+            nonce = nonce,
+            aad = aad,
+            ciphertext = ciphertext,
+        )
+
+        // Assert
+        assertContentEquals(
+            expected = plaintext,
+            actual = actual,
+            message = "JvmCryptoProvider should round-trip plaintext through ChaCha20-Poly1305",
+        )
+    }
+
+    @Test
+    public fun chaCha20Poly1305_encryptAndDecrypt_roundTripPlaintextWithoutAad(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+        val key: ByteArray = ByteArray(size = 32) { index -> index.toByte() }
+        val nonce: ByteArray = ByteArray(size = 12) { index -> (index + 1).toByte() }
+        val plaintext: ByteArray = byteArrayOf(0x21, 0x22, 0x23)
+
+        // Act
+        val ciphertext: ByteArray = provider.chaCha20Poly1305Encrypt(
+            key = key,
+            nonce = nonce,
+            aad = byteArrayOf(),
+            plaintext = plaintext,
+        )
+        val actual: ByteArray = provider.chaCha20Poly1305Decrypt(
+            key = key,
+            nonce = nonce,
+            aad = byteArrayOf(),
+            ciphertext = ciphertext,
+        )
+
+        // Assert
+        assertContentEquals(
+            expected = plaintext,
+            actual = actual,
+            message = "JvmCryptoProvider should also round-trip ChaCha20-Poly1305 payloads when no AAD is provided",
+        )
+    }
+
+    @Test
+    public fun chaCha20Poly1305Decrypt_throwsWhenCiphertextIsTampered(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+        val key: ByteArray = ByteArray(size = 32) { index -> index.toByte() }
+        val nonce: ByteArray = ByteArray(size = 12) { index -> (index + 1).toByte() }
+        val aad: ByteArray = byteArrayOf(0x01, 0x02)
+        val ciphertext: ByteArray = provider.chaCha20Poly1305Encrypt(
+            key = key,
+            nonce = nonce,
+            aad = aad,
+            plaintext = byteArrayOf(0x21, 0x22),
+        ).also { encrypted ->
+            encrypted[encrypted.lastIndex] = (encrypted.last().toInt() xor 0x01).toByte()
+        }
+
+        // Act
+        assertFailsWith<AEADBadTagException> {
+            provider.chaCha20Poly1305Decrypt(
+                key = key,
+                nonce = nonce,
+                aad = aad,
+                ciphertext = ciphertext,
+            )
+        }
+
+        // Assert
+        // expected exception
+    }
+
+    @Test
+    public fun chaCha20Poly1305Encrypt_throwsWhenKeyLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.chaCha20Poly1305Encrypt(
+                key = byteArrayOf(0x01),
+                nonce = ByteArray(size = 12),
+                aad = byteArrayOf(),
+                plaintext = byteArrayOf(),
+            )
+        }
+
+        // Assert
+        assertEquals(
+            expected = "ChaCha20-Poly1305 key must be exactly 32 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed ChaCha20-Poly1305 keys",
+        )
+    }
+
+    @Test
+    public fun chaCha20Poly1305Encrypt_throwsWhenNonceLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.chaCha20Poly1305Encrypt(
+                key = ByteArray(size = 32),
+                nonce = byteArrayOf(0x01),
+                aad = byteArrayOf(),
+                plaintext = byteArrayOf(),
+            )
+        }
+
+        // Assert
+        assertEquals(
+            expected = "ChaCha20-Poly1305 nonce must be exactly 12 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed ChaCha20-Poly1305 nonces during encryption",
+        )
+    }
+
+    @Test
+    public fun chaCha20Poly1305Decrypt_throwsWhenKeyLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.chaCha20Poly1305Decrypt(
+                key = byteArrayOf(0x01),
+                nonce = ByteArray(size = 12),
+                aad = byteArrayOf(),
+                ciphertext = byteArrayOf(),
+            )
+        }
+
+        // Assert
+        assertEquals(
+            expected = "ChaCha20-Poly1305 key must be exactly 32 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed ChaCha20-Poly1305 keys during decryption",
+        )
+    }
+
+    @Test
+    public fun chaCha20Poly1305Decrypt_throwsWhenNonceLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.chaCha20Poly1305Decrypt(
+                key = ByteArray(size = 32),
+                nonce = byteArrayOf(0x01),
+                aad = byteArrayOf(),
+                ciphertext = byteArrayOf(),
+            )
+        }
+
+        // Assert
+        assertEquals(
+            expected = "ChaCha20-Poly1305 nonce must be exactly 12 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed ChaCha20-Poly1305 nonces",
+        )
+    }
+
+    @Test
     public fun unsupportedPrimitives_throwHelpfulMessage(): Unit {
         // Arrange
         val provider = JvmCryptoProvider()
@@ -203,29 +387,11 @@ public class JvmCryptoProviderTest {
         val x25519Error = assertFailsWith<UnsupportedOperationException> {
             provider.x25519(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02))
         }
-        val encryptError = assertFailsWith<UnsupportedOperationException> {
-            provider.chaCha20Poly1305Encrypt(
-                key = byteArrayOf(0x08),
-                nonce = byteArrayOf(0x09),
-                aad = byteArrayOf(0x0A),
-                plaintext = byteArrayOf(0x0B),
-            )
-        }
-        val decryptError = assertFailsWith<UnsupportedOperationException> {
-            provider.chaCha20Poly1305Decrypt(
-                key = byteArrayOf(0x0C),
-                nonce = byteArrayOf(0x0D),
-                aad = byteArrayOf(0x0E),
-                ciphertext = byteArrayOf(0x0F),
-            )
-        }
 
         // Assert
         val expectedMessage = "JvmCryptoProvider primitive is not implemented yet."
         assertEquals(expected = expectedMessage, actual = generateX25519Error.message)
         assertEquals(expected = expectedMessage, actual = x25519Error.message)
-        assertEquals(expected = expectedMessage, actual = encryptError.message)
-        assertEquals(expected = expectedMessage, actual = decryptError.message)
     }
 
     private fun hex(value: String): ByteArray {
