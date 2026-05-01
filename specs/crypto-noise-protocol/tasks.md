@@ -23,9 +23,9 @@
 
 ## Phase 3: Noise K Payload Encryption
 
-- [ ] T014 Implement `NoiseKSeal` (encrypt payload with sender CipherState)
-- [ ] T015 [P] Implement `NoiseKOpen` (decrypt payload with receiver CipherState)
-- [ ] T016 Write `NoiseKSealOpenTest` — round-trip seal/open with nonce advancement
+- [x] T014 Implement `NoiseKSeal` (encrypt payload with sender CipherState)
+- [x] T015 [P] Implement `NoiseKOpen` (decrypt payload with receiver CipherState)
+- [x] T016 Write `NoiseKSealOpenTest` — round-trip seal/open with nonce advancement
 
 ## Phase 4: Replay Protection
 
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-15 actionable tasks complete, 16 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+18 actionable tasks complete, 13 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
