@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing release tag to publish (for example v0.1.0)"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -13,6 +18,7 @@ jobs:
   publish-android:
     runs-on: ubuntu-latest
     env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -20,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -30,12 +38,17 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Publish Android artifacts
-        run: ./gradlew :meshlink:publishAndroidPublicationToOSSRHRepository
+      - name: Publish Android, JVM, and multiplatform metadata
+        run: >-
+          ./gradlew
+          :meshlink:publishAndroidPublicationToOSSRHRepository
+          :meshlink:publishJvmPublicationToOSSRHRepository
+          :meshlink:publishKotlinMultiplatformPublicationToOSSRHRepository
 
   publish-ios:
     runs-on: macos-latest
     env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -43,6 +56,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -61,9 +76,13 @@ jobs:
       - publish-android
       - publish-ios
     runs-on: macos-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -77,13 +96,24 @@ jobs:
       - name: Assemble release XCFramework
         run: ./gradlew :meshlink:assembleMeshLinkReleaseXCFramework
 
-      - name: Zip XCFramework
-        run: |
-          cd meshlink/build/XCFrameworks/release
-          ditto -c -k --sequesterRsrc --keepParent MeshLink.xcframework MeshLink.xcframework.zip
+      - name: Package XCFramework
+        id: package_xcframework
+        run: ./scripts/package-xcframework.sh
 
-      - name: Upload XCFramework artifact
-        uses: actions/upload-artifact@v4
+      - name: Verify Package.swift release metadata
+        run: >-
+          ./scripts/update-package-swift.sh
+          --verify
+          --version "${RELEASE_TAG}"
+          --checksum "${{ steps.package_xcframework.outputs.checksum }}"
+          --repository "${GITHUB_REPOSITORY}"
+
+      - name: Verify packaged release artifacts
+        run: ./scripts/verify-publish.sh meshlink/build/XCFrameworks/release
+
+      - name: Publish GitHub release assets
+        uses: softprops/action-gh-release@v2
         with:
-          name: MeshLink.xcframework
-          path: meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip
+          files: |
+            meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip
+            meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip.checksum

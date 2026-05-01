@@ -1,29 +1,32 @@
 # Implementation Plan: Platform & Distribution
 
-**Branch**: feature branch required | **Date**: 2026-04-30 | **Spec**: `specs/platform-distribution/spec.md`  
-**Status**: Migrated planning artifact — must be executed on a feature branch, not on `main`
+**Branch**: `feat/platform-distribution` | **Date**: 2026-05-01 | **Spec**: `specs/platform-distribution/spec.md`  
+**Status**: Implemented and verified
 
 ## Summary
 
-Platform-specific implementations (Android, iOS, JVM) plus build infrastructure for publishing to Maven Central and SPM, CI pipelines, binary compatibility validation, and SKIE Swift interop.
+Deliver platform-specific Android, iOS, and JVM implementations plus a reproducible distribution pipeline for Maven Central and SwiftPM. The iOS path is intentionally **physical-device only** for BLE usage; simulator execution is not a supported acceptance path. Build configuration changes must preserve constitution compliance and keep all dependency/plugin version declarations centralized in `gradle/libs.versions.toml` with `version.ref`.
 
 ## Phases
 
-1. Android platform actuals
-2. iOS platform actuals
-3. JVM infrastructure
-4. Build and publish setup
-5. CI pipelines
-6. API compatibility and release validation
-7. Constitution and CI alignment follow-up
+1. Build governance and shared publishing foundation
+2. Android distribution implementation
+3. iOS physical-device distribution implementation
+4. JVM benchmark and compatibility infrastructure
+5. Release asset packaging and manifests
+6. CI / release automation
+7. Acceptance verification and constitution closure
 
 ## Technical Constraints
 
-- Must comply with all constitution quality gates
-- Must execute on feature branches, never directly on `main`
-- Must preserve cross-platform API consistency
-- Must satisfy the constitution's crypto packaging constraint
-- Must keep publishing and CI verification reproducible
+- Must comply with all constitution quality gates.
+- Must execute on a feature branch, never directly on `main`.
+- Must preserve cross-platform API consistency.
+- Must satisfy the constitution's crypto packaging constraint.
+- Must keep publishing and CI verification reproducible.
+- iOS BLE validation is **device-only**; simulator execution is intentionally unsupported.
+- All dependency and plugin version changes must flow through `gradle/libs.versions.toml` using `version.ref` entries.
+- Kotlin must remain pinned to the SKIE-compatible version tracked in `docs/memory/DECISIONS.md` until a newer supported pairing is verified.
 
 ## Crypto Packaging Interpretation
 
@@ -36,51 +39,80 @@ For this feature, “constitution-compliant” platform crypto actuals means:
 ## Project Structure
 
 ```text
-meshlink/src/
-├── androidMain/kotlin/ch/trancee/meshlink/
-│   ├── api/MeshLinkAndroidFactory.kt
-│   ├── crypto/AndroidCryptoProvider.kt
-│   ├── storage/AndroidSecureStorage.kt
-│   └── transport/AndroidBleTransport.kt, MeshLinkService.kt, Logger.kt
-├── iosMain/kotlin/ch/trancee/meshlink/
-│   ├── api/MeshLinkIosFactory.kt
-│   ├── crypto/IosCryptoProvider.kt
-│   ├── engine/MeshNode.kt
-│   ├── storage/IosSecureStorage.kt
-│   └── transport/IosBleTransport.kt, Logger.kt
-├── jvmMain/kotlin/ch/trancee/meshlink/
-│   ├── crypto/JvmCryptoProvider.kt
-│   ├── transport/Logger.kt
-│   └── benchmark/*.kt (4 benchmark files)
+gradle/
+└── libs.versions.toml
+build.gradle.kts
+meshlink/
+├── api/
+│   ├── jvm/meshlink.api
+│   └── meshlink.klib.api
+├── build.gradle.kts
+└── src/
+    ├── androidMain/kotlin/ch/trancee/meshlink/
+    │   ├── api/MeshLinkAndroidFactory.kt
+    │   ├── crypto/AndroidCryptoProvider.kt
+    │   ├── storage/AndroidSecureStorage.kt
+    │   └── transport/AndroidBleTransport.kt, MeshLinkService.kt, Logger.kt
+    ├── androidHostTest/kotlin/ch/trancee/meshlink/
+    │   ├── api/MeshLinkAndroidFactoryTest.kt
+    │   └── crypto/AndroidCryptoProviderTest.kt
+    ├── iosMain/kotlin/ch/trancee/meshlink/
+    │   ├── api/MeshLinkIosFactory.kt
+    │   ├── crypto/IosCryptoBridge.kt, IosCryptoProvider.kt
+    │   ├── engine/MeshNode.kt
+    │   ├── storage/IosSecureStorage.kt
+    │   └── transport/IosBleTransport.kt, Logger.kt
+    ├── jvmBenchmark/kotlin/ch/trancee/meshlink/
+    │   ├── routing/DedupBenchmark.kt
+    │   ├── routing/RoutingBenchmark.kt
+    │   ├── transfer/TransferBenchmark.kt
+    │   └── wire/WireFormatBenchmark.kt
+    └── jvmMain/kotlin/ch/trancee/meshlink/
+        ├── crypto/JvmCryptoProvider.kt
+        └── transport/Logger.kt
 .github/workflows/
-├── ci.yml       # ktfmt → detekt → jvmTest → koverVerify → apiCheck → benchmark
-├── release.yml  # publish-android → publish-ios → xcframework
-└── codeql.yml   # weekly security scan
-Package.swift                  # SPM binary target manifest
-consumer-rules.pro             # Android consumer ProGuard rules
-scripts/verify-publish.sh      # Publication verification script
-.githooks/pre-commit           # Local quality gate hook
+├── ci.yml
+├── codeql.yml
+└── release.yml
+.githooks/pre-commit
+Package.swift
+consumer-rules.pro
+scripts/
+├── package-xcframework.sh
+├── update-package-swift.sh
+└── verify-publish.sh
+docs/ios-crypto-bridge.md
 ```
 
 ## Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Android crypto | Constitution-compliant Android actual via the project-owned CryptoProvider abstraction | Must satisfy the no-external-crypto-artifact constraint |
-| iOS crypto | Constitution-compliant iOS actual via the project-owned CryptoProvider abstraction | Must satisfy the no-external-crypto-artifact constraint |
-| JVM crypto | JDK built-in (for tests only) | No native deps needed for CI |
-| Publishing | Maven Central + SPM | Standard channels for each platform |
+| Version management | Use `gradle/libs.versions.toml` + `version.ref` for every dependency/plugin version touched by this feature | Keeps build changes auditable and consistent with repository policy |
+| Android crypto | Constitution-compliant Android actual via the project-owned `CryptoProvider` abstraction | Must satisfy the no-external-crypto-artifact constraint |
+| iOS crypto | Constitution-compliant iOS actual via the `IosCryptoBridge` / `IosCryptoProvider` path behind `CryptoProvider` | Keeps released artifacts compliant while using Apple-native crypto on device |
+| iOS packaging | Static XCFramework for physical devices only | BLE is not a supported simulator acceptance path |
+| SwiftPM distribution | Release-hosted `MeshLink.xcframework.zip` + checksum referenced by `Package.swift` | Required by SwiftPM `binaryTarget` remote distribution |
+| Publishing | Maven Central + GitHub release assets | Matches Android/JVM and iOS distribution channels |
 | Signing | In-memory PGP from CI secrets | No keyring files in repo |
-| SKIE | Enabled for all public API | Better Swift UX (exhaustive enums, AsyncStream) |
+| SKIE | Enabled for public API with explicit verification of enum + stream interop | Better Swift UX without diverging the Kotlin API |
 
-These platform actuals map to:
-- `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt`
-- `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt`
+## Requirement Coverage
 
-Both remain behind the shared `CryptoProvider` abstraction and must satisfy the constitution's no-external-crypto-artifact constraint.
+| Requirement | Planned Coverage |
+|-------------|------------------|
+| FR-001, FR-009, FR-010 | `meshlink/build.gradle.kts`, `consumer-rules.pro`, `release.yml`, `verify-publish.sh` |
+| FR-002, FR-003, FR-012 | `meshlink/build.gradle.kts`, `Package.swift`, `scripts/package-xcframework.sh`, `scripts/update-package-swift.sh`, `release.yml`, `docs/ios-crypto-bridge.md` |
+| FR-004 | `build.gradle.kts`, `meshlink/api/jvm/meshlink.api`, `meshlink/api/meshlink.klib.api` |
+| FR-005 | `meshlink/build.gradle.kts`, SKIE verification step, `docs/ios-crypto-bridge.md` |
+| FR-006, FR-007, FR-008 | `.github/workflows/ci.yml`, `.github/workflows/release.yml`, `.github/workflows/codeql.yml` |
+| FR-011 | `AndroidCryptoProvider.kt`, `IosCryptoProvider.kt`, `verify-publish.sh`, release artifact inspection |
+| FR-013 | `gradle/libs.versions.toml`, `build.gradle.kts`, `meshlink/build.gradle.kts` |
 
 ## Verification Commands
 
-- `./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck :meshlink:detekt :meshlink:ktfmtCheck`
+- `./gradlew :meshlink:ktfmtCheck :meshlink:detekt :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck`
 - `./gradlew :meshlink:jvmCiBenchmark`
-- `./gradlew :meshlink:compileKotlinIosArm64`
+- `./gradlew :meshlink:compileKotlinIosArm64 :meshlink:assembleMeshLinkReleaseXCFramework`
+- `./scripts/verify-publish.sh meshlink/build/outputs/aar meshlink/build/XCFrameworks/release`
+- `swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip` *(macOS only, after packaging)*

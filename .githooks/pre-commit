@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-./gradlew :meshlink:ktfmtCheck :meshlink:detekt
+# Keep the local hook fast enough for regular commits while still catching
+# formatting, static-analysis, and public-API drift before CI.
+./gradlew :meshlink:ktfmtCheck :meshlink:detekt :meshlink:apiCheck

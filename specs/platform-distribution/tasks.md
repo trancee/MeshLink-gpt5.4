@@ -1,73 +1,146 @@
 # Tasks: Platform & Distribution
 
-**Status**: Complete — platform actuals, distribution scaffolding, SKIE interop, and crypto packaging verification are implemented
+**Input**: Design documents from `specs/platform-distribution/`, including active feature memory  
+**Prerequisites**: `spec.md`, `plan.md`, `memory-synthesis.md`
 
-## Phase 1: Android Platform
+## Format: `[ID] [P?] [Story] Description`
 
-- [x] ~~[REMOVED] T001 Implement `AndroidCryptoProvider` (libsodium JNI bridge via SodiumJni)~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [x] ~~[REMOVED] T002 [P] Implement `SodiumJni` (JNI native method declarations)~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [x] ~~[REMOVED] T003 [P] Build libsodium for Android (arm64-v8a, armeabi-v7a, x86_64) — `scripts/build-android-libsodium.sh`~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [x] ~~[REMOVED] T004 [P] Build JNI bridge — `scripts/build-android-jni.sh`~~ — removed because the JNI bridge was only required for the deprecated external crypto packaging path
-- [x] T005 Implement `AndroidBleTransport` (BluetoothGatt, L2CAP, scanning, advertising)
-- [x] T006 [P] Implement `MeshLinkService` (foreground service for background BLE)
-- [x] T007 [P] Implement `AndroidSecureStorage` (DataStore preferences)
-- [x] T008 Implement `MeshLinkAndroidFactory` (wires all Android actuals)
+- **[P]**: Can run in parallel (different files, no shared state)
+- **[Story]**: `US0` foundation, `US1` Android distribution, `US2` iOS device distribution, `US3` binary compatibility, `US4` CI quality gates
+- Every task includes exact file paths.
+- iOS verification is **device-only**; do not create simulator-based acceptance tasks.
+- Any dependency or plugin version change must be made in `gradle/libs.versions.toml` using `version.ref`.
 
-## Phase 2: iOS Platform
-
-- [x] ~~[REMOVED] T009 Build libsodium for iOS (arm64) — `scripts/build-ios-libsodium.sh`~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [x] ~~[REMOVED] T010 Create `libsodium.def` cinterop definition~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [x] ~~[REMOVED] T011 Implement `IosCryptoProvider` (libsodium cinterop)~~ — removed to align with the constitution ban on shipping external crypto libraries
-- [x] T012 Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)
-- [x] T013 [P] Implement `IosSecureStorage`
-- [x] T014 [P] Implement `MeshNode` (iOS-specific helper)
-- [x] T015 Implement `MeshLinkIosFactory`
-
-## Phase 3: JVM Infrastructure
-
-- [x] T016 Implement `JvmCryptoProvider` (JDK shim for test execution)
-- [x] T017 [P] Add `DedupBenchmark`, `RoutingBenchmark`, `TransferBenchmark`, `WireFormatBenchmark`
-
-## Phase 4: Build & Publish
-
-- [x] T018 Configure `maven-publish` + `signing` in meshlink/build.gradle.kts
-- [x] T019 [P] Configure XCFramework assembly (XCFrameworkConfig)
-- [x] T020 [P] Create `Package.swift` (SPM binary target manifest)
-- [x] T021 [P] Create `consumer-rules.pro` (ProGuard keep rules)
-- [x] T022 Configure Dokka javadoc JAR generation (supports FR-001 and FR-002 publication requirements)
-
-## Phase 5: CI Pipelines
-
-- [x] T023 Create `ci.yml` (ktfmt, detekt, jvmTest, koverVerify, apiCheck, CI-shortened benchmark, coverage summary)
-- [x] T024 [P] Create `release.yml` (publish-android, publish-ios, publish-xcframework)
-- [x] T025 [P] Create `codeql.yml` (weekly security scan: actions, c-cpp, java-kotlin)
-- [x] T026 [P] Configure `.githooks/pre-commit` (ktfmt + detekt; supports constitution quality gates and FR-005 CI hygiene)
-
-## Phase 6: API Compatibility
-
-- [x] T027 Configure BCV (JVM .api + KLib ABI tracking)
-- [x] T028 Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)
-- [x] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream)
-- [x] T030 Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)
-
-## Phase 7: Constitution & CI Alignment
-
-> This phase closes constitution and CI alignment for FR-005, FR-010, SC-004, and SC-005.
-> Execution note: implement `T031` and `T032` before running `T033`; complete `T034` before considering FR-005 and SC-004 fully satisfied.
-
-- [x] T031 Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
-- [x] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
-- [x] T033 Verify released Android and iOS publication outputs contain no third-party crypto binaries or native crypto payloads using `scripts/verify-publish.sh`
-- [x] T034 Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005
-
-## Verification
+## Verification Commands
 
 ```bash
-./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck :meshlink:detekt :meshlink:ktfmtCheck
+./gradlew :meshlink:ktfmtCheck :meshlink:detekt :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck
 ./gradlew :meshlink:jvmCiBenchmark
-./gradlew :meshlink:compileKotlinIosArm64  # macOS only
+./gradlew :meshlink:compileKotlinIosArm64 :meshlink:assembleMeshLinkReleaseXCFramework
+./scripts/verify-publish.sh meshlink/build/outputs/aar meshlink/build/XCFrameworks/release
+swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip
 ```
 
-`jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
+---
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and all 27 actionable tasks are now complete.
+## Phase 1: Foundation (US0)
+
+**Purpose**: Shared build, packaging, and verification infrastructure required by all stories.
+
+- [x] T001 [US0] Normalize dependency and plugin version declarations to `version.ref` entries in `gradle/libs.versions.toml`.
+- [x] T002 [US0] Update root build configuration in `build.gradle.kts` to consume version-catalog aliases and enforce BCV/KLib validation.
+- [x] T003 [US0] Update module build configuration in `meshlink/build.gradle.kts` for publishing, signing, Dokka, XCFramework, benchmark, and SKIE wiring.
+- [x] T004 [US0] Create XCFramework packaging helper in `scripts/package-xcframework.sh`.
+- [x] T005 [US0] Create SwiftPM manifest update helper in `scripts/update-package-swift.sh`.
+- [x] T006 [US0] Refresh publication verification in `scripts/verify-publish.sh` so release archives are scanned for forbidden crypto payloads.
+- [x] T007 [US0] Verify foundation wiring with `./gradlew :meshlink:tasks --all` and confirm `assembleMeshLinkReleaseXCFramework`, `publishAllPublicationsToOSSRHRepository`, `apiCheck`, and `jvmCiBenchmark` are available.
+
+**Gate**: Foundation tasks complete before story work begins.
+
+---
+
+## Phase 2: User Story 1 — Android Distribution (Priority: P1) 🎯 MVP
+
+**Goal**: Publish Android/JVM artifacts with constitution-compliant platform actuals and Android-specific packaging support.  
+**Verification**: `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify`
+
+### Implementation
+
+- [x] T008 [US1] Implement Android crypto actual in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt`.
+<!-- parallel-group: 1 -->
+- [x] T009 [P] [US1] Implement Android secure storage in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/storage/AndroidSecureStorage.kt`.
+- [x] T010 [P] [US1] Implement the Android background BLE service in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/MeshLinkService.kt`.
+- [x] T011 [US1] Implement Android BLE transport in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/AndroidBleTransport.kt`.
+- [x] T012 [US1] Wire Android platform dependencies in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/api/MeshLinkAndroidFactory.kt` after T008-T011.
+<!-- parallel-group: 2 -->
+- [x] T013 [P] [US1] Add Android crypto provider coverage in `meshlink/src/androidHostTest/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProviderTest.kt`.
+- [x] T014 [P] [US1] Add Android factory/distribution coverage in `meshlink/src/androidHostTest/kotlin/ch/trancee/meshlink/api/MeshLinkAndroidFactoryTest.kt`.
+- [x] T015 [US1] Refresh Android consumer rules in `consumer-rules.pro`.
+- [x] T016 [US1] Verify Android distribution with `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify`.
+
+**Checkpoint**: Android artifacts are publishable and independently verifiable.
+
+---
+
+## Phase 3: User Story 2 — iOS Device Distribution (Priority: P1)
+
+**Goal**: Ship a physical-device-only XCFramework and SwiftPM binary-target manifest for iOS BLE consumers.  
+**Verification**: `./gradlew :meshlink:compileKotlinIosArm64 :meshlink:assembleMeshLinkReleaseXCFramework`
+
+### Implementation
+
+- [x] T017 [US2] Implement the iOS crypto bridge contract in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoBridge.kt`.
+- [x] T018 [US2] Implement the iOS crypto provider in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt`.
+<!-- parallel-group: 3 -->
+- [x] T019 [P] [US2] Implement iOS secure storage in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/storage/IosSecureStorage.kt`.
+- [x] T020 [P] [US2] Implement the iOS helper node in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/engine/MeshNode.kt`.
+- [x] T021 [US2] Implement physical-device BLE transport in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/transport/IosBleTransport.kt`.
+- [x] T022 [US2] Wire iOS platform dependencies in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/api/MeshLinkIosFactory.kt` after T017-T021.
+- [x] T023 [US2] Create the release-hosted SwiftPM binary-target manifest in `Package.swift`.
+- [x] T024 [US2] Document physical-device-only iOS integration and unsupported simulator execution in `docs/ios-crypto-bridge.md`.
+- [x] T025 [US2] Verify device-only iOS packaging with `./gradlew :meshlink:compileKotlinIosArm64 :meshlink:assembleMeshLinkReleaseXCFramework`.
+
+**Checkpoint**: iOS XCFramework distribution works for physical-device workflows and states simulator limits explicitly.
+
+---
+
+## Phase 4: User Story 3 — Binary Compatibility & Swift Interop (Priority: P1)
+
+**Goal**: Track JVM and iOS API baselines and verify the Swift-facing surface stays stable.  
+**Verification**: `./gradlew :meshlink:apiCheck`
+
+### Implementation
+
+- [x] T026 [US3] Refresh the JVM BCV baseline in `meshlink/api/jvm/meshlink.api` via `./gradlew :meshlink:apiDump`.
+- [x] T027 [US3] Refresh the iOS KLib baseline in `meshlink/api/meshlink.klib.api` via `./gradlew :meshlink:apiDump` on macOS.
+- [x] T028 [US3] Configure or refine SKIE in `meshlink/build.gradle.kts`.
+- [x] T029 [US3] Add Swift interop verification guidance for `MeshLinkState` and one public stream API in `docs/ios-crypto-bridge.md`.
+- [x] T030 [US3] Verify API compatibility with `./gradlew :meshlink:apiCheck`.
+
+**Checkpoint**: Public API baselines are committed and Swift-facing behavior is explicitly verified.
+
+---
+
+## Phase 5: User Story 4 — CI Quality Gates (Priority: P1)
+
+**Goal**: Make PR, release, and security workflows enforce the full distribution contract.  
+**Verification**: full verification commands plus release-asset checksum validation.
+
+### Implementation
+
+- [x] T031 [US4] Create or refresh PR validation in `.github/workflows/ci.yml` for `ktfmt`, `detekt`, `jvmTest`, `androidHostTest`, `koverVerify`, `apiCheck`, and `jvmCiBenchmark`.
+<!-- parallel-group: 4 -->
+- [x] T032 [P] [US4] Create or refresh release automation in `.github/workflows/release.yml` for `publish-android`, `publish-ios`, XCFramework zip packaging, checksum generation, `Package.swift` validation, and GitHub release asset upload.
+- [x] T033 [P] [US4] Create or refresh scheduled scanning in `.github/workflows/codeql.yml`.
+- [x] T034 [P] [US4] Create or refresh local quality hooks in `.githooks/pre-commit`.
+- [x] T035 [US4] Verify release artifacts with `./scripts/verify-publish.sh meshlink/build/outputs/aar meshlink/build/XCFrameworks/release`.
+- [x] T036 [US4] Verify SwiftPM checksum generation with `swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip`.
+- [x] T037 [US4] Run the final gate: `./gradlew :meshlink:ktfmtCheck :meshlink:detekt :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck && ./gradlew :meshlink:jvmCiBenchmark`.
+
+**Checkpoint**: PR, release, and security gates enforce the full platform-distribution contract.
+
+---
+
+## Dependencies & Execution Order
+
+- Phase 1 blocks all other work.
+- Phase 2 depends on Phase 1.
+- Phase 3 depends on Phase 1.
+- Phase 4 depends on Phases 2 and 3 because BCV and SKIE verification must run against the final public surface.
+- Phase 5 depends on Phases 2-4 because CI and release automation must validate the finished Android/iOS/build pipeline.
+
+## Parallel Opportunities
+
+- `T009` and `T010` can run together after `T008`.
+- `T013` and `T014` can run together after `T012`.
+- `T019` and `T020` can run together after `T018`.
+- `T032`, `T033`, and `T034` can run together after `T031`.
+
+## Coverage Strategy
+
+Per constitution: 100% line + branch coverage, no `@CoverageIgnore`.
+
+- Add or refresh Android host tests for Android-only platform logic.
+- Keep shared/public-surface verification under `jvmTest` and `apiCheck`.
+- Use explicit release-asset verification to cover crypto packaging constraints.
+- Treat device-only iOS integration guidance as part of the acceptance surface; do not add simulator-based tests.

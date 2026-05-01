@@ -63,6 +63,8 @@ kotlin {
   }
 }
 
+skie { isEnabled.set(true) }
+
 benchmark {
   targets { register("jvmBenchmark") }
   configurations {
@@ -89,6 +91,12 @@ tasks.register("jvmCiBenchmark") {
   group = "verification"
   description = "Runs the CI-shortened JVM benchmark suite."
   dependsOn("jvmBenchmarkBenchmark")
+}
+
+tasks.register("androidHostTest") {
+  group = "verification"
+  description = "Runs Android host tests through the Kotlin Multiplatform Android host-test task."
+  dependsOn("testAndroidHostTest")
 }
 
 detekt {
