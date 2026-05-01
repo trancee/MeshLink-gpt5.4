@@ -11,10 +11,10 @@
 
 ## Phase 2: Routing Core
 
-- [ ] T005 Implement `RoutingTable` (route storage, metric comparison, best-route selection)
+- [x] T005 Implement `RoutingTable` (route storage, metric comparison, best-route selection)
 - [ ] T006 Implement `RoutingEngine` (Babel update processing, route installation, withdrawal)
 - [ ] T007 Implement `RouteCoordinator` (seqno management, feasibility conditions, starvation recovery)
-- [ ] T008 Write `RoutingTableTest` — multi-route scenarios, metric ordering
+- [x] T008 Write `RoutingTableTest` — multi-route scenarios, metric ordering
 - [ ] T009 Write `RoutingEngineTest` — update processing, convergence
 - [ ] T010 Write `RouteCoordinatorSeqNoTest` — feasibility, starvation
 - [ ] T011 Write `RouteCoordinatorDiagnosticTest` — diagnostic emissions
@@ -38,4 +38,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-4 actionable tasks complete, 14 remain pending.
+6 actionable tasks complete, 12 remain pending.
