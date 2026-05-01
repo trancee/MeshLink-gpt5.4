@@ -28,9 +28,9 @@
 ## Phase 3: Codec Dispatcher & Validation
 
 - [x] T018 Implement `WireCodec` (encode/decode dispatcher by MessageType)
-- [ ] T019 Implement `InboundValidator` (length bounds, hop limits, field constraints)
+- [x] T019 Implement `InboundValidator` (length bounds, hop limits, field constraints)
 - [x] T020 Write `WireFormatTest` — round-trip all message types
-- [ ] T021 Write `InboundValidatorTest` — boundary conditions
+- [x] T021 Write `InboundValidatorTest` — boundary conditions
 
 ## Phase 4: Benchmark
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-19 actionable tasks complete, 3 remain pending. Current JVM and Android host-test coverage verify at 100%.
+21 actionable tasks complete, 1 remains pending. Current JVM and Android host-test coverage verify at 100%.
