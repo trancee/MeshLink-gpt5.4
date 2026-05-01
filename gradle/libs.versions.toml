@@ -3,9 +3,11 @@ agp = "9.2.0"
 benchmark = "0.4.16"
 kotlin = "2.3.21"
 mockito = "5.23.0"
+serialization = "1.9.0"
 
 [libraries]
 kotlinx-benchmark-runtime = { group = "org.jetbrains.kotlinx", name = "kotlinx-benchmark-runtime", version.ref = "benchmark" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 
 [plugins]

@@ -41,11 +41,11 @@
 
 ## Phase 6: Wycheproof Validation
 
-- [ ] T023 [P] Add `WycheproofAeadVectors` — ChaCha20-Poly1305 test vectors
-- [ ] T024 [P] Add `WycheproofEd25519Vectors` — Ed25519 signing vectors
-- [ ] T025 [P] Add `WycheproofX25519Vectors` — X25519 DH vectors
-- [ ] T026 [P] Add `WycheproofHkdfVectors` — HKDF-SHA256 vectors
-- [ ] T027 Write `WycheproofCryptoTest` — runner for all vector files
+- [x] T023 [P] Add `WycheproofAeadVectors` — ChaCha20-Poly1305 test vectors
+- [x] T024 [P] Add `WycheproofEd25519Vectors` — Ed25519 signing vectors
+- [x] T025 [P] Add `WycheproofX25519Vectors` — X25519 DH vectors
+- [x] T026 [P] Add `WycheproofHkdfVectors` — HKDF-SHA256 vectors
+- [x] T027 Write `WycheproofCryptoTest` — runner for all vector files
 - [x] T028 Write `HmacSha256Test` — HMAC correctness
 
 ## Phase 7: Platform Actuals
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-24 actionable tasks complete, 7 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+29 actionable tasks complete, 2 remain pending. Current JVM and Android host-test coverage verify at 100%, Wycheproof crypto vectors run on JVM, and `:meshlink:jvmBenchmark` remains green.

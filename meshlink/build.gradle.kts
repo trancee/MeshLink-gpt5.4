@@ -41,6 +41,9 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
+        getByName("jvmTest").dependencies {
+            implementation(libs.kotlinx.serialization.json)
+        }
         getByName("androidHostTest").dependencies {
             implementation(libs.mockito.core)
         }
