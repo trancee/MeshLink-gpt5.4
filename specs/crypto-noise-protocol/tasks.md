@@ -5,7 +5,7 @@
 ## Phase 1: Foundation
 
 - [x] T001 Define `CryptoProvider` interface (X25519, Ed25519, ChaCha20-Poly1305, HKDF, HMAC-SHA256)
-- [ ] T002 [P] Implement `CryptoProviderFactory` expect/actual pattern
+- [x] T002 [P] Implement `CryptoProviderFactory` expect/actual pattern
 - [x] T003 [P] Implement `ConstantTimeEquals` utility
 - [x] T004 [P] Define `KeyPair` and `Identity` data classes
 - [ ] T005 Write `CryptoProviderTest` validating all primitives
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-3 actionable tasks complete, 28 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+4 actionable tasks complete, 27 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
