@@ -35,7 +35,7 @@
 ## Phase 5: Identity & Trust
 
 - [ ] T019 Implement `Identity` (Ed25519 key generation, keyHash derivation)
-- [ ] T020 Implement `TrustStore` (TOFU/STRICT/PROMPT pinning, key conflict handling)
+- [x] T020 Implement `TrustStore` (TOFU/STRICT/PROMPT pinning, key conflict handling)
 - [ ] T021 [P] Implement `RotationAnnouncement` (signed proof of key rotation)
 - [ ] T022 Write `IdentityTest`, `TrustStoreTest`
 
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-7 actionable tasks complete, 24 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+8 actionable tasks complete, 23 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.

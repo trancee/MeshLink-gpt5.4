@@ -6,7 +6,7 @@
 
 - [ ] T001 Define `MeshLinkState` enum (UNINITIALIZED, RUNNING, PAUSED, STOPPED, RECOVERABLE, TERMINAL)
 - [ ] T002 [P] Define `PeerIdHex` value class (type-safe peer identifier)
-- [ ] T003 [P] Define `TrustMode` enum (TOFU, STRICT, PROMPT)
+- [x] T003 [P] Define `TrustMode` enum (TOFU, STRICT, PROMPT)
 - [ ] T004 [P] Define `RegulatoryRegion` enum with parameter clamping
 - [ ] T005 [P] Define `PeerState` sealed hierarchy
 - [ ] T006 [P] Define `PeerDetail` data class
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-All 25 actionable tasks are now pending.
+1 actionable task complete, 24 remain pending.
