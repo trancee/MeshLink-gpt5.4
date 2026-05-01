@@ -1,15 +1,15 @@
 # Tasks: Power Management
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: In progress — power foundation types bootstrapped
 
 ## Phase 1: Foundation
 
-- [ ] T001 Define `PowerTier` enum (HIGH, NORMAL, LOW)
-- [ ] T002 [P] Define `PowerConfig` (thresholds, intervals, connection limits)
-- [ ] T003 [P] Define `PowerProfile` (per-tier scan/connection parameters)
-- [ ] T004 [P] Define `BatteryMonitor` interface
-- [ ] T005 [P] Implement `FixedBatteryMonitor` (test utility)
-- [ ] T006 Write `FixedBatteryMonitorTest`
+- [x] T001 Define `PowerTier` enum (HIGH, NORMAL, LOW)
+- [x] T002 [P] Define `PowerConfig` (thresholds, intervals, connection limits)
+- [x] T003 [P] Define `PowerProfile` (per-tier scan/connection parameters)
+- [x] T004 [P] Define `BatteryMonitor` interface
+- [x] T005 [P] Implement `FixedBatteryMonitor` (test utility)
+- [x] T006 Write `FixedBatteryMonitorTest`
 
 ## Phase 2: Power Engine
 
@@ -32,4 +32,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-All 15 actionable tasks are now pending.
+6 actionable tasks complete, 9 remain pending.
