@@ -1,13 +1,10 @@
 package ch.trancee.meshlink.crypto.noise
 
 public class DhCache(
-    private val maxEntries: Int = DEFAULT_MAX_ENTRIES,
+    maxEntries: Int = DEFAULT_MAX_ENTRIES,
 ) {
-    private val entries: LinkedHashMap<DhCacheKey, ByteArray> = object : LinkedHashMap<DhCacheKey, ByteArray>(16, 0.75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<DhCacheKey, ByteArray>?): Boolean {
-            return size > maxEntries
-        }
-    }
+    private val capacity: Int = maxEntries.coerceAtLeast(minimumValue = 1)
+    private val entries: MutableList<Pair<DhCacheKey, ByteArray>> = mutableListOf()
 
     public fun getOrCompute(
         privateKey: ByteArray,
@@ -15,13 +12,18 @@ public class DhCache(
         compute: () -> ByteArray,
     ): ByteArray {
         val cacheKey = DhCacheKey(privateKey = privateKey, publicKey = publicKey)
-        val cached: ByteArray? = entries[cacheKey]
-        if (cached != null) {
+        val existingIndex: Int = entries.indexOfFirst { entry -> entry.first == cacheKey }
+        if (existingIndex >= 0) {
+            val cached: ByteArray = entries.removeAt(existingIndex).second
+            entries.add(cacheKey to cached)
             return cached.copyOf()
         }
 
         val computed: ByteArray = compute()
-        entries[cacheKey] = computed.copyOf()
+        if (entries.size == capacity) {
+            entries.removeAt(index = 0)
+        }
+        entries.add(cacheKey to computed.copyOf())
         return computed.copyOf()
     }
 

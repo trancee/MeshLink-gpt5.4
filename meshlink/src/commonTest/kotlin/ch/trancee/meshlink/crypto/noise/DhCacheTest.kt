@@ -6,6 +6,58 @@ import kotlin.test.assertEquals
 
 public class DhCacheTest {
     @Test
+    public fun constructor_usesDefaultCapacityWhenNotSpecified(): Unit {
+        // Arrange
+        val cache = DhCache()
+        var computeCalls: Int = 0
+
+        // Act
+        cache.getOrCompute(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02)) {
+            computeCalls += 1
+            byteArrayOf(0x11)
+        }
+        cache.getOrCompute(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02)) {
+            computeCalls += 1
+            byteArrayOf(0x22)
+        }
+
+        // Assert
+        assertEquals(
+            expected = 1,
+            actual = computeCalls,
+            message = "DhCache should use its default capacity and cache repeated entries when no explicit size is provided",
+        )
+    }
+
+    @Test
+    public fun constructor_normalizesNonPositiveCapacityToOneEntry(): Unit {
+        // Arrange
+        val cache = DhCache(maxEntries = 0)
+        var computeCalls: Int = 0
+
+        // Act
+        cache.getOrCompute(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02)) {
+            computeCalls += 1
+            byteArrayOf(0x11)
+        }
+        cache.getOrCompute(privateKey = byteArrayOf(0x03), publicKey = byteArrayOf(0x04)) {
+            computeCalls += 1
+            byteArrayOf(0x22)
+        }
+        cache.getOrCompute(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02)) {
+            computeCalls += 1
+            byteArrayOf(0x33)
+        }
+
+        // Assert
+        assertEquals(
+            expected = 3,
+            actual = computeCalls,
+            message = "DhCache should normalize non-positive capacities to a single-entry cache",
+        )
+    }
+
+    @Test
     public fun getOrCompute_returnsCachedResultForRepeatedKeyPair(): Unit {
         // Arrange
         val cache = DhCache(maxEntries = 2)

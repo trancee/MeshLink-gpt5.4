@@ -50,8 +50,8 @@
 
 ## Phase 7: Platform Actuals
 
-- [ ] T029 [P] Implement `AndroidCryptoProvider` (libsodium JNI via SodiumJni)
-- [ ] T030 [P] Implement `IosCryptoProvider` (libsodium cinterop)
+- [x] T029 [P] Implement `AndroidCryptoProvider` (libsodium JNI via SodiumJni)
+- [x] T030 [P] Implement `IosCryptoProvider` (libsodium cinterop)
 - [x] T031 [P] Implement `JvmCryptoProvider` (JDK shim for test infrastructure)
 
 ## Verification
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-29 actionable tasks complete, 2 remain pending. Current JVM and Android host-test coverage verify at 100%, Wycheproof crypto vectors run on JVM, and `:meshlink:jvmBenchmark` remains green.
+All 31 actionable tasks complete. JVM and Android host-test coverage verify at 100%, Wycheproof crypto vectors run on JVM, iOS compilation succeeds, and `:meshlink:jvmBenchmark` remains green.

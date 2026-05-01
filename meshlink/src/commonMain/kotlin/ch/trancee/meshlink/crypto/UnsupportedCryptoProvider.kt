@@ -1,6 +1,6 @@
 package ch.trancee.meshlink.crypto
 
-internal class UnsupportedCryptoProvider : CryptoProvider {
+public open class UnsupportedCryptoProvider : CryptoProvider {
     override fun generateX25519KeyPair(): KeyPair = unsupported()
 
     override fun generateEd25519KeyPair(): KeyPair = unsupported()
