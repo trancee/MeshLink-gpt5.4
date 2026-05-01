@@ -33,6 +33,7 @@
 | II. Testing | ☐ | 100% coverage achievable? Wycheproof vectors needed? Benchmark added? |
 | III. UX Consistency | ☐ | API identical across targets? SKIE generates correct Swift? |
 | IV. Performance | ☐ | Budget declared in spec? Benchmark validates? <10% regression? |
+| Conventional Commits | ☐ | Human and automated commits for this feature use Conventional Commit messages |
 | No server dependency | ☐ | Feature works fully offline? |
 | Wire stability | ☐ | New wire messages backward-compatible? Schema updated? |
 | Single runtime dep | ☐ | No new runtime dependencies added? |

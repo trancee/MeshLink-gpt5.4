@@ -1,9 +1,31 @@
 <!--
 Sync Impact Report
-Version: 1.0.1 → 1.0.2
-Modified: Principles I-IV, Quality Gates, Governance
-Templates: aligned
+Version change: 1.0.2 → 1.0.3
+Modified principles:
+- None renamed
+Added sections:
+- None
+Removed sections:
+- None
+Templates requiring updates:
+- ✅ .specify/templates/plan-template.md
+- ✅ .specify/templates/tasks-template.md
+- ✅ .specify/templates/checklist-template.md
+Related guidance and tooling updates:
+- ✅ .specify/extensions/git/git-config.yml
+- ✅ .specify/extensions/git/config-template.yml
+- ✅ .specify/extensions/git/commands/speckit.git.initialize.md
+- ✅ .specify/extensions/git/commands/speckit.git.commit.md
+- ✅ .specify/extensions/git/README.md
+- ✅ .specify/extensions/git/scripts/bash/initialize-repo.sh
+- ✅ .specify/extensions/git/scripts/bash/auto-commit.sh
+- ✅ .specify/extensions/git/scripts/powershell/initialize-repo.ps1
+- ✅ .specify/extensions/git/scripts/powershell/auto-commit.ps1
+- ✅ .github/copilot-instructions.md
+Follow-up TODOs:
+- None
 History:
+- v1.0.3 (2026-05-01): Clarified that all commits, including automated Spec Kit commits, MUST use Conventional Commits and aligned supporting tooling/docs.
 - v1.0.2 (2026-04-30): Compressed duplicated gate detail, clarified ambiguous wording, and added enforcement references.
 - v1.0.1 (2026-04-30): Wording optimization and gate consolidation.
 - v1.0.0 (2026-04-30): Initial ratification.
@@ -145,8 +167,10 @@ Every change MUST satisfy these release-blocking gates before merge.
 - Dependency vulnerability fixes MUST merge within 5 business days of
   disclosure.
 - Critical issues (CVSS ≥9.0) MUST merge within 48 hours.
-- Commits MUST use Conventional Commits (`feat:`, `fix:`, `test:`,
-  `docs:`, `refactor:`, `perf:`, `chore:`).
+- Every commit, including hook-generated and auto-commit commits, MUST
+  use Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`,
+  `refactor:`, `perf:`, `chore:`). Non-conforming commits MUST be
+  amended before merge.
 
 ## Technical Constraints
 
@@ -185,7 +209,10 @@ development.
     non-semantic refinement.
 - When guidance conflicts, this constitution MUST take precedence over
   READMEs, guides, and comments.
+- Commit-producing automation, templates, and hooks MUST default to
+  Conventional Commit messages and MUST be updated in the same change
+  set when commit policy changes.
 - Day-to-day conventions that do not rise to constitutional level MUST
   live in `docs/` or other project documentation.
 
-**Version**: 1.0.2 | **Ratified**: 2026-04-30 | **Last Amended**: 2026-04-30
+**Version**: 1.0.3 | **Ratified**: 2026-04-30 | **Last Amended**: 2026-05-01

@@ -14,13 +14,15 @@ Run the appropriate script from the project root:
 - **PowerShell**: `.specify/extensions/git/scripts/powershell/initialize-repo.ps1`
 
 If the extension scripts are not found, fall back to:
-- **Bash**: `git init && git add . && git commit -m "Initial commit from Specify template"`
-- **PowerShell**: `git init; git add .; git commit -m "Initial commit from Specify template"`
+- **Bash**: `git init && git add . && git commit -m "chore: initialize repository"`
+- **PowerShell**: `git init; git add .; git commit -m "chore: initialize repository"`
+
+All generated commit messages MUST follow Conventional Commits.
 
 The script handles all checks internally:
 - Skips if Git is not available
 - Skips if already inside a Git repository
-- Runs `git init`, `git add .`, and `git commit` with an initial commit message
+- Runs `git init`, `git add .`, and `git commit` with an initial Conventional Commit message
 
 ## Customization
 

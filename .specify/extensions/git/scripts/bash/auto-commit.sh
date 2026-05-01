@@ -128,9 +128,9 @@ fi
 _command_name=$(echo "$EVENT_NAME" | sed 's/^after_//' | sed 's/^before_//')
 _phase=$(echo "$EVENT_NAME" | grep -q '^before_' && echo 'before' || echo 'after')
 
-# Use custom message if configured, otherwise default
+# Use custom message if configured, otherwise default to a Conventional Commit.
 if [ -z "$_commit_msg" ]; then
-    _commit_msg="[Spec Kit] Auto-commit ${_phase} ${_command_name}"
+    _commit_msg="chore: auto-commit ${_phase} ${_command_name}"
 fi
 
 # Stage and commit

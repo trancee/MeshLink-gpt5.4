@@ -15,6 +15,7 @@ This repository uses the Spec Kit memory workflow. For non-trivial tasks, memory
 - Before `/plan` and `/tasks`: read the active spec plus feature memory. Do not proceed through unresolved conflicts with project memory or architecture boundaries.
 - Before `/implement`: re-read `memory-synthesis.md` and treat implementation and verification watchpoints as requirements.
 - After `/implement` and `/verify`: review the diff, completed work, tests, and findings. Update durable memory only when the lesson is durable, evidenced, reusable, and non-obvious. Do not add changelog-style or speculative entries.
+- Any human or automated commit created in this repository MUST use a Conventional Commit message.
 
 Treat `docs/memory/` as repository memory. Keep entries concise, durable, and reviewable in Git.
 

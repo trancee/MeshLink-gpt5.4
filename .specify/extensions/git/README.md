@@ -6,11 +6,11 @@ Git repository initialization, feature branch creation, numbering (sequential/ti
 
 This extension provides Git operations as an optional, self-contained module. It manages:
 
-- **Repository initialization** with configurable commit messages
+- **Repository initialization** with configurable Conventional Commit messages
 - **Feature branch creation** with sequential (`001-feature-name`) or timestamp (`20260319-143022-feature-name`) numbering
 - **Branch validation** to ensure branches follow naming conventions
 - **Git remote detection** for GitHub integration (e.g., issue creation)
-- **Auto-commit** after core commands (configurable per-command with custom messages)
+- **Auto-commit** after core commands (configurable per-command with Conventional Commit messages)
 
 ## Commands
 
@@ -54,7 +54,7 @@ Configuration is stored in `.specify/extensions/git/git-config.yml`:
 branch_numbering: sequential
 
 # Custom commit message for git init
-init_commit_message: "[Spec Kit] Initial commit"
+init_commit_message: "chore: initialize repository"
 
 # Auto-commit per command (all disabled by default)
 # Example: enable auto-commit after specify
@@ -62,8 +62,10 @@ auto_commit:
   default: false
   after_specify:
     enabled: true
-    message: "[Spec Kit] Add specification"
+    message: "docs: add specification"
 ```
+
+All generated or configured commit messages are expected to follow Conventional Commits.
 
 ## Installation
 

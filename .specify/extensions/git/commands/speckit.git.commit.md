@@ -15,7 +15,8 @@ This command is invoked as a hook after (or before) core commands. It:
 3. Looks up the specific event key to see if auto-commit is enabled
 4. Falls back to `auto_commit.default` if no event-specific key exists
 5. Uses the per-command `message` if configured, otherwise a default message
-6. If enabled and there are uncommitted changes, runs `git add .` + `git commit`
+6. Requires the configured or default message to follow Conventional Commits
+7. If enabled and there are uncommitted changes, runs `git add .` + `git commit`
 
 ## Execution
 
@@ -32,14 +33,16 @@ In `.specify/extensions/git/git-config.yml`:
 
 ```yaml
 auto_commit:
-  default: false          # Global toggle — set true to enable for all commands
+  default: false           # Global toggle — set true to enable for all commands
   after_specify:
     enabled: true          # Override per-command
-    message: "[Spec Kit] Add specification"
+    message: "docs: add specification"
   after_plan:
     enabled: false
-    message: "[Spec Kit] Add implementation plan"
+    message: "docs: add implementation plan"
 ```
+
+All configured messages MUST follow Conventional Commits.
 
 ## Graceful Degradation
 

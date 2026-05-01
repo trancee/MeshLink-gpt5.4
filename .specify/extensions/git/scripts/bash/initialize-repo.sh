@@ -24,8 +24,8 @@ _find_project_root() {
 REPO_ROOT=$(_find_project_root "$SCRIPT_DIR") || REPO_ROOT="$(pwd)"
 cd "$REPO_ROOT"
 
-# Read commit message from extension config, fall back to default
-COMMIT_MSG="[Spec Kit] Initial commit"
+# Read commit message from extension config, fall back to a Conventional Commit.
+COMMIT_MSG="chore: initialize repository"
 _config_file="$REPO_ROOT/.specify/extensions/git/git-config.yml"
 if [ -f "$_config_file" ]; then
     _msg=$(grep '^init_commit_message:' "$_config_file" 2>/dev/null | sed 's/^init_commit_message:[[:space:]]*//' | sed 's/^["'\'']//' | sed 's/["'\'']*$//')

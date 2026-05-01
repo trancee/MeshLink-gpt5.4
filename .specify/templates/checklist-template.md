@@ -59,7 +59,7 @@
 
 - [ ] CHK029 KDoc on all new/modified public declarations
 - [ ] CHK030 Documentation updated in `docs/` if user-facing behavior changes
-- [ ] CHK031 Commit messages follow Conventional Commits format
+- [ ] CHK031 Every human and automated commit uses a Conventional Commit message (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `perf:`, `chore:`)
 
 ## Security
 

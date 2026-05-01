@@ -144,9 +144,9 @@ if ($d1 -eq 0 -and $d2 -eq 0 -and -not $untracked) {
 $commandName = $EventName -replace '^after_', '' -replace '^before_', ''
 $phase = if ($EventName -match '^before_') { 'before' } else { 'after' }
 
-# Use custom message if configured, otherwise default
+# Use custom message if configured, otherwise default to a Conventional Commit.
 if (-not $commitMsg) {
-    $commitMsg = "[Spec Kit] Auto-commit $phase $commandName"
+    $commitMsg = "chore: auto-commit $phase $commandName"
 }
 
 # Stage and commit

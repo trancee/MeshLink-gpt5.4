@@ -8,6 +8,7 @@
 - **[P]**: Can run in parallel (different files, no shared state)
 - **[Story]**: Which user story (US1, US2, US3…)
 - Include exact file paths: `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/[subsystem]/[File].kt`
+- Any human or automated commit created while executing these tasks MUST use a Conventional Commit message
 - Preserve relevant implementation and verification watchpoints from `memory-synthesis.md` in the task breakdown
 
 ## Verification Commands
