@@ -9,6 +9,8 @@ import ch.trancee.meshlink.wire.messages.KeepaliveMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessageCodec
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessageCodec
+import ch.trancee.meshlink.wire.messages.UpdateMessage
+import ch.trancee.meshlink.wire.messages.UpdateMessageCodec
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -192,6 +194,58 @@ public class WireCodecTest {
     }
 
     @Test
+    public fun encodeAndDecode_roundTripUpdateMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedDestinationPeerId: ByteArray = byteArrayOf(0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C)
+        val message = UpdateMessage(
+            destinationPeerId = expectedDestinationPeerId,
+            metric = 123,
+            seqno = 7,
+        )
+
+        // Act
+        val decoded: UpdateMessage = assertIs<UpdateMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertContentEquals(
+            expected = expectedDestinationPeerId,
+            actual = decoded.destinationPeerId,
+            message = "WireCodec should preserve the UPDATE destination peer identifier through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 123,
+            actual = decoded.metric,
+            message = "WireCodec should preserve the UPDATE metric through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 7,
+            actual = decoded.seqno,
+            message = "WireCodec should preserve the UPDATE sequence number through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesUpdateTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = UpdateMessage(
+            destinationPeerId = byteArrayOf(0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C),
+            metric = 99,
+            seqno = 5,
+        )
+        val expectedPayload: ByteArray = UpdateMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.UPDATE.code.toByte(), 0x14, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame UPDATE messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
     public fun encode_throwsWhenMessageImplementationIsNotYetSupported(): Unit {
         // Arrange
         val message: WireMessage = UnsupportedWireMessage
@@ -280,7 +334,7 @@ public class WireCodecTest {
     public fun decode_throwsWhenMessageTypeIsRecognizedButCodecIsNotYetImplemented(): Unit {
         // Arrange
         val encoded: ByteArray = byteArrayOf(
-            MessageType.UPDATE.code.toByte(),
+            MessageType.NACK.code.toByte(),
             0x00,
             0x00,
             0x00,
@@ -294,7 +348,7 @@ public class WireCodecTest {
 
         // Assert
         assertEquals(
-            expected = "WireCodec does not yet support decoding UPDATE messages.",
+            expected = "WireCodec does not yet support decoding NACK messages.",
             actual = error.message,
             message = "WireCodec should surface unsupported message types until their specific codecs are implemented",
         )

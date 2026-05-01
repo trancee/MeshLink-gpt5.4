@@ -5,6 +5,7 @@ import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessage
+import ch.trancee.meshlink.wire.messages.UpdateMessage
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -27,6 +28,11 @@ public class WireFormatTest {
                 hopCount = 1u,
                 maxHops = 4u,
                 payload = byteArrayOf(0x31, 0x32),
+            ),
+            UpdateMessage(
+                destinationPeerId = byteArrayOf(0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C),
+                metric = 77,
+                seqno = 8,
             ),
         )
 

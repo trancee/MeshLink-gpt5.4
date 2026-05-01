@@ -14,7 +14,7 @@
 
 - [x] T006 [P] Implement `Hello` encode/decode
 - [x] T007 [P] Implement `Handshake` encode/decode
-- [ ] T008 [P] Implement `Update` encode/decode (Babel routing update)
+- [x] T008 [P] Implement `Update` encode/decode (Babel routing update)
 - [ ] T009 [P] Implement `Chunk` encode/decode (transfer payload)
 - [ ] T010 [P] Implement `ChunkAck` encode/decode (SACK)
 - [ ] T011 [P] Implement `DeliveryAck` encode/decode
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-9 actionable tasks complete, 13 remain pending. Current JVM and Android host-test coverage verify at 100%.
+10 actionable tasks complete, 12 remain pending. Current JVM and Android host-test coverage verify at 100%.
