@@ -12,6 +12,7 @@ public class DeliveryPipeline(
         windowMillis = config.rateLimitWindowMillis,
         maxMessagesPerWindow = config.maxMessagesPerWindow,
     ),
+    private val cutThroughBuffer: CutThroughBuffer = CutThroughBuffer(),
 ) {
     private val nextSequenceNumbersBySender: MutableMap<String, Long> = mutableMapOf()
     private val pendingDeliveries: MutableMap<MessageIdKey, PendingDelivery> = linkedMapOf()
@@ -119,6 +120,20 @@ public class DeliveryPipeline(
                 reason = DeliveryFailureReason.TIMEOUT,
             )
         }
+    }
+
+    public fun relayChunk0(
+        chunk0: ByteArray,
+        localHopPeerId: ByteArray,
+    ): ByteArray {
+        val forwardedFrame: ByteArray = cutThroughBuffer.appendVisitedHop(
+            chunk0 = chunk0,
+            hopPeerId = localHopPeerId,
+        )
+        diagnosticSink.emit(code = DiagnosticCode.MESSAGE_SENT) {
+            DiagnosticPayload.InternalError(message = "cut-through-relay")
+        }
+        return forwardedFrame
     }
 
     public fun pendingCount(): Int {

@@ -22,11 +22,11 @@
 
 ## Phase 3: Cut-Through Relay
 
-- [ ] T013 Implement `CutThroughBuffer` (FlatBuffer byte surgery, visited_hops append)
-- [ ] T014 Wire cut-through into DeliveryPipeline relay path
-- [ ] T015 Write `CutThroughBufferTest` — byte surgery correctness
-- [ ] T016 Write `CutThroughBufferDiagnosticTest`
-- [ ] T017 Write `DeliveryPipelineCutThroughTest`
+- [x] T013 Implement `CutThroughBuffer` (FlatBuffer byte surgery, visited_hops append)
+- [x] T014 Wire cut-through into DeliveryPipeline relay path
+- [x] T015 Write `CutThroughBufferTest` — byte surgery correctness
+- [x] T016 Write `CutThroughBufferDiagnosticTest`
+- [x] T017 Write `DeliveryPipelineCutThroughTest`
 
 ## Phase 4: Integration
 
@@ -39,4 +39,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-12 actionable tasks complete, 7 remain pending.
+17 actionable tasks complete, 2 remain pending.
