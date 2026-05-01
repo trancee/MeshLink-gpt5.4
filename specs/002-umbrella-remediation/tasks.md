@@ -87,7 +87,7 @@
 - [x] T015 [P] [US1] Update iOS runtime bootstrap glue in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/engine/MeshNode.kt` and `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoBridge.kt` if needed so the real transport path and handshake lifecycle compile together.
 - [x] T016 [US1] Implement explicit L2CAP-to-GATT fallback and stale-capability handling in `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/transport/ConnectionInitiationPolicy.kt`, `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/transport/OemL2capProbeCache.kt`, `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/transport/AndroidBleTransport.kt`, and `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/transport/IosBleTransport.kt`.
 - [x] T017 [P] [US1] Extend shared transport tests in `meshlink/src/commonTest/kotlin/ch/trancee/meshlink/transport/ConnectionInitiationPolicyTest.kt` and `meshlink/src/commonTest/kotlin/ch/trancee/meshlink/transport/OemL2capProbeCacheTest.kt` for stale OEM-cache and fallback edge cases.
-- [ ] T018 [US1] Verify User Story 1 with `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:compileKotlinIosArm64 :meshlink:koverVerify`.
+- [x] T018 [US1] Verify User Story 1 with `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:compileKotlinIosArm64 :meshlink:koverVerify`.
 
 **Checkpoint**: Secure sessions are derived through real Noise XX + TrustStore flow, and platform transports no longer depend on production-time `VirtualMeshTransport` delegation.
 
