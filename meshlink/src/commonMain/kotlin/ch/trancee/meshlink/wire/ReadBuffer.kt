@@ -24,6 +24,21 @@ public class ReadBuffer(
         return b0 or (b1 shl 8) or (b2 shl 16) or (b3 shl 24)
     }
 
+    public fun readLong(): Long {
+        ensureAvailable(requiredBytes = Long.SIZE_BYTES)
+
+        val b0: Long = source[position++].toLong() and 0xFFL
+        val b1: Long = source[position++].toLong() and 0xFFL
+        val b2: Long = source[position++].toLong() and 0xFFL
+        val b3: Long = source[position++].toLong() and 0xFFL
+        val b4: Long = source[position++].toLong() and 0xFFL
+        val b5: Long = source[position++].toLong() and 0xFFL
+        val b6: Long = source[position++].toLong() and 0xFFL
+        val b7: Long = source[position++].toLong() and 0xFFL
+
+        return b0 or (b1 shl 8) or (b2 shl 16) or (b3 shl 24) or (b4 shl 32) or (b5 shl 40) or (b6 shl 48) or (b7 shl 56)
+    }
+
     public fun readBytes(length: Int): ByteArray {
         if (length < 0) {
             throw IllegalArgumentException("ReadBuffer cannot read a negative number of bytes.")

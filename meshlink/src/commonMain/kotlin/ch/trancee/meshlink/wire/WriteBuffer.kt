@@ -20,6 +20,19 @@ public class WriteBuffer(
         buffer[position++] = ((value ushr 24) and 0xFF).toByte()
     }
 
+    public fun writeLong(value: Long): Unit {
+        ensureCapacity(additionalBytes = Long.SIZE_BYTES)
+
+        buffer[position++] = (value and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 8) and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 16) and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 24) and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 32) and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 40) and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 48) and 0xFFL).toByte()
+        buffer[position++] = ((value ushr 56) and 0xFFL).toByte()
+    }
+
     public fun writeBytes(value: ByteArray): Unit {
         ensureCapacity(additionalBytes = value.size)
         value.copyInto(destination = buffer, destinationOffset = position)

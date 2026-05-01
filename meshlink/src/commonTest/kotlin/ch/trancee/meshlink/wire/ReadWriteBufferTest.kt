@@ -25,6 +25,24 @@ public class ReadWriteBufferTest {
     }
 
     @Test
+    public fun writeLongAndReadLong_roundTripLittleEndianValue(): Unit {
+        // Arrange
+        val expectedValue: Long = 0x8877665544332211uL.toLong()
+        val writeBuffer = WriteBuffer(initialCapacity = 1)
+
+        // Act
+        writeBuffer.writeLong(expectedValue)
+        val actualValue: Long = ReadBuffer(source = writeBuffer.toByteArray()).readLong()
+
+        // Assert
+        assertEquals(
+            expected = expectedValue,
+            actual = actualValue,
+            message = "ReadBuffer and WriteBuffer should round-trip Long values in little-endian order",
+        )
+    }
+
+    @Test
     public fun writeBytes_growsBufferWhenCapacityIsExceeded(): Unit {
         // Arrange
         val expectedBytes: ByteArray = byteArrayOf(0x01, 0x02, 0x03, 0x04)
