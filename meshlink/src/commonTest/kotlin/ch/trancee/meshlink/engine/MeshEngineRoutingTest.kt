@@ -80,13 +80,13 @@ public class MeshEngineRoutingTest {
     val peerId = PeerIdHex(value = "44556677")
 
     // Act
+    val firstHandshakeFrame =
+      ch.trancee.meshlink.crypto.noise
+        .NoiseXXHandshake(role = HandshakeRole.INITIATOR)
+        .createOutboundMessage(payload = byteArrayOf(0x05))
     engine.receiveInboundMessage(
       peerId = peerId,
-      message =
-        ch.trancee.meshlink.wire.messages.HandshakeMessage(
-          round = HandshakeRound.ONE,
-          payload = byteArrayOf(0x05),
-        ),
+      message = firstHandshakeFrame,
       handshakeRole = HandshakeRole.RESPONDER,
     )
 
@@ -139,13 +139,13 @@ public class MeshEngineRoutingTest {
         role = HandshakeRole.INITIATOR,
         payload = byteArrayOf(0x11),
       )
+    val responderHandshake =
+      ch.trancee.meshlink.crypto.noise.NoiseXXHandshake(role = HandshakeRole.RESPONDER)
+    responderHandshake.receiveInboundMessage(message = first)
+    val second = responderHandshake.createOutboundMessage(payload = byteArrayOf(0x12))
     engine.receiveInboundMessage(
       peerId = peerId,
-      message =
-        ch.trancee.meshlink.wire.messages.HandshakeMessage(
-          round = HandshakeRound.TWO,
-          payload = byteArrayOf(0x12),
-        ),
+      message = second,
       handshakeRole = HandshakeRole.INITIATOR,
     )
     val third = engine.continueHandshake(peerId = peerId, payload = byteArrayOf(0x13))

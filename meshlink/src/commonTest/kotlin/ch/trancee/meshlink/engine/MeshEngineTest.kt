@@ -7,8 +7,6 @@ import ch.trancee.meshlink.api.PeerIdHex
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
 import ch.trancee.meshlink.transport.VirtualMeshTransport
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
-import ch.trancee.meshlink.wire.messages.HandshakeMessage
-import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import kotlin.test.Test
@@ -194,9 +192,13 @@ public class MeshEngineTest {
       )
 
     // Act
+    val firstHandshakeFrame =
+      ch.trancee.meshlink.crypto.noise
+        .NoiseXXHandshake(role = HandshakeRole.INITIATOR)
+        .createOutboundMessage(payload = byteArrayOf(0x0E))
     engine.receiveInboundMessage(
       peerId = peerId,
-      message = HandshakeMessage(round = HandshakeRound.ONE, payload = byteArrayOf(0x0E)),
+      message = firstHandshakeFrame,
       handshakeRole = HandshakeRole.RESPONDER,
     )
 

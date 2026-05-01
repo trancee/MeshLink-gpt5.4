@@ -92,7 +92,8 @@ public class NoiseHandshakeManagerDiagnosticTest {
     manager.receiveHandshakeMessage(
       peerId = peerId,
       role = HandshakeRole.RESPONDER,
-      message = HandshakeMessage(round = HandshakeRound.ONE, payload = byteArrayOf(0x11)),
+      message =
+        HandshakeMessage(round = HandshakeRound.ONE, payload = ByteArray(size = 32) { 0x11 }),
     )
 
     // Assert
@@ -195,7 +196,8 @@ public class NoiseHandshakeManagerDiagnosticTest {
     manager.receiveHandshakeMessage(
       peerId = peerId,
       role = HandshakeRole.RESPONDER,
-      message = HandshakeMessage(round = HandshakeRound.ONE, payload = byteArrayOf(0x22)),
+      message =
+        HandshakeMessage(round = HandshakeRound.ONE, payload = ByteArray(size = 32) { 0x22 }),
     )
     manager.createOutboundMessage(peerId = peerId, payload = byteArrayOf(0x23))
 
