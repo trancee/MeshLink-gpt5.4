@@ -12,9 +12,9 @@
 ## Phase 2: L2CAP & Frame Codec
 
 - [x] T005 Implement `L2capFrameCodec` (length-prefixed frame encoding/decoding)
-- [ ] T006 [P] Implement `L2capRetryScheduler` (exponential backoff with jitter)
+- [x] T006 [P] Implement `L2capRetryScheduler` (exponential backoff with jitter)
 - [x] T007 Write `L2capFrameCodecTest`
-- [ ] T008 Write `L2capRetrySchedulerTest`
+- [x] T008 Write `L2capRetrySchedulerTest`
 
 ## Phase 3: Discovery & Connection
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-6 actionable tasks complete, 16 remain pending.
+8 actionable tasks complete, 14 remain pending.
