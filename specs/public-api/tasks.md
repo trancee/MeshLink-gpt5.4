@@ -7,7 +7,7 @@
 - [x] T001 Define `MeshLinkState` enum (UNINITIALIZED, RUNNING, PAUSED, STOPPED, RECOVERABLE, TERMINAL)
 - [x] T002 [P] Define `PeerIdHex` value class (type-safe peer identifier)
 - [x] T003 [P] Define `TrustMode` enum (TOFU, STRICT, PROMPT)
-- [ ] T004 [P] Define `RegulatoryRegion` enum with parameter clamping
+- [x] T004 [P] Define `RegulatoryRegion` enum with parameter clamping
 - [ ] T005 [P] Define `PeerState` sealed hierarchy
 - [ ] T006 [P] Define `PeerDetail` data class
 - [ ] T007 [P] Define `RoutingSnapshot` data class
@@ -25,7 +25,7 @@
 
 - [ ] T014 Implement `MeshLinkConfig` builder DSL (validation, clamping, sub-configs)
 - [ ] T015 Write `MeshLinkConfigTest` — validation, defaults, clamping
-- [ ] T016 Write `RegulatoryRegionClampingTest`
+- [x] T016 Write `RegulatoryRegionClampingTest`
 
 ## Phase 4: API Interface & Factory
 
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-4 actionable tasks complete, 21 remain pending.
+6 actionable tasks complete, 19 remain pending.
