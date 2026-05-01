@@ -115,7 +115,7 @@ swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcfr
 - [x] T034 [P] [US4] Create or refresh local quality hooks in `.githooks/pre-commit`.
 - [x] T035 [US4] Verify release artifacts with `./scripts/verify-publish.sh meshlink/build/outputs/aar meshlink/build/XCFrameworks/release`.
 - [x] T036 [US4] Verify SwiftPM checksum generation with `swift package compute-checksum meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip`.
-- [ ] T037 [US4] Run the final gate: `./gradlew :meshlink:ktfmtCheck :meshlink:detekt :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck && ./gradlew :meshlink:jvmCiBenchmark`.
+- [x] T037 [US4] Run the final gate: `./gradlew :meshlink:ktfmtCheck :meshlink:detekt :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck && ./gradlew :meshlink:jvmCiBenchmark`.
 
 **Checkpoint**: PR, release, and security gates enforce the full platform-distribution contract.
 
