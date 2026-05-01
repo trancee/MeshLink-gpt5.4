@@ -6,8 +6,8 @@
 
 - [x] T001 Define `MeshEngineConfig` (aggregate config for all subsystems)
 - [x] T002 [P] Define `HandshakeConfig` (timeout, retry settings)
-- [ ] T003 [P] Implement `PowerTierCodec` (encode/decode power tier byte)
-- [ ] T004 Write `PowerTierCodecTest`
+- [x] T003 [P] Implement `PowerTierCodec` (encode/decode power tier byte)
+- [x] T004 Write `PowerTierCodecTest`
 
 ## Phase 2: Pseudonym Rotation
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-2 actionable tasks complete, 20 remain pending.
+4 actionable tasks complete, 18 remain pending.
