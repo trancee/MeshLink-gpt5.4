@@ -10,9 +10,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -26,26 +31,12 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
-      - name: Check formatting
-        run: ./gradlew :meshlink:ktfmtCheck
-
-      - name: Run detekt
-        run: ./gradlew :meshlink:detekt
-
-      - name: Run JVM and Android host tests
-        run: ./gradlew :meshlink:jvmTest :meshlink:androidHostTest
-
-      - name: Verify coverage
-        run: ./gradlew :meshlink:koverVerify :meshlink:koverLogJvm :meshlink:koverLogAndroid
-
-      - name: Verify JVM binary compatibility
-        run: ./gradlew :meshlink:jvmApiCheck
-
-      - name: Run CI benchmark suite
-        run: ./gradlew :meshlink:jvmCiBenchmark
+      - name: Run consolidated quality gate
+        run: ./gradlew :meshlink:ciQualityGate
 
   ios-device-packaging:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -59,14 +50,8 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
-      - name: Compile iOS device target
-        run: ./gradlew :meshlink:compileKotlinIosArm64
-
-      - name: Verify full binary compatibility on macOS
-        run: ./gradlew :meshlink:apiCheck
-
-      - name: Assemble release XCFramework
-        run: ./gradlew :meshlink:assembleMeshLinkReleaseXCFramework
+      - name: Run consolidated iOS packaging gate
+        run: ./gradlew :meshlink:iosPackagingGate
 
       - name: Package XCFramework for SwiftPM validation
         run: ./scripts/package-xcframework.sh
