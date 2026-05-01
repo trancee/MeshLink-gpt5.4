@@ -3,6 +3,7 @@ import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -10,6 +11,8 @@ plugins {
     alias(libs.plugins.benchmark)
     alias(libs.plugins.kover)
 }
+
+val meshLinkXCFramework = XCFramework("MeshLink")
 
 kotlin {
     explicitApi()
@@ -56,6 +59,10 @@ kotlin {
         binaries.framework {
             baseName = "MeshLink"
             isStatic = true
+            binaryOption("bundleId", "ch.trancee.meshlink")
+            binaryOption("bundleShortVersionString", project.version.toString())
+            binaryOption("bundleVersion", "1")
+            meshLinkXCFramework.add(this)
         }
     }
 }
