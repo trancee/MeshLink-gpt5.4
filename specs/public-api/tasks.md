@@ -1,6 +1,6 @@
 # Tasks: Public API & Diagnostics
 
-**Status**: Migrated — task tracking reset; all actionable tasks pending
+**Status**: Complete — API surface, diagnostics, config DSL, factories, and stub integrations implemented
 
 ## Phase 1: Core Types
 
@@ -37,8 +37,8 @@
 
 ## Phase 5: Platform Factories
 
-- [ ] T022 [P] Implement `MeshLinkAndroidFactory` (androidMain)
-- [ ] T023 [P] Implement `MeshLinkIosFactory` (iosMain)
+- [x] T022 [P] Implement `MeshLinkAndroidFactory` (androidMain)
+- [x] T023 [P] Implement `MeshLinkIosFactory` (iosMain)
 
 ## Phase 6: Integration
 
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-23 actionable tasks complete, 2 remain pending.
+25 actionable tasks complete, 0 remain pending.
