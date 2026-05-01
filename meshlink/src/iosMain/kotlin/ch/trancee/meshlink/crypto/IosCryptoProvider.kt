@@ -200,8 +200,6 @@ public class IosCryptoProvider : CryptoProvider {
   }
 
   private fun currentDelegate(): IosCryptoDelegate {
-    return requireNotNull(IosCryptoRuntime.delegate) {
-      "IosCryptoProvider has not been configured. Install an IosCryptoDelegate before creating MeshLink on iOS."
-    }
+    return requireIosCryptoDelegate()
   }
 }

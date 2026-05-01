@@ -47,6 +47,12 @@ internal object IosCryptoRuntime {
   internal var delegate: IosCryptoDelegate? = null
 }
 
+internal fun requireIosCryptoDelegate(): IosCryptoDelegate {
+  return requireNotNull(IosCryptoRuntime.delegate) {
+    "IosCryptoProvider has not been configured. Install an IosCryptoDelegate before creating MeshLink on iOS."
+  }
+}
+
 @OptIn(ExperimentalForeignApi::class)
 internal fun ByteArray.toNSData(): NSData {
   if (isEmpty()) {
