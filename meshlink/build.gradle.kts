@@ -99,6 +99,28 @@ tasks.register("androidHostTest") {
   dependsOn("testAndroidHostTest")
 }
 
+tasks.register("ciQualityGate") {
+  group = "verification"
+  description =
+    "Runs the full Linux CI quality gate in one Gradle invocation to reduce repeated configuration overhead."
+  dependsOn(
+    "ktfmtCheck",
+    "detekt",
+    "jvmTest",
+    "androidHostTest",
+    "koverVerify",
+    "jvmApiCheck",
+    "jvmCiBenchmark",
+  )
+}
+
+tasks.register("iosPackagingGate") {
+  group = "verification"
+  description =
+    "Runs the macOS iOS packaging gate in one Gradle invocation to reduce repeated configuration overhead."
+  dependsOn("apiCheck", "assembleMeshLinkReleaseXCFramework")
+}
+
 detekt {
   buildUponDefaultConfig = true
   parallel = true
