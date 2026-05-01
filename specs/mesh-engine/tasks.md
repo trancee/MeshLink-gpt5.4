@@ -22,8 +22,8 @@
 
 ## Phase 4: State Management
 
-- [ ] T010 Implement `MeshStateManager` (periodic sweep: stale peers, expired routes)
-- [ ] T011 Write `MeshStateManagerTest`
+- [x] T010 Implement `MeshStateManager` (periodic sweep: stale peers, expired routes)
+- [x] T011 Write `MeshStateManagerTest`
 
 ## Phase 5: Engine Core
 
@@ -48,4 +48,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-7 actionable tasks complete, 15 remain pending.
+9 actionable tasks complete, 13 remain pending.
