@@ -1,6 +1,6 @@
 # Tasks: Platform & Distribution
 
-**Status**: In progress — platform actuals and distribution scaffolding partially implemented on feature branch
+**Status**: In progress — distribution scaffolding is complete; SKIE and iOS crypto remain blocked on external toolchain/platform constraints
 
 ## Phase 1: Android Platform
 
@@ -47,7 +47,7 @@
 
 - [x] T027 Configure BCV (JVM .api + KLib ABI tracking)
 - [x] T028 Run initial `apiDump` to establish baseline (supports FR-003 and SC-003)
-- [ ] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream)
+- [ ] T029 Configure SKIE for Swift interop (exhaustive enums, AsyncStream) — blocked: SKIE 0.10.11 rejects Kotlin 2.3.21 and currently supports up to 2.3.20
 - [x] T030 Create `scripts/verify-publish.sh` (supports SC-001 and FR-010 verification)
 
 ## Phase 7: Constitution & CI Alignment
@@ -56,7 +56,7 @@
 > Execution note: implement `T031` and `T032` before running `T033`; complete `T034` before considering FR-005 and SC-004 fully satisfied.
 
 - [x] T031 Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
-- [ ] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
+- [ ] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction — blocked: Kotlin/Native cinterop exposes Security functions but not the required 25519 key-type constants, and CryptoKit remains Swift-only
 - [x] T033 Verify released Android and iOS publication outputs contain no third-party crypto binaries or native crypto payloads using `scripts/verify-publish.sh`
 - [x] T034 Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005
 
