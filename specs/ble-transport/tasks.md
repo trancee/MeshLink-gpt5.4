@@ -30,8 +30,8 @@
 
 ## Phase 4: Platform Actuals
 
-- [ ] T018 [P] Implement `AndroidBleTransport` (BluetoothGatt, BluetoothLeScanner, L2CAP)
-- [ ] T019 [P] Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)
+- [x] T018 [P] Implement `AndroidBleTransport` (BluetoothGatt, BluetoothLeScanner, L2CAP)
+- [x] T019 [P] Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)
 - [ ] T020 [P] Implement `MeshLinkService` (Android foreground service for BLE)
 - [x] T021 [P] Implement `VirtualMeshTransport` (test double for integration tests)
 - [x] T022 Write `VirtualMeshTransportTest`
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-19 actionable tasks complete, 3 remain pending.
+21 actionable tasks complete, 1 remain pending.
