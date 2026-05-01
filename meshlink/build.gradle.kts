@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.benchmark)
     alias(libs.plugins.kover)
 }
 
@@ -14,7 +15,14 @@ kotlin {
     explicitApi()
     jvmToolchain(21)
 
-    jvm()
+    jvm {
+        compilations.create("benchmark") {
+            associateWith(this@jvm.compilations.getByName("main"))
+            defaultSourceSet.dependencies {
+                implementation(libs.kotlinx.benchmark.runtime)
+            }
+        }
+    }
     iosArm64()
 
     android {
@@ -46,8 +54,37 @@ kotlin {
     }
 }
 
+benchmark {
+    targets {
+        register("jvmBenchmark")
+    }
+    configurations {
+        named("main") {
+            include(".*WireFormatBenchmark.*")
+            warmups = 1
+            iterations = 3
+            iterationTime = 100
+            iterationTimeUnit = "ms"
+            mode = "avgt"
+            outputTimeUnit = "us"
+            reportFormat = "text"
+        }
+    }
+}
+
+tasks.register("jvmBenchmark") {
+    group = "verification"
+    description = "Runs the JVM benchmark suite."
+    dependsOn("jvmBenchmarkBenchmark")
+}
+
 kover {
     reports {
+        filters {
+            excludes {
+                classes("ch.trancee.meshlink.wire.WireFormatBenchmark")
+            }
+        }
         variant("jvm") {
             html {
                 title = "MeshLink JVM Coverage"

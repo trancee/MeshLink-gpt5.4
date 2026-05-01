@@ -1,6 +1,6 @@
 # Tasks: Wire Format & Codec
 
-**Status**: In progress — foundation and first Hello codec slice bootstrapped
+**Status**: Complete — codec, validation, and benchmark slices implemented
 
 ## Phase 1: Foundation
 
@@ -34,7 +34,7 @@
 
 ## Phase 4: Benchmark
 
-- [ ] T022 Add `WireFormatBenchmark` in jvmMain — encode+decode throughput
+- [x] T022 Add `WireFormatBenchmark` in jvmMain — encode+decode throughput
 
 ## Verification
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-21 actionable tasks complete, 1 remains pending. Current JVM and Android host-test coverage verify at 100%.
+All 22 actionable tasks complete. JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` runs the WireFormatBenchmark suite.
