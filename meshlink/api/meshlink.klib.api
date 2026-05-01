@@ -320,6 +320,18 @@ abstract interface ch.trancee.meshlink.crypto/CryptoProvider { // ch.trancee.mes
     abstract fun x25519(kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // ch.trancee.meshlink.crypto/CryptoProvider.x25519|x25519(kotlin.ByteArray;kotlin.ByteArray){}[0]
 }
 
+abstract interface ch.trancee.meshlink.crypto/IosCryptoDelegate { // ch.trancee.meshlink.crypto/IosCryptoDelegate|null[0]
+    abstract fun chaCha20Poly1305Decrypt(platform.Foundation/NSData, platform.Foundation/NSData, platform.Foundation/NSData, platform.Foundation/NSData): platform.Foundation/NSData? // ch.trancee.meshlink.crypto/IosCryptoDelegate.chaCha20Poly1305Decrypt|chaCha20Poly1305Decrypt(platform.Foundation.NSData;platform.Foundation.NSData;platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+    abstract fun chaCha20Poly1305Encrypt(platform.Foundation/NSData, platform.Foundation/NSData, platform.Foundation/NSData, platform.Foundation/NSData): platform.Foundation/NSData? // ch.trancee.meshlink.crypto/IosCryptoDelegate.chaCha20Poly1305Encrypt|chaCha20Poly1305Encrypt(platform.Foundation.NSData;platform.Foundation.NSData;platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+    abstract fun ed25519Sign(platform.Foundation/NSData, platform.Foundation/NSData): platform.Foundation/NSData? // ch.trancee.meshlink.crypto/IosCryptoDelegate.ed25519Sign|ed25519Sign(platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+    abstract fun ed25519Verify(platform.Foundation/NSData, platform.Foundation/NSData, platform.Foundation/NSData): kotlin/Boolean // ch.trancee.meshlink.crypto/IosCryptoDelegate.ed25519Verify|ed25519Verify(platform.Foundation.NSData;platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+    abstract fun generateEd25519KeyPair(): ch.trancee.meshlink.crypto/IosCryptoKeyPair? // ch.trancee.meshlink.crypto/IosCryptoDelegate.generateEd25519KeyPair|generateEd25519KeyPair(){}[0]
+    abstract fun generateX25519KeyPair(): ch.trancee.meshlink.crypto/IosCryptoKeyPair? // ch.trancee.meshlink.crypto/IosCryptoDelegate.generateX25519KeyPair|generateX25519KeyPair(){}[0]
+    abstract fun hkdfSha256(platform.Foundation/NSData, platform.Foundation/NSData, platform.Foundation/NSData, kotlin/Int): platform.Foundation/NSData? // ch.trancee.meshlink.crypto/IosCryptoDelegate.hkdfSha256|hkdfSha256(platform.Foundation.NSData;platform.Foundation.NSData;platform.Foundation.NSData;kotlin.Int){}[0]
+    abstract fun hmacSha256(platform.Foundation/NSData, platform.Foundation/NSData): platform.Foundation/NSData? // ch.trancee.meshlink.crypto/IosCryptoDelegate.hmacSha256|hmacSha256(platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+    abstract fun x25519(platform.Foundation/NSData, platform.Foundation/NSData): platform.Foundation/NSData? // ch.trancee.meshlink.crypto/IosCryptoDelegate.x25519|x25519(platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+}
+
 abstract interface ch.trancee.meshlink.power/BatteryMonitor { // ch.trancee.meshlink.power/BatteryMonitor|null[0]
     abstract fun batteryPercent(): kotlin/Int // ch.trancee.meshlink.power/BatteryMonitor.batteryPercent|batteryPercent(){}[0]
 }
@@ -1014,8 +1026,27 @@ final class ch.trancee.meshlink.crypto/Identity { // ch.trancee.meshlink.crypto/
     }
 }
 
-final class ch.trancee.meshlink.crypto/IosCryptoProvider : ch.trancee.meshlink.crypto/UnsupportedCryptoProvider { // ch.trancee.meshlink.crypto/IosCryptoProvider|null[0]
+final class ch.trancee.meshlink.crypto/IosCryptoKeyPair { // ch.trancee.meshlink.crypto/IosCryptoKeyPair|null[0]
+    constructor <init>(platform.Foundation/NSData, platform.Foundation/NSData) // ch.trancee.meshlink.crypto/IosCryptoKeyPair.<init>|<init>(platform.Foundation.NSData;platform.Foundation.NSData){}[0]
+
+    final val publicKey // ch.trancee.meshlink.crypto/IosCryptoKeyPair.publicKey|{}publicKey[0]
+        final fun <get-publicKey>(): platform.Foundation/NSData // ch.trancee.meshlink.crypto/IosCryptoKeyPair.publicKey.<get-publicKey>|<get-publicKey>(){}[0]
+    final val secretKey // ch.trancee.meshlink.crypto/IosCryptoKeyPair.secretKey|{}secretKey[0]
+        final fun <get-secretKey>(): platform.Foundation/NSData // ch.trancee.meshlink.crypto/IosCryptoKeyPair.secretKey.<get-secretKey>|<get-secretKey>(){}[0]
+}
+
+final class ch.trancee.meshlink.crypto/IosCryptoProvider : ch.trancee.meshlink.crypto/CryptoProvider { // ch.trancee.meshlink.crypto/IosCryptoProvider|null[0]
     constructor <init>() // ch.trancee.meshlink.crypto/IosCryptoProvider.<init>|<init>(){}[0]
+
+    final fun chaCha20Poly1305Decrypt(kotlin/ByteArray, kotlin/ByteArray, kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // ch.trancee.meshlink.crypto/IosCryptoProvider.chaCha20Poly1305Decrypt|chaCha20Poly1305Decrypt(kotlin.ByteArray;kotlin.ByteArray;kotlin.ByteArray;kotlin.ByteArray){}[0]
+    final fun chaCha20Poly1305Encrypt(kotlin/ByteArray, kotlin/ByteArray, kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // ch.trancee.meshlink.crypto/IosCryptoProvider.chaCha20Poly1305Encrypt|chaCha20Poly1305Encrypt(kotlin.ByteArray;kotlin.ByteArray;kotlin.ByteArray;kotlin.ByteArray){}[0]
+    final fun ed25519Sign(kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // ch.trancee.meshlink.crypto/IosCryptoProvider.ed25519Sign|ed25519Sign(kotlin.ByteArray;kotlin.ByteArray){}[0]
+    final fun ed25519Verify(kotlin/ByteArray, kotlin/ByteArray, kotlin/ByteArray): kotlin/Boolean // ch.trancee.meshlink.crypto/IosCryptoProvider.ed25519Verify|ed25519Verify(kotlin.ByteArray;kotlin.ByteArray;kotlin.ByteArray){}[0]
+    final fun generateEd25519KeyPair(): ch.trancee.meshlink.crypto/KeyPair // ch.trancee.meshlink.crypto/IosCryptoProvider.generateEd25519KeyPair|generateEd25519KeyPair(){}[0]
+    final fun generateX25519KeyPair(): ch.trancee.meshlink.crypto/KeyPair // ch.trancee.meshlink.crypto/IosCryptoProvider.generateX25519KeyPair|generateX25519KeyPair(){}[0]
+    final fun hkdfSha256(kotlin/ByteArray, kotlin/ByteArray, kotlin/ByteArray, kotlin/Int): kotlin/ByteArray // ch.trancee.meshlink.crypto/IosCryptoProvider.hkdfSha256|hkdfSha256(kotlin.ByteArray;kotlin.ByteArray;kotlin.ByteArray;kotlin.Int){}[0]
+    final fun hmacSha256(kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // ch.trancee.meshlink.crypto/IosCryptoProvider.hmacSha256|hmacSha256(kotlin.ByteArray;kotlin.ByteArray){}[0]
+    final fun x25519(kotlin/ByteArray, kotlin/ByteArray): kotlin/ByteArray // ch.trancee.meshlink.crypto/IosCryptoProvider.x25519|x25519(kotlin.ByteArray;kotlin.ByteArray){}[0]
 }
 
 final class ch.trancee.meshlink.crypto/KeyPair { // ch.trancee.meshlink.crypto/KeyPair|null[0]
@@ -2471,6 +2502,7 @@ final object ch.trancee.meshlink.api/MeshLink { // ch.trancee.meshlink.api/MeshL
 final object ch.trancee.meshlink.api/MeshLinkIosFactory { // ch.trancee.meshlink.api/MeshLinkIosFactory|null[0]
     final fun create(): ch.trancee.meshlink.api/MeshLinkApi // ch.trancee.meshlink.api/MeshLinkIosFactory.create|create(){}[0]
     final fun create(ch.trancee.meshlink.api/MeshLinkConfig): ch.trancee.meshlink.api/MeshLinkApi // ch.trancee.meshlink.api/MeshLinkIosFactory.create|create(ch.trancee.meshlink.api.MeshLinkConfig){}[0]
+    final fun installCryptoDelegate(ch.trancee.meshlink.crypto/IosCryptoDelegate) // ch.trancee.meshlink.api/MeshLinkIosFactory.installCryptoDelegate|installCryptoDelegate(ch.trancee.meshlink.crypto.IosCryptoDelegate){}[0]
 }
 
 final object ch.trancee.meshlink.api/NoOpDiagnosticSink : ch.trancee.meshlink.api/DiagnosticSink { // ch.trancee.meshlink.api/NoOpDiagnosticSink|null[0]

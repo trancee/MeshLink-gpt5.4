@@ -22,6 +22,28 @@ Do not bump Kotlin independently of SKIE compatibility on this repo's iOS-distri
 **Where to look next**
 `gradle/libs.versions.toml`, `build.gradle.kts`, `meshlink/build.gradle.kts`, `specs/platform-distribution/tasks.md`
 
+### 2026-05-01 - Implement iOS crypto through a Swift-installed delegate bridge
+**Status**
+Active
+
+**Why this is durable**
+CryptoKit is Swift-only while the shared MeshLink crypto surface is defined in Kotlin, so iOS crypto needs a stable bridging pattern rather than ad hoc direct interop attempts.
+
+**Decision**
+Implement `IosCryptoProvider` as a Kotlin adapter behind `CryptoProvider` that delegates to a Swift-installed `IosCryptoDelegate` using `NSData` payloads. Keep the real cryptography in Apple-native Swift code and install the delegate through `MeshLinkIosFactory` before creating the API.
+
+**Tradeoffs**
+This keeps released artifacts constitution-compliant and lets Swift use CryptoKit directly, but it introduces a required iOS bootstrap step before MeshLink can be used.
+
+**Future mistake prevented**
+Do not try to force direct Kotlin/Native use of Swift-only CryptoKit APIs or reintroduce third-party crypto binaries just to satisfy the iOS implementation.
+
+**Evidence**
+`IosCryptoProvider` now compiles, the KLib API baseline was updated, full verification passes, and the generated iOS framework exports the delegate bridge plus SKIE-enhanced Swift wrappers.
+
+**Where to look next**
+`meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoBridge.kt`, `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt`, `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/api/MeshLinkIosFactory.kt`, `docs/ios-crypto-bridge.md`
+
 ## Template
 ### YYYY-MM-DD - Decision title
 **Status**

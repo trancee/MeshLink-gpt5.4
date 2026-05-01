@@ -1,6 +1,6 @@
 # Tasks: Platform & Distribution
 
-**Status**: In progress — distribution scaffolding and SKIE interop are complete; iOS crypto remains blocked on platform interop constraints
+**Status**: Complete — platform actuals, distribution scaffolding, SKIE interop, and crypto packaging verification are implemented
 
 ## Phase 1: Android Platform
 
@@ -56,7 +56,7 @@
 > Execution note: implement `T031` and `T032` before running `T033`; complete `T034` before considering FR-005 and SC-004 fully satisfied.
 
 - [x] T031 Implement constitution-compliant `AndroidCryptoProvider` in `meshlink/src/androidMain/kotlin/ch/trancee/meshlink/crypto/AndroidCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
-- [ ] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction — blocked: Kotlin/Native cinterop exposes Security functions but not the required 25519 key-type constants, and CryptoKit remains Swift-only
+- [x] T032 [P] Implement constitution-compliant `IosCryptoProvider` in `meshlink/src/iosMain/kotlin/ch/trancee/meshlink/crypto/IosCryptoProvider.kt` behind the project-owned `CryptoProvider` abstraction
 - [x] T033 Verify released Android and iOS publication outputs contain no third-party crypto binaries or native crypto payloads using `scripts/verify-publish.sh`
 - [x] T034 Verify `ci.yml` runs the CI-shortened benchmark suite required by FR-005
 
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 26 of the 27 actionable tasks are now complete while 1 remains pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and all 27 actionable tasks are now complete.
