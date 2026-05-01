@@ -23,10 +23,10 @@
 - [ ] T011 [P] Implement `MeshHashFilter` (advertisement dedup)
 - [ ] T012 [P] Implement `OemL2capProbeCache` (device model → capability cache)
 - [ ] T013 [P] Implement `OemSlotTracker` (advertisement slot management)
-- [ ] T014 [P] Implement `WriteLatencyTracker`
+- [x] T014 [P] Implement `WriteLatencyTracker`
 - [x] T015 Write `AdvertisementCodecTest`, `ConnectionInitiationPolicyTest`
 - [ ] T016 Write `MeshHashFilterTest`, `OemL2capProbeCacheTest`, `OemSlotTrackerTest`
-- [ ] T017 Write `WriteLatencyTrackerTest`
+- [x] T017 Write `WriteLatencyTrackerTest`
 
 ## Phase 4: Platform Actuals
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify
 ```
 
-11 actionable tasks complete, 11 remain pending.
+13 actionable tasks complete, 9 remain pending.
