@@ -10,7 +10,7 @@
 - [x] ~~[REMOVED] T004 [P] Build JNI bridge — `scripts/build-android-jni.sh`~~ — removed because the JNI bridge was only required for the deprecated external crypto packaging path
 - [x] T005 Implement `AndroidBleTransport` (BluetoothGatt, L2CAP, scanning, advertising)
 - [x] T006 [P] Implement `MeshLinkService` (foreground service for background BLE)
-- [ ] T007 [P] Implement `AndroidSecureStorage` (DataStore preferences)
+- [x] T007 [P] Implement `AndroidSecureStorage` (DataStore preferences)
 - [x] T008 Implement `MeshLinkAndroidFactory` (wires all Android actuals)
 
 ## Phase 2: iOS Platform
@@ -19,8 +19,8 @@
 - [x] ~~[REMOVED] T010 Create `libsodium.def` cinterop definition~~ — removed to align with the constitution ban on shipping external crypto libraries
 - [x] ~~[REMOVED] T011 Implement `IosCryptoProvider` (libsodium cinterop)~~ — removed to align with the constitution ban on shipping external crypto libraries
 - [x] T012 Implement `IosBleTransport` (CBCentralManager, CBPeripheralManager, CBL2CAPChannel)
-- [ ] T013 [P] Implement `IosSecureStorage`
-- [ ] T014 [P] Implement `MeshNode` (iOS-specific helper)
+- [x] T013 [P] Implement `IosSecureStorage`
+- [x] T014 [P] Implement `MeshNode` (iOS-specific helper)
 - [x] T015 Implement `MeshLinkIosFactory`
 
 ## Phase 3: JVM Infrastructure
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 10 of the 27 actionable tasks are now complete while 17 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 13 of the 27 actionable tasks are now complete while 14 remain pending.
