@@ -17,9 +17,9 @@
 
 - [x] T009 Define `DiagnosticCode` enum (26 codes with severity levels)
 - [x] T010 [P] Define `DiagnosticPayload` sealed hierarchy (typed payloads)
-- [ ] T011 Implement `DiagnosticSink` (SharedFlow ring buffer, DROP_OLDEST, lazy eval)
-- [ ] T012 [P] Implement `NoOpDiagnosticSink` (zero-overhead opt-out)
-- [ ] T013 Write `DiagnosticSinkTest`
+- [x] T011 Implement `DiagnosticSink` (SharedFlow ring buffer, DROP_OLDEST, lazy eval)
+- [x] T012 [P] Implement `NoOpDiagnosticSink` (zero-overhead opt-out)
+- [x] T013 Write `DiagnosticSinkTest`
 
 ## Phase 3: Configuration
 
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-13 actionable tasks complete, 12 remain pending.
+16 actionable tasks complete, 9 remain pending.

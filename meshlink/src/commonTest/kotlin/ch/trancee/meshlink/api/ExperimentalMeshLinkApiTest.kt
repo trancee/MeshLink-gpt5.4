@@ -9,8 +9,8 @@ public class ExperimentalMeshLinkApiTest {
     public fun annotation_declaresBinaryRetentionAndExpectedTargets(): Unit {
         // Arrange
         val annotationClass = ExperimentalMeshLinkApi::class.java
-        val retention: Retention = annotationClass.getAnnotation(Retention::class.java)
-        val target: Target = annotationClass.getAnnotation(Target::class.java)
+        val retention: Retention = requireNotNull(annotationClass.getAnnotation(Retention::class.java))
+        val target: Target = requireNotNull(annotationClass.getAnnotation(Target::class.java))
 
         // Act
         val actualRetention: AnnotationRetention = retention.value
