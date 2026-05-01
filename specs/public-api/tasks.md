@@ -11,7 +11,7 @@
 - [ ] T005 [P] Define `PeerState` sealed hierarchy
 - [ ] T006 [P] Define `PeerDetail` data class
 - [ ] T007 [P] Define `RoutingSnapshot` data class
-- [ ] T008 [P] Define `ExperimentalMeshLinkApi` opt-in annotation
+- [x] T008 [P] Define `ExperimentalMeshLinkApi` opt-in annotation
 
 ## Phase 2: Diagnostic System
 
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-6 actionable tasks complete, 19 remain pending.
+7 actionable tasks complete, 18 remain pending.
