@@ -52,7 +52,7 @@
 
 - [ ] T029 [P] Implement `AndroidCryptoProvider` (libsodium JNI via SodiumJni)
 - [ ] T030 [P] Implement `IosCryptoProvider` (libsodium cinterop)
-- [ ] T031 [P] Implement `JvmCryptoProvider` (JDK shim for test infrastructure)
+- [x] T031 [P] Implement `JvmCryptoProvider` (JDK shim for test infrastructure)
 
 ## Verification
 
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-23 actionable tasks complete, 8 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+24 actionable tasks complete, 7 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.

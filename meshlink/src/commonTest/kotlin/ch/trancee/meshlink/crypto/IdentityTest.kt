@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 public class IdentityTest {
     @Test
@@ -52,20 +53,25 @@ public class IdentityTest {
     }
 
     @Test
-    public fun generate_throwsWhenDefaultProviderBackendIsNotYetImplemented(): Unit {
+    public fun generate_usesDefaultProviderWhenAvailableOrThrowsHelpfulPlaceholderError(): Unit {
         // Arrange
         
         // Act
-        val error = assertFailsWith<UnsupportedOperationException> {
-            Identity.generate()
-        }
+        val result: Result<Identity> = runCatching { Identity.generate() }
 
         // Assert
-        assertEquals(
-            expected = "CryptoProviderFactory has not been wired to a platform crypto backend yet.",
-            actual = error.message,
-            message = "Identity.generate should surface the missing platform crypto backend when called with the default provider",
-        )
+        if (result.isSuccess) {
+            val identity: Identity = result.getOrThrow()
+            assertEquals(expected = Identity.PUBLIC_KEY_SIZE, actual = identity.publicKey.size)
+            assertEquals(expected = Identity.SECRET_KEY_SIZE, actual = identity.secretKey.size)
+            assertTrue(actual = identity.keyHash.isNotEmpty())
+        } else {
+            assertEquals(
+                expected = "CryptoProviderFactory has not been wired to a platform crypto backend yet.",
+                actual = result.exceptionOrNull()?.message,
+                message = "Identity.generate should surface the missing platform crypto backend when the current platform has no provider",
+            )
+        }
     }
 
     @Test

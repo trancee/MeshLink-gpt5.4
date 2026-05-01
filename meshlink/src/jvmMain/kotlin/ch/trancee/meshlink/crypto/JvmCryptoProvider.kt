@@ -6,17 +6,32 @@ import java.security.KeyPairGenerator
 import java.security.Signature
 import java.security.interfaces.EdECPrivateKey
 import java.security.interfaces.EdECPublicKey
+import java.security.interfaces.XECPrivateKey
+import java.security.interfaces.XECPublicKey
 import java.security.spec.EdECPoint
 import java.security.spec.EdECPrivateKeySpec
 import java.security.spec.EdECPublicKeySpec
 import java.security.spec.NamedParameterSpec
+import java.security.spec.XECPrivateKeySpec
+import java.security.spec.XECPublicKeySpec
 import javax.crypto.Cipher
+import javax.crypto.KeyAgreement
 import javax.crypto.Mac
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 public class JvmCryptoProvider : CryptoProvider {
-    override fun generateX25519KeyPair(): KeyPair = unsupported()
+    override fun generateX25519KeyPair(): KeyPair {
+        val generator = KeyPairGenerator.getInstance("X25519")
+        val keyPair = generator.generateKeyPair()
+        return KeyPair(
+            publicKey = toLittleEndian(
+                value = (keyPair.public as XECPublicKey).u,
+                size = X25519_KEY_SIZE,
+            ),
+            secretKey = (keyPair.private as XECPrivateKey).scalar.get(),
+        )
+    }
 
     override fun generateEd25519KeyPair(): KeyPair {
         val generator = KeyPairGenerator.getInstance("Ed25519")
@@ -32,7 +47,27 @@ public class JvmCryptoProvider : CryptoProvider {
     override fun x25519(
         privateKey: ByteArray,
         publicKey: ByteArray,
-    ): ByteArray = unsupported()
+    ): ByteArray {
+        require(privateKey.size == X25519_KEY_SIZE) {
+            "X25519 privateKey must be exactly $X25519_KEY_SIZE bytes."
+        }
+        require(publicKey.size == X25519_KEY_SIZE) {
+            "X25519 publicKey must be exactly $X25519_KEY_SIZE bytes."
+        }
+        val keyFactory = KeyFactory.getInstance("X25519")
+        val privateKeySpec = XECPrivateKeySpec(
+            NamedParameterSpec.X25519,
+            privateKey,
+        )
+        val publicKeySpec = XECPublicKeySpec(
+            NamedParameterSpec.X25519,
+            fromLittleEndian(bytes = publicKey),
+        )
+        val agreement = KeyAgreement.getInstance("X25519")
+        agreement.init(keyFactory.generatePrivate(privateKeySpec))
+        agreement.doPhase(keyFactory.generatePublic(publicKeySpec), true)
+        return agreement.generateSecret()
+    }
 
     override fun ed25519Sign(
         privateKey: ByteArray,
@@ -197,14 +232,11 @@ public class JvmCryptoProvider : CryptoProvider {
         return BigInteger(bigEndian)
     }
 
-    private fun <T> unsupported(): T {
-        throw UnsupportedOperationException("JvmCryptoProvider primitive is not implemented yet.")
-    }
-
     public companion object {
         private const val HASH_OUTPUT_SIZE: Int = 32
         private const val CHACHA20_KEY_SIZE: Int = 32
         private const val CHACHA20_NONCE_SIZE: Int = 12
+        private const val X25519_KEY_SIZE: Int = 32
         private val BIG_INTEGER_255: BigInteger = BigInteger.valueOf(0xFF)
     }
 }

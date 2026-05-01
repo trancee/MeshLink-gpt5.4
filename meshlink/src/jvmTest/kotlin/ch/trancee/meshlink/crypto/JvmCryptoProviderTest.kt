@@ -10,6 +10,88 @@ import kotlin.test.assertTrue
 
 public class JvmCryptoProviderTest {
     @Test
+    public fun generateX25519KeyPair_returnsExpectedKeyLengths(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val actual: KeyPair = provider.generateX25519KeyPair()
+
+        // Assert
+        assertEquals(
+            expected = 32,
+            actual = actual.publicKey.size,
+            message = "JvmCryptoProvider should expose raw 32-byte X25519 public keys",
+        )
+        assertEquals(
+            expected = 32,
+            actual = actual.secretKey.size,
+            message = "JvmCryptoProvider should expose raw 32-byte X25519 private keys",
+        )
+    }
+
+    @Test
+    public fun x25519_generatesMatchingSharedSecretsForBothPeers(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+        val left: KeyPair = provider.generateX25519KeyPair()
+        val right: KeyPair = provider.generateX25519KeyPair()
+
+        // Act
+        val leftSharedSecret: ByteArray = provider.x25519(
+            privateKey = left.secretKey,
+            publicKey = right.publicKey,
+        )
+        val rightSharedSecret: ByteArray = provider.x25519(
+            privateKey = right.secretKey,
+            publicKey = left.publicKey,
+        )
+
+        // Assert
+        assertContentEquals(
+            expected = leftSharedSecret,
+            actual = rightSharedSecret,
+            message = "JvmCryptoProvider should derive the same X25519 shared secret for both peers",
+        )
+    }
+
+    @Test
+    public fun x25519_throwsWhenPrivateKeyLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.x25519(privateKey = byteArrayOf(0x01), publicKey = ByteArray(size = 32))
+        }
+
+        // Assert
+        assertEquals(
+            expected = "X25519 privateKey must be exactly 32 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed X25519 private keys",
+        )
+    }
+
+    @Test
+    public fun x25519_throwsWhenPublicKeyLengthIsInvalid(): Unit {
+        // Arrange
+        val provider = JvmCryptoProvider()
+
+        // Act
+        val error = assertFailsWith<IllegalArgumentException> {
+            provider.x25519(privateKey = ByteArray(size = 32), publicKey = byteArrayOf(0x01))
+        }
+
+        // Assert
+        assertEquals(
+            expected = "X25519 publicKey must be exactly 32 bytes.",
+            actual = error.message,
+            message = "JvmCryptoProvider should reject malformed X25519 public keys",
+        )
+    }
+
+    @Test
     public fun generateEd25519KeyPair_returnsExpectedKeyLengths(): Unit {
         // Arrange
         val provider = JvmCryptoProvider()
@@ -381,17 +463,9 @@ public class JvmCryptoProviderTest {
         val provider = JvmCryptoProvider()
 
         // Act
-        val generateX25519Error = assertFailsWith<UnsupportedOperationException> {
-            provider.generateX25519KeyPair()
-        }
-        val x25519Error = assertFailsWith<UnsupportedOperationException> {
-            provider.x25519(privateKey = byteArrayOf(0x01), publicKey = byteArrayOf(0x02))
-        }
 
         // Assert
         val expectedMessage = "JvmCryptoProvider primitive is not implemented yet."
-        assertEquals(expected = expectedMessage, actual = generateX25519Error.message)
-        assertEquals(expected = expectedMessage, actual = x25519Error.message)
     }
 
     private fun hex(value: String): ByteArray {
