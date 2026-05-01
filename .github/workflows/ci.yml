@@ -38,8 +38,8 @@ jobs:
       - name: Verify coverage
         run: ./gradlew :meshlink:koverVerify :meshlink:koverLogJvm :meshlink:koverLogAndroid
 
-      - name: Verify binary compatibility
-        run: ./gradlew :meshlink:apiCheck
+      - name: Verify JVM binary compatibility
+        run: ./gradlew :meshlink:jvmApiCheck
 
       - name: Run CI benchmark suite
         run: ./gradlew :meshlink:jvmCiBenchmark
@@ -61,6 +61,9 @@ jobs:
 
       - name: Compile iOS device target
         run: ./gradlew :meshlink:compileKotlinIosArm64
+
+      - name: Verify full binary compatibility on macOS
+        run: ./gradlew :meshlink:apiCheck
 
       - name: Assemble release XCFramework
         run: ./gradlew :meshlink:assembleMeshLinkReleaseXCFramework
