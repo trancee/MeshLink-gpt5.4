@@ -15,7 +15,7 @@
 
 ## Phase 2: Diagnostic System
 
-- [ ] T009 Define `DiagnosticCode` enum (26 codes with severity levels)
+- [x] T009 Define `DiagnosticCode` enum (26 codes with severity levels)
 - [ ] T010 [P] Define `DiagnosticPayload` sealed hierarchy (typed payloads)
 - [ ] T011 Implement `DiagnosticSink` (SharedFlow ring buffer, DROP_OLDEST, lazy eval)
 - [ ] T012 [P] Implement `NoOpDiagnosticSink` (zero-overhead opt-out)
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-11 actionable tasks complete, 14 remain pending.
+12 actionable tasks complete, 13 remain pending.

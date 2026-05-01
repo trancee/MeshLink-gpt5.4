@@ -1,0 +1,32 @@
+package ch.trancee.meshlink.api
+
+public enum class DiagnosticCode(
+    public val severity: DiagnosticSeverity,
+) {
+    ENGINE_STARTED(DiagnosticSeverity.INFO),
+    ENGINE_STOPPED(DiagnosticSeverity.INFO),
+    ENGINE_PAUSED(DiagnosticSeverity.INFO),
+    ENGINE_RESUMED(DiagnosticSeverity.INFO),
+    HANDSHAKE_STARTED(DiagnosticSeverity.DEBUG),
+    HANDSHAKE_SUCCEEDED(DiagnosticSeverity.INFO),
+    HANDSHAKE_FAILED(DiagnosticSeverity.ERROR),
+    PEER_DISCOVERED(DiagnosticSeverity.INFO),
+    PEER_LOST(DiagnosticSeverity.WARN),
+    ROUTE_ADDED(DiagnosticSeverity.DEBUG),
+    ROUTE_REMOVED(DiagnosticSeverity.INFO),
+    MESSAGE_SENT(DiagnosticSeverity.DEBUG),
+    MESSAGE_DELIVERED(DiagnosticSeverity.INFO),
+    MESSAGE_FAILED(DiagnosticSeverity.ERROR),
+    TRANSFER_STARTED(DiagnosticSeverity.INFO),
+    TRANSFER_PROGRESS(DiagnosticSeverity.DEBUG),
+    TRANSFER_COMPLETED(DiagnosticSeverity.INFO),
+    TRANSFER_FAILED(DiagnosticSeverity.ERROR),
+    POWER_TIER_CHANGED(DiagnosticSeverity.INFO),
+    RADIO_DISABLED(DiagnosticSeverity.WARN),
+    RADIO_RESTORED(DiagnosticSeverity.INFO),
+    BUFFER_PRESSURE(DiagnosticSeverity.WARN),
+    SECURITY_WARNING(DiagnosticSeverity.WARN),
+    IDENTITY_ROTATED(DiagnosticSeverity.INFO),
+    DROPPED_EVENTS(DiagnosticSeverity.WARN),
+    INTERNAL_ERROR(DiagnosticSeverity.ERROR),
+}
