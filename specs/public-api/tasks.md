@@ -23,8 +23,8 @@
 
 ## Phase 3: Configuration
 
-- [ ] T014 Implement `MeshLinkConfig` builder DSL (validation, clamping, sub-configs)
-- [ ] T015 Write `MeshLinkConfigTest` — validation, defaults, clamping
+- [x] T014 Implement `MeshLinkConfig` builder DSL (validation, clamping, sub-configs)
+- [x] T015 Write `MeshLinkConfigTest` — validation, defaults, clamping
 - [x] T016 Write `RegulatoryRegionClampingTest`
 
 ## Phase 4: API Interface & Factory
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-16 actionable tasks complete, 9 remain pending.
+18 actionable tasks complete, 7 remain pending.
