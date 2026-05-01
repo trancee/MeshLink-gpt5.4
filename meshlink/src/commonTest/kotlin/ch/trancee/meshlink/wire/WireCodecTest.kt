@@ -5,6 +5,8 @@ import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.HandshakeMessageCodec
 import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.HelloMessageCodec
+import ch.trancee.meshlink.wire.messages.KeepaliveMessage
+import ch.trancee.meshlink.wire.messages.KeepaliveMessageCodec
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -100,6 +102,38 @@ public class WireCodecTest {
             expected = byteArrayOf(MessageType.HANDSHAKE.code.toByte(), 0x03, 0x00, 0x00, 0x00) + expectedPayload,
             actual = encoded,
             message = "WireCodec should frame HANDSHAKE messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripKeepaliveMessageThroughDispatcher(): Unit {
+        // Arrange
+        val message = KeepaliveMessage
+
+        // Act
+        val decoded: KeepaliveMessage = assertIs<KeepaliveMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertEquals(
+            expected = KeepaliveMessage,
+            actual = decoded,
+            message = "WireCodec should preserve KEEPALIVE through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesKeepaliveTypeAndZeroLengthPayload(): Unit {
+        // Arrange
+        val expectedPayload: ByteArray = KeepaliveMessageCodec.encode()
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = KeepaliveMessage)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.KEEPALIVE.code.toByte(), 0x00, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame KEEPALIVE messages with a zero-length payload",
         )
     }
 

@@ -1,0 +1,11 @@
+package ch.trancee.meshlink.wire
+
+public enum class ValidationFailureCode {
+    TRUNCATED_HEADER,
+    UNKNOWN_MESSAGE_TYPE,
+    NEGATIVE_PAYLOAD_LENGTH,
+    PAYLOAD_LENGTH_MISMATCH,
+    PAYLOAD_EXCEEDS_MAX_SIZE,
+    HELLO_PAYLOAD_SIZE_INVALID,
+    HANDSHAKE_PAYLOAD_TOO_SHORT,
+}

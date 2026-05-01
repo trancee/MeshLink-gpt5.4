@@ -21,14 +21,20 @@ public class ValidationResultTest {
     }
 
     @Test
-    public fun invalid_retainsFailureReason(): Unit {
+    public fun invalid_retainsFailureCodeAndReason(): Unit {
         // Arrange
+        val expectedCode: ValidationFailureCode = ValidationFailureCode.PAYLOAD_EXCEEDS_MAX_SIZE
         val expectedReason: String = "payload too large"
 
         // Act
-        val actual = ValidationResult.Invalid(reason = expectedReason)
+        val actual = ValidationResult.Invalid(code = expectedCode, reason = expectedReason)
 
         // Assert
+        assertEquals(
+            expected = expectedCode,
+            actual = actual.code,
+            message = "ValidationResult.Invalid should retain the failure code",
+        )
         assertEquals(
             expected = expectedReason,
             actual = actual.reason,

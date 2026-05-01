@@ -19,7 +19,7 @@
 - [ ] T010 [P] Implement `ChunkAck` encode/decode (SACK)
 - [ ] T011 [P] Implement `DeliveryAck` encode/decode
 - [ ] T012 [P] Implement `Nack` encode/decode
-- [ ] T013 [P] Implement `Keepalive` encode/decode
+- [x] T013 [P] Implement `Keepalive` encode/decode
 - [ ] T014 [P] Implement `Broadcast` encode/decode
 - [ ] T015 [P] Implement `RoutedMessage` encode/decode
 - [ ] T016 [P] Implement `ResumeRequest` encode/decode
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-7 actionable tasks complete, 15 remain pending. Current JVM and Android host-test coverage verify at 100%.
+8 actionable tasks complete, 14 remain pending. Current JVM and Android host-test coverage verify at 100%.

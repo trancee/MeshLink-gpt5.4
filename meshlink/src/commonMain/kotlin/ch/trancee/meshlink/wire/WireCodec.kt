@@ -4,6 +4,8 @@ import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeMessageCodec
 import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.HelloMessageCodec
+import ch.trancee.meshlink.wire.messages.KeepaliveMessage
+import ch.trancee.meshlink.wire.messages.KeepaliveMessageCodec
 
 public object WireCodec {
     private const val HEADER_SIZE: Int = 1 + Int.SIZE_BYTES
@@ -20,6 +22,10 @@ public object WireCodec {
             is HandshakeMessage -> {
                 frameType = MessageType.HANDSHAKE
                 payload = HandshakeMessageCodec.encode(message = message)
+            }
+            is KeepaliveMessage -> {
+                frameType = MessageType.KEEPALIVE
+                payload = KeepaliveMessageCodec.encode(message = message)
             }
             else -> throw UnsupportedOperationException(
                 "WireCodec does not yet support encoding ${message::class.simpleName} messages.",
@@ -56,6 +62,7 @@ public object WireCodec {
         return when (type) {
             MessageType.HELLO -> HelloMessageCodec.decode(payload = payload)
             MessageType.HANDSHAKE -> HandshakeMessageCodec.decode(payload = payload)
+            MessageType.KEEPALIVE -> KeepaliveMessageCodec.decode(payload = payload)
             else -> throw UnsupportedOperationException(
                 "WireCodec does not yet support decoding ${type.name} messages.",
             )
