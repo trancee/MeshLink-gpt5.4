@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.wire
 
+import ch.trancee.meshlink.wire.messages.BroadcastMessage
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
@@ -7,6 +8,7 @@ import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.KeepaliveMessage
 import ch.trancee.meshlink.wire.messages.NackMessage
 import ch.trancee.meshlink.wire.messages.ResumeRequestMessage
+import ch.trancee.meshlink.wire.messages.RotationAnnouncementMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import ch.trancee.meshlink.wire.messages.UpdateMessage
 import kotlin.test.Test
@@ -45,6 +47,17 @@ public class WireFormatTest {
             ResumeRequestMessage(
                 transferId = 0x3132333435363738,
                 resumeOffset = 0x4142434445464748,
+            ),
+            BroadcastMessage(
+                originPeerId = byteArrayOf(0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C),
+                sequenceNumber = 9,
+                maxHops = 3u,
+                payload = byteArrayOf(0x61, 0x62),
+            ),
+            RotationAnnouncementMessage(
+                previousPublicKey = ByteArray(size = 32) { index -> (index + 1).toByte() },
+                nextPublicKey = ByteArray(size = 32) { index -> (index + 33).toByte() },
+                signature = ByteArray(size = 64) { index -> (index + 65).toByte() },
             ),
         )
 

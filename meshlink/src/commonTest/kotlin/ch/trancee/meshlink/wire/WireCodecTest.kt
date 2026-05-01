@@ -1,5 +1,7 @@
 package ch.trancee.meshlink.wire
 
+import ch.trancee.meshlink.wire.messages.BroadcastMessage
+import ch.trancee.meshlink.wire.messages.BroadcastMessageCodec
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessage
 import ch.trancee.meshlink.wire.messages.DeliveryAckMessageCodec
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
@@ -13,6 +15,8 @@ import ch.trancee.meshlink.wire.messages.NackMessage
 import ch.trancee.meshlink.wire.messages.NackMessageCodec
 import ch.trancee.meshlink.wire.messages.ResumeRequestMessage
 import ch.trancee.meshlink.wire.messages.ResumeRequestMessageCodec
+import ch.trancee.meshlink.wire.messages.RotationAnnouncementMessage
+import ch.trancee.meshlink.wire.messages.RotationAnnouncementMessageCodec
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessageCodec
 import ch.trancee.meshlink.wire.messages.UpdateMessage
@@ -373,6 +377,122 @@ public class WireCodecTest {
     }
 
     @Test
+    public fun encodeAndDecode_roundTripBroadcastMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedOriginPeerId: ByteArray = byteArrayOf(0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C)
+        val expectedPayload: ByteArray = byteArrayOf(0x61, 0x62)
+        val message = BroadcastMessage(
+            originPeerId = expectedOriginPeerId,
+            sequenceNumber = 123,
+            maxHops = 2u,
+            payload = expectedPayload,
+        )
+
+        // Act
+        val decoded: BroadcastMessage = assertIs<BroadcastMessage>(WireCodec.decode(encoded = WireCodec.encode(message = message)))
+
+        // Assert
+        assertContentEquals(
+            expected = expectedOriginPeerId,
+            actual = decoded.originPeerId,
+            message = "WireCodec should preserve the BROADCAST origin peer identifier through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 123,
+            actual = decoded.sequenceNumber,
+            message = "WireCodec should preserve the BROADCAST sequence number through encode/decode dispatch",
+        )
+        assertEquals(
+            expected = 2u,
+            actual = decoded.maxHops,
+            message = "WireCodec should preserve the BROADCAST maxHops through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedPayload,
+            actual = decoded.payload,
+            message = "WireCodec should preserve the BROADCAST payload through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesBroadcastTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = BroadcastMessage(
+            originPeerId = byteArrayOf(0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C),
+            sequenceNumber = 7,
+            maxHops = 4u,
+            payload = byteArrayOf(0x71, 0x72),
+        )
+        val expectedPayload: ByteArray = BroadcastMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.BROADCAST.code.toByte(), 0x13, 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame BROADCAST messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
+    public fun encodeAndDecode_roundTripRotationAnnouncementMessageThroughDispatcher(): Unit {
+        // Arrange
+        val expectedPreviousPublicKey: ByteArray = ByteArray(size = 32) { index -> (index + 1).toByte() }
+        val expectedNextPublicKey: ByteArray = ByteArray(size = 32) { index -> (index + 33).toByte() }
+        val expectedSignature: ByteArray = ByteArray(size = 64) { index -> (index + 65).toByte() }
+        val message = RotationAnnouncementMessage(
+            previousPublicKey = expectedPreviousPublicKey,
+            nextPublicKey = expectedNextPublicKey,
+            signature = expectedSignature,
+        )
+
+        // Act
+        val decoded: RotationAnnouncementMessage = assertIs<RotationAnnouncementMessage>(
+            WireCodec.decode(encoded = WireCodec.encode(message = message)),
+        )
+
+        // Assert
+        assertContentEquals(
+            expected = expectedPreviousPublicKey,
+            actual = decoded.previousPublicKey,
+            message = "WireCodec should preserve the rotation previous key through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedNextPublicKey,
+            actual = decoded.nextPublicKey,
+            message = "WireCodec should preserve the rotation next key through encode/decode dispatch",
+        )
+        assertContentEquals(
+            expected = expectedSignature,
+            actual = decoded.signature,
+            message = "WireCodec should preserve the rotation signature through encode/decode dispatch",
+        )
+    }
+
+    @Test
+    public fun encode_writesRotationAnnouncementTypeAndPayloadLength(): Unit {
+        // Arrange
+        val message = RotationAnnouncementMessage(
+            previousPublicKey = ByteArray(size = 32) { index -> (index + 1).toByte() },
+            nextPublicKey = ByteArray(size = 32) { index -> (index + 33).toByte() },
+            signature = ByteArray(size = 64) { index -> (index + 65).toByte() },
+        )
+        val expectedPayload: ByteArray = RotationAnnouncementMessageCodec.encode(message = message)
+
+        // Act
+        val encoded: ByteArray = WireCodec.encode(message = message)
+
+        // Assert
+        assertContentEquals(
+            expected = byteArrayOf(MessageType.ROTATION_ANNOUNCEMENT.code.toByte(), 0x80.toByte(), 0x00, 0x00, 0x00) + expectedPayload,
+            actual = encoded,
+            message = "WireCodec should frame ROTATION_ANNOUNCEMENT messages with the correct type tag and payload length",
+        )
+    }
+
+    @Test
     public fun encode_throwsWhenMessageImplementationIsNotYetSupported(): Unit {
         // Arrange
         val message: WireMessage = UnsupportedWireMessage
@@ -461,7 +581,7 @@ public class WireCodecTest {
     public fun decode_throwsWhenMessageTypeIsRecognizedButCodecIsNotYetImplemented(): Unit {
         // Arrange
         val encoded: ByteArray = byteArrayOf(
-            MessageType.BROADCAST.code.toByte(),
+            MessageType.CHUNK.code.toByte(),
             0x00,
             0x00,
             0x00,
@@ -475,7 +595,7 @@ public class WireCodecTest {
 
         // Assert
         assertEquals(
-            expected = "WireCodec does not yet support decoding BROADCAST messages.",
+            expected = "WireCodec does not yet support decoding CHUNK messages.",
             actual = error.message,
             message = "WireCodec should surface unsupported message types until their specific codecs are implemented",
         )

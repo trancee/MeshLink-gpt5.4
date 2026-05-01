@@ -20,10 +20,10 @@
 - [x] T011 [P] Implement `DeliveryAck` encode/decode
 - [x] T012 [P] Implement `Nack` encode/decode
 - [x] T013 [P] Implement `Keepalive` encode/decode
-- [ ] T014 [P] Implement `Broadcast` encode/decode
+- [x] T014 [P] Implement `Broadcast` encode/decode
 - [x] T015 [P] Implement `RoutedMessage` encode/decode
 - [x] T016 [P] Implement `ResumeRequest` encode/decode
-- [ ] T017 [P] Implement `RotationAnnouncementMessage` encode/decode
+- [x] T017 [P] Implement `RotationAnnouncementMessage` encode/decode
 
 ## Phase 3: Codec Dispatcher & Validation
 
@@ -42,4 +42,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-13 actionable tasks complete, 9 remain pending. Current JVM and Android host-test coverage verify at 100%.
+15 actionable tasks complete, 7 remain pending. Current JVM and Android host-test coverage verify at 100%.
