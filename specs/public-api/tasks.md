@@ -8,9 +8,9 @@
 - [x] T002 [P] Define `PeerIdHex` value class (type-safe peer identifier)
 - [x] T003 [P] Define `TrustMode` enum (TOFU, STRICT, PROMPT)
 - [x] T004 [P] Define `RegulatoryRegion` enum with parameter clamping
-- [ ] T005 [P] Define `PeerState` sealed hierarchy
-- [ ] T006 [P] Define `PeerDetail` data class
-- [ ] T007 [P] Define `RoutingSnapshot` data class
+- [x] T005 [P] Define `PeerState` sealed hierarchy
+- [x] T006 [P] Define `PeerDetail` data class
+- [x] T007 [P] Define `RoutingSnapshot` data class
 - [x] T008 [P] Define `ExperimentalMeshLinkApi` opt-in annotation
 
 ## Phase 2: Diagnostic System
@@ -33,7 +33,7 @@
 - [ ] T018 Implement `MeshLink` companion (create factory, Flow mapping)
 - [ ] T019 Write `MeshLinkTest` — factory creation, Flow mapping
 - [x] T020 Write `MeshLinkStateTest` — transition validation
-- [ ] T021 Write `PeerStateTest`, `PeerIdHexExtTest`
+- [x] T021 Write `PeerStateTest`, `PeerIdHexExtTest`
 
 ## Phase 5: Platform Factories
 
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-7 actionable tasks complete, 18 remain pending.
+11 actionable tasks complete, 14 remain pending.
