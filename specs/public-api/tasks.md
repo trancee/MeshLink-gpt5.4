@@ -4,7 +4,7 @@
 
 ## Phase 1: Core Types
 
-- [ ] T001 Define `MeshLinkState` enum (UNINITIALIZED, RUNNING, PAUSED, STOPPED, RECOVERABLE, TERMINAL)
+- [x] T001 Define `MeshLinkState` enum (UNINITIALIZED, RUNNING, PAUSED, STOPPED, RECOVERABLE, TERMINAL)
 - [ ] T002 [P] Define `PeerIdHex` value class (type-safe peer identifier)
 - [x] T003 [P] Define `TrustMode` enum (TOFU, STRICT, PROMPT)
 - [ ] T004 [P] Define `RegulatoryRegion` enum with parameter clamping
@@ -32,7 +32,7 @@
 - [ ] T017 Define `MeshLinkApi` interface (start, stop, pause, resume, send, peers, messages, diagnostics)
 - [ ] T018 Implement `MeshLink` companion (create factory, Flow mapping)
 - [ ] T019 Write `MeshLinkTest` — factory creation, Flow mapping
-- [ ] T020 Write `MeshLinkStateTest` — transition validation
+- [x] T020 Write `MeshLinkStateTest` — transition validation
 - [ ] T021 Write `PeerStateTest`, `PeerIdHexExtTest`
 
 ## Phase 5: Platform Factories
@@ -51,4 +51,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:apiCheck
 ```
 
-1 actionable task complete, 24 remain pending.
+3 actionable tasks complete, 22 remain pending.
