@@ -29,8 +29,8 @@
 
 ## Phase 4: Replay Protection
 
-- [ ] T017 Implement `ReplayGuard` (64-entry sliding bitmap window)
-- [ ] T018 Write `ReplayGuardTest` — duplicates, out-of-order, window advance
+- [x] T017 Implement `ReplayGuard` (64-entry sliding bitmap window)
+- [x] T018 Write `ReplayGuardTest` — duplicates, out-of-order, window advance
 
 ## Phase 5: Identity & Trust
 
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-4 actionable tasks complete, 27 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+6 actionable tasks complete, 25 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
