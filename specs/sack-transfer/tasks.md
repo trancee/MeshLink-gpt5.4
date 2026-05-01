@@ -1,6 +1,6 @@
 # Tasks: SACK Transfer
 
-**Status**: In progress — transfer foundation types bootstrapped
+**Status**: Complete — transfer foundation, engine, and benchmark implemented
 
 ## Phase 1: Foundation
 
@@ -23,7 +23,7 @@
 
 ## Phase 3: Benchmark
 
-- [ ] T014 Add `TransferBenchmark` — chunk processing throughput
+- [x] T014 Add `TransferBenchmark` — chunk processing throughput
 
 ## Verification
 
@@ -31,4 +31,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:jvmBenchmark
 ```
 
-13 actionable tasks complete, 1 remain pending.
+14 actionable tasks complete, 0 remain pending.
