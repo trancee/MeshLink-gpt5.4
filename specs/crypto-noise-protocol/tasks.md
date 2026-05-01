@@ -8,17 +8,17 @@
 - [x] T002 [P] Implement `CryptoProviderFactory` expect/actual pattern
 - [x] T003 [P] Implement `ConstantTimeEquals` utility
 - [x] T004 [P] Define `KeyPair` and `Identity` data classes
-- [ ] T005 Write `CryptoProviderTest` validating all primitives
+- [x] T005 Write `CryptoProviderTest` validating all primitives
 
 ## Phase 2: Noise Protocol Core
 
 - [x] T006 Implement `SymmetricState` (MixKey, MixHash, EncryptAndHash, DecryptAndHash)
 - [x] T007 [P] Implement `CipherState` (InitializeKey, EncryptWithAd, DecryptWithAd, nonce tracking)
 - [x] T008 Implement `HandshakeState` (XX pattern state machine)
-- [ ] T009 Implement `NoiseXXHandshake` (3-message initiator/responder flow)
+- [x] T009 Implement `NoiseXXHandshake` (3-message initiator/responder flow)
 - [x] T010 [P] Implement `DhCache` (LRU memoization of X25519 results)
 - [x] T011 [P] Implement `NoiseSession` (established session with send/recv CipherState pair)
-- [ ] T012 Write `NoiseXXHandshakeTest` — full handshake round-trip
+- [x] T012 Write `NoiseXXHandshakeTest` — full handshake round-trip
 - [x] T013 Write `SymmetricStateTest`, `CipherStateTest`, `DhCacheTest`
 
 ## Phase 3: Noise K Payload Encryption
@@ -46,7 +46,7 @@
 - [ ] T025 [P] Add `WycheproofX25519Vectors` — X25519 DH vectors
 - [ ] T026 [P] Add `WycheproofHkdfVectors` — HKDF-SHA256 vectors
 - [ ] T027 Write `WycheproofCryptoTest` — runner for all vector files
-- [ ] T028 Write `HmacSha256Test` — HMAC correctness
+- [x] T028 Write `HmacSha256Test` — HMAC correctness
 
 ## Phase 7: Platform Actuals
 
@@ -60,4 +60,4 @@
 ./gradlew :meshlink:jvmTest :meshlink:koverVerify :meshlink:detekt :meshlink:ktfmtCheck
 ```
 
-19 actionable tasks complete, 12 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
+23 actionable tasks complete, 8 remain pending. Current JVM and Android host-test coverage verify at 100%, and `:meshlink:jvmBenchmark` remains green.
