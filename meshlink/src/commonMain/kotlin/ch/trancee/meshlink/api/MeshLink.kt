@@ -10,13 +10,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * Platform-neutral entry point for creating a MeshLink runtime.
+ *
+ * The common implementation currently returns a lightweight stub that exercises the public contract
+ * and diagnostics pipeline. Platform-specific factories can swap in a full engine while preserving
+ * the same API surface.
+ */
 @OptIn(ExperimentalObjCName::class)
 @ObjCName(name = "MeshLinkRuntime", swiftName = "MeshLinkRuntime", exact = true)
 public object MeshLink {
+  /** Creates a runtime using the library defaults. */
   public fun create(): MeshLinkApi {
     return create(config = MeshLinkConfig.default())
   }
 
+  /** Creates a runtime backed by a default diagnostic sink derived from [config]. */
   public fun create(config: MeshLinkConfig): MeshLinkApi {
     return create(
       config = config,
@@ -28,11 +37,23 @@ public object MeshLink {
     )
   }
 
+  /**
+   * Creates a runtime with an explicitly supplied diagnostic sink.
+   *
+   * This overload is useful in tests and host applications that want to route diagnostics into an
+   * existing observability pipeline.
+   */
   public fun create(config: MeshLinkConfig, diagnosticSink: DiagnosticSink): MeshLinkApi {
     return StubMeshLinkApi(config = config, diagnosticSink = diagnosticSink)
   }
 }
 
+/**
+ * Minimal in-memory implementation used by the common entry point.
+ *
+ * It mirrors the public lifecycle and message flows without depending on platform transport or
+ * engine wiring.
+ */
 internal class StubMeshLinkApi(
   private val config: MeshLinkConfig,
   private val diagnosticSink: DiagnosticSink,
@@ -75,6 +96,8 @@ internal class StubMeshLinkApi(
   }
 
   override fun send(peerId: PeerIdHex, payload: ByteArray): Unit {
+    // The stub loops sent payloads back into the shared message stream so tests can
+    // exercise application-facing delivery behavior without a real transport.
     mutableMessages.tryEmit(payload.copyOf())
     diagnosticSink.emit(code = DiagnosticCode.MESSAGE_SENT) {
       DiagnosticPayload.PeerLifecycle(peerId = peerId, state = PeerState.Connected)

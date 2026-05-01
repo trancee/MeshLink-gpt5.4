@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.wire.messages
 
+/** Codec for [KeepaliveMessage]. */
 public object KeepaliveMessageCodec {
   public fun encode(message: KeepaliveMessage = KeepaliveMessage): ByteArray {
     return ByteArray(size = 0)

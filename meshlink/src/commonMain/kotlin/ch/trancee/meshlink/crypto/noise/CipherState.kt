@@ -2,6 +2,7 @@ package ch.trancee.meshlink.crypto.noise
 
 import ch.trancee.meshlink.crypto.CryptoProvider
 
+/** Noise transport cipher state with a monotonically increasing nonce. */
 public class CipherState(private val provider: CryptoProvider, initialNonce: ULong = 0u) {
   private var key: ByteArray? = null
   private var nonce: ULong = initialNonce
@@ -10,6 +11,7 @@ public class CipherState(private val provider: CryptoProvider, initialNonce: ULo
 
   public fun nonce(): ULong = nonce
 
+  /** Installs a new key and resets the nonce counter. */
   public fun initializeKey(key: ByteArray?): Unit {
     if (key != null && key.size != KEY_SIZE) {
       throw IllegalArgumentException("CipherState key must be exactly $KEY_SIZE bytes.")
@@ -18,6 +20,11 @@ public class CipherState(private val provider: CryptoProvider, initialNonce: ULo
     nonce = 0u
   }
 
+  /**
+   * Encrypts a transport message with the current nonce.
+   *
+   * If no key is installed yet, Noise semantics treat this as plaintext passthrough.
+   */
   public fun encryptWithAd(aad: ByteArray, plaintext: ByteArray): ByteArray {
     val currentKey: ByteArray = key ?: return plaintext.copyOf()
     ensureNonceAvailable()
@@ -32,6 +39,7 @@ public class CipherState(private val provider: CryptoProvider, initialNonce: ULo
     return ciphertext
   }
 
+  /** Decrypts a transport message with the current nonce. */
   public fun decryptWithAd(aad: ByteArray, ciphertext: ByteArray): ByteArray {
     val currentKey: ByteArray = key ?: return ciphertext.copyOf()
     ensureNonceAvailable()

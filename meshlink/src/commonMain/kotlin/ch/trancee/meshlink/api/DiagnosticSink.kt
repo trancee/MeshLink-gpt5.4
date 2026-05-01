@@ -6,11 +6,25 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+/**
+ * Sink for diagnostic events emitted by MeshLink subsystems.
+ *
+ * Implementations are expected to be non-blocking because diagnostics are emitted on hot paths such
+ * as transport, routing, and handshake processing.
+ */
 public interface DiagnosticSink {
+  /** Bounded stream of recent diagnostic events. */
   public val diagnosticEvents: SharedFlow<DiagnosticEvent>
 
+  /** Count of events that were dropped from the retained history due to buffer limits. */
   public val droppedEventCount: Long
 
+  /**
+   * Emits a diagnostic event.
+   *
+   * The payload supplier is evaluated lazily so callers can avoid constructing payload objects when
+   * the sink implementation chooses a cheaper path.
+   */
   public fun emit(
     code: DiagnosticCode,
     payload: () -> DiagnosticPayload = { DiagnosticPayload.None },
@@ -19,6 +33,7 @@ public interface DiagnosticSink {
   public companion object {
     public const val DEFAULT_BUFFER_SIZE: Int = 64
 
+    /** Creates the default shared-flow-backed sink used by the library. */
     public fun create(
       bufferSize: Int = DEFAULT_BUFFER_SIZE,
       redactPeerIds: Boolean = false,
@@ -35,6 +50,7 @@ public interface DiagnosticSink {
   }
 }
 
+/** Immutable diagnostic record delivered to observers. */
 public data class DiagnosticEvent(
   public val code: DiagnosticCode,
   public val severity: DiagnosticSeverity,
@@ -63,7 +79,8 @@ private class SharedFlowDiagnosticSink(
     private set
 
   override fun emit(code: DiagnosticCode, payload: () -> DiagnosticPayload): Unit {
-    // Arrange
+    // Redaction happens before the event is materialized so consumers never observe
+    // the unredacted payload by accident.
     val actualPayload: DiagnosticPayload =
       payload().let { resolvedPayload ->
         if (redactPeerIds) {
@@ -80,7 +97,8 @@ private class SharedFlowDiagnosticSink(
         payload = actualPayload,
       )
 
-    // Act
+    // MutableSharedFlow with replay keeps only the latest [bufferSize] events, so we
+    // track evictions explicitly for diagnostics consumers.
     if (emissionCount >= bufferSize.toLong()) {
       droppedEventCount += 1
     }

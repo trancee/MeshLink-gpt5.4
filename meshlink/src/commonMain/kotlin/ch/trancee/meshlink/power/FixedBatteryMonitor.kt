@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.power
 
+/** Mutable battery monitor used for tests and deterministic host-side simulations. */
 public class FixedBatteryMonitor(initialBatteryPercent: Int) : BatteryMonitor {
   private var currentBatteryPercent: Int =
     validateBatteryPercent(batteryPercent = initialBatteryPercent)
@@ -8,6 +9,7 @@ public class FixedBatteryMonitor(initialBatteryPercent: Int) : BatteryMonitor {
     return currentBatteryPercent
   }
 
+  /** Updates the reported battery level. */
   public fun update(batteryPercent: Int): Unit {
     currentBatteryPercent = validateBatteryPercent(batteryPercent = batteryPercent)
   }

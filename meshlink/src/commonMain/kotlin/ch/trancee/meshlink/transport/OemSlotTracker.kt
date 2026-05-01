@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transport
 
+/** Tracks a small pool of OEM-specific slots by owner identifier. */
 public class OemSlotTracker(private val maxSlots: Int = DEFAULT_MAX_SLOTS) {
   private val allocations: MutableList<OemSlotAllocation> = mutableListOf()
 
@@ -7,6 +8,7 @@ public class OemSlotTracker(private val maxSlots: Int = DEFAULT_MAX_SLOTS) {
     require(maxSlots > 0) { "OemSlotTracker maxSlots must be greater than 0." }
   }
 
+  /** Acquires or returns the existing slot for the owner. */
   public fun acquire(ownerId: String): Int? {
     val normalizedOwnerId: String = ownerId.normalizeOwnerId()
     allocations
@@ -22,6 +24,7 @@ public class OemSlotTracker(private val maxSlots: Int = DEFAULT_MAX_SLOTS) {
     return availableSlot
   }
 
+  /** Releases any slot held by the owner. */
   public fun release(ownerId: String): Unit {
     val normalizedOwnerId: String = ownerId.normalizeOwnerId()
     val existingIndex: Int =

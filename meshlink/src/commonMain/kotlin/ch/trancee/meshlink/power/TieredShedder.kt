@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.power
 
+/** Chooses which connections to shed when the target capacity drops. */
 public object TieredShedder {
   public fun shed(
     connections: List<ManagedConnection>,

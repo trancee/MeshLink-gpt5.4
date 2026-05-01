@@ -3,6 +3,7 @@ package ch.trancee.meshlink.engine
 import ch.trancee.meshlink.api.MeshLinkConfig
 import ch.trancee.meshlink.transport.BleTransportConfig
 
+/** Top-level runtime wiring config for [MeshEngine]. */
 public data class MeshEngineConfig(
   public val meshLinkConfig: MeshLinkConfig,
   public val bleTransportConfig: BleTransportConfig,
@@ -16,6 +17,7 @@ public data class MeshEngineConfig(
   }
 
   public companion object {
+    /** Returns the default engine configuration assembled from subsystem defaults. */
     public fun default(): MeshEngineConfig {
       return MeshEngineConfig(
         meshLinkConfig = MeshLinkConfig.default(),

@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [HandshakeMessage]. */
 public object HandshakeMessageCodec {
   private const val ROUND_SIZE: Int = 1
 

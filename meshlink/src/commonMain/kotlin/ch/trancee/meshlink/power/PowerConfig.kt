@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.power
 
+/** Thresholds and profiles used by the power manager. */
 public data class PowerConfig(
   public val highTierThresholdPercent: Int,
   public val normalTierThresholdPercent: Int,
@@ -29,6 +30,7 @@ public data class PowerConfig(
   public companion object {
     private const val LOW_TIER_MAX_SCAN_DUTY_PERCENT: Int = 5
 
+    /** Returns the default power-management policy. */
     public fun default(): PowerConfig {
       return PowerConfig(
         highTierThresholdPercent = 80,

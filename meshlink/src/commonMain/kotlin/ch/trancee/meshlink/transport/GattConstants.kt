@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transport
 
+/** UUIDs for the MeshLink GATT service surface. */
 public object GattConstants {
   public const val SERVICE_UUID: String = "c0de0001-7b1d-4b1e-9000-000000000001"
   public const val WRITE_CHARACTERISTIC_UUID: String = "c0de0002-7b1d-4b1e-9000-000000000002"

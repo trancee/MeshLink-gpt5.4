@@ -1,10 +1,14 @@
 package ch.trancee.meshlink.api
 
+/** Typed payload attached to a [DiagnosticEvent]. */
 public sealed class DiagnosticPayload {
+  /** Returns a payload variant safe to expose when peer identifiers must be redacted. */
   public open fun redactPeerIds(): DiagnosticPayload = this
 
+  /** Diagnostic event without additional structured data. */
   public data object None : DiagnosticPayload()
 
+  /** Failure detail for a handshake attempt. */
   public data class HandshakeFailure(public val peerId: PeerIdHex, public val reason: String) :
     DiagnosticPayload() {
     override fun redactPeerIds(): DiagnosticPayload {
@@ -12,12 +16,14 @@ public sealed class DiagnosticPayload {
     }
   }
 
+  /** Progress update for a bulk transfer. */
   public data class TransferProgress(
     public val transferId: String,
     public val bytesTransferred: Long,
     public val totalBytes: Long,
   ) : DiagnosticPayload()
 
+  /** Peer lifecycle state attached to a diagnostic. */
   public data class PeerLifecycle(public val peerId: PeerIdHex, public val state: PeerState) :
     DiagnosticPayload() {
     override fun redactPeerIds(): DiagnosticPayload {
@@ -25,6 +31,7 @@ public sealed class DiagnosticPayload {
     }
   }
 
+  /** Routing-table change summary. */
   public data class RoutingChange(public val destinationPeerId: PeerIdHex, public val metric: Int) :
     DiagnosticPayload() {
     override fun redactPeerIds(): DiagnosticPayload {
@@ -32,14 +39,17 @@ public sealed class DiagnosticPayload {
     }
   }
 
+  /** Buffer saturation or dropped-work signal. */
   public data class BufferPressure(public val usedBytes: Int, public val droppedEvents: Int) :
     DiagnosticPayload()
 
+  /** Power tier transition summary. */
   public data class PowerTierChanged(
     public val previousTier: String,
     public val currentTier: String,
   ) : DiagnosticPayload()
 
+  /** Internal error message intended primarily for diagnostics consumers. */
   public data class InternalError(public val message: String) : DiagnosticPayload()
 }
 

@@ -3,6 +3,7 @@ package ch.trancee.meshlink.transport
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Length-prefix framing codec for L2CAP byte streams. */
 public class L2capFrameCodec(
   private val maxFrameLengthBytes: Int = DEFAULT_MAX_FRAME_LENGTH_BYTES
 ) {
@@ -14,6 +15,7 @@ public class L2capFrameCodec(
     }
   }
 
+  /** Prefixes the payload with its 4-byte length. */
   public fun encode(payload: ByteArray): ByteArray {
     require(payload.size <= maxFrameLengthBytes) {
       "L2capFrameCodec frame length must be between 0 and $maxFrameLengthBytes bytes."
@@ -25,6 +27,11 @@ public class L2capFrameCodec(
     return writeBuffer.toByteArray()
   }
 
+  /**
+   * Appends a raw stream chunk and returns every whole frame now available.
+   *
+   * Partial trailing data is retained in [bufferedBytes] until more bytes arrive.
+   */
   public fun append(chunk: ByteArray): List<ByteArray> {
     require(chunk.isNotEmpty() || bufferedBytes.isNotEmpty()) {
       "L2capFrameCodec append requires either a non-empty chunk or buffered frame data."

@@ -1,5 +1,9 @@
 package ch.trancee.meshlink.power
 
+/**
+ * Maps battery percentage to a power tier while applying hysteresis to avoid rapid oscillation
+ * around thresholds.
+ */
 public class PowerModeEngine(private val hysteresisPercent: Int = DEFAULT_HYSTERESIS_PERCENT) {
   init {
     require(hysteresisPercent >= 0) {
@@ -7,6 +11,7 @@ public class PowerModeEngine(private val hysteresisPercent: Int = DEFAULT_HYSTER
     }
   }
 
+  /** Evaluates the desired power tier for the current battery reading. */
   public fun evaluate(
     currentTier: PowerTier?,
     batteryPercent: Int,

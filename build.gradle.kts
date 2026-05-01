@@ -1,5 +1,7 @@
 import org.gradle.api.tasks.wrapper.Wrapper
 
+// Root build script that centralizes plugin availability, dependency constraints used by
+// publishing/signing plugins, and repository-wide metadata shared by all modules.
 plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
@@ -12,6 +14,8 @@ plugins {
     alias(libs.plugins.binary.compatibility.validator)
 }
 
+// These constraints keep transitive buildscript dependencies on a known-good set of
+// versions, which avoids plugin classpath drift between local and CI builds.
 buildscript {
     dependencies {
         constraints {
@@ -37,6 +41,8 @@ allprojects {
     version = "0.1.0-SNAPSHOT"
 }
 
+// Enable strict JVM and KLib API validation so accidental public-surface changes are
+// caught during development rather than after publishing.
 apiValidation {
     @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
     klib {
@@ -45,6 +51,8 @@ apiValidation {
     }
 }
 
+// Ship the full wrapper distribution so IDEs and Dokka-related workflows have source
+// and documentation artifacts available without extra downloads.
 tasks.wrapper {
     gradleVersion = "9.5.0"
     distributionType = Wrapper.DistributionType.ALL

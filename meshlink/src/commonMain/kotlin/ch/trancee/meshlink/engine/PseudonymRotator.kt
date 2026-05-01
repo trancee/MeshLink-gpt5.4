@@ -3,6 +3,12 @@ package ch.trancee.meshlink.engine
 import ch.trancee.meshlink.crypto.CryptoProvider
 import ch.trancee.meshlink.transport.AdvertisementCodec
 
+/**
+ * Derives rotating advertisement pseudonyms from a stable identity key.
+ *
+ * Rotation is epoch-based so nearby peers can correlate advertisements within a short window while
+ * long-term tracking remains harder.
+ */
 public class PseudonymRotator(
   private val cryptoProvider: CryptoProvider,
   private val epochDurationMillis: Long = DEFAULT_EPOCH_DURATION_MILLIS,
@@ -21,6 +27,7 @@ public class PseudonymRotator(
     }
   }
 
+  /** Maps a timestamp into its rotation epoch. */
   public fun epochFor(timestampMillis: Long): Long {
     require(timestampMillis >= 0) {
       "PseudonymRotator timestampMillis must be greater than or equal to 0."
@@ -29,6 +36,9 @@ public class PseudonymRotator(
     return timestampMillis / epochDurationMillis
   }
 
+  /**
+   * Returns a stable per-node offset used to avoid every device rotating at the exact same instant.
+   */
   public fun staggerMillis(nodeId: ByteArray): Long {
     require(nodeId.isNotEmpty()) { "PseudonymRotator nodeId must not be empty." }
     if (maxStaggerMillis == 0L) {
@@ -43,6 +53,7 @@ public class PseudonymRotator(
     return accumulator % (maxStaggerMillis + 1)
   }
 
+  /** Derives the pseudonym for a specific epoch. */
   public fun pseudonymForEpoch(identityKey: ByteArray, epoch: Long): ByteArray {
     require(identityKey.isNotEmpty()) { "PseudonymRotator identityKey must not be empty." }
     require(epoch >= 0) { "PseudonymRotator epoch must be greater than or equal to 0." }
@@ -63,6 +74,7 @@ public class PseudonymRotator(
       .copyOf(newSize = pseudonymLengthBytes)
   }
 
+  /** Convenience helper that derives the pseudonym for the timestamp's current epoch. */
   public fun pseudonymAt(identityKey: ByteArray, timestampMillis: Long): ByteArray {
     return pseudonymForEpoch(
       identityKey = identityKey,
@@ -70,6 +82,10 @@ public class PseudonymRotator(
     )
   }
 
+  /**
+   * Accepts pseudonyms from the previous, current, and next epoch to tolerate clock skew and
+   * in-flight rotations.
+   */
   public fun isValidForCurrentWindow(
     candidate: ByteArray,
     identityKey: ByteArray,

@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [RoutedMessage]. */
 public object RoutedMessageCodec {
   private const val HEADER_SIZE: Int = 2
 

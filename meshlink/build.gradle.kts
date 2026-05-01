@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
+// Module build script for the published MeshLink KMP library. It wires platform targets,
+// quality gates, publishing metadata, coverage enforcement, and XCFramework packaging.
 plugins {
   alias(libs.plugins.android.kotlin.multiplatform.library)
   alias(libs.plugins.kotlin.multiplatform)
@@ -20,6 +22,8 @@ plugins {
   id("signing")
 }
 
+// Reuse one XCFramework container so every Apple binary target contributes to the same
+// release artifact consumed by SwiftPM.
 val meshLinkXCFramework = XCFramework("MeshLink")
 
 kotlin {
@@ -65,6 +69,8 @@ kotlin {
 
 skie { isEnabled.set(true) }
 
+// Keep benchmark registration explicit so CI can invoke a stable JVM benchmark target
+// without exposing every benchmark class as a separate task surface.
 benchmark {
   targets { register("jvmBenchmark") }
   configurations {
@@ -99,6 +105,8 @@ tasks.register("androidHostTest") {
   dependsOn("testAndroidHostTest")
 }
 
+// Aggregate the Linux CI checks into a single task to minimize repeated configuration
+// overhead on ephemeral runners.
 tasks.register("ciQualityGate") {
   group = "verification"
   description =
@@ -114,6 +122,8 @@ tasks.register("ciQualityGate") {
   )
 }
 
+// macOS-only packaging gate used by release workflows to prove the Apple artifact still
+// assembles cleanly after shared-code changes.
 tasks.register("iosPackagingGate") {
   group = "verification"
   description =
@@ -167,6 +177,7 @@ tasks.register("ktfmtFormat") {
   dependsOn("spotlessApply")
 }
 
+// Dokka HTML output is repackaged as the javadoc classifier required by Maven Central.
 val javadocJar by
   tasks.registering(Jar::class) {
     group = "documentation"
@@ -176,6 +187,8 @@ val javadocJar by
     from(tasks.named("dokkaGeneratePublicationHtml"))
   }
 
+// Publishing is configured for OSSRH so snapshots and releases can share one Gradle
+// path while still resolving to the correct Sonatype endpoint.
 publishing {
   repositories {
     maven {
@@ -222,6 +235,8 @@ publishing {
   }
 }
 
+// Only require signing for non-snapshot releases when credentials are available. This
+// keeps local development and snapshot publishing lightweight.
 signing {
   val signingKey: String? = providers.environmentVariable("SIGNING_KEY").orNull
   val signingPassword: String? = providers.environmentVariable("SIGNING_PASSWORD").orNull
@@ -236,6 +251,8 @@ signing {
   }
 }
 
+// Coverage gates are intentionally strict because the project treats coverage as part
+// of its correctness contract for shared library code.
 kover {
   reports {
     filters {

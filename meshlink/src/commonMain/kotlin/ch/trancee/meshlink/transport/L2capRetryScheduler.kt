@@ -2,6 +2,7 @@ package ch.trancee.meshlink.transport
 
 import kotlin.math.roundToLong
 
+/** Exponential backoff scheduler with bounded jitter for L2CAP reconnect attempts. */
 public class L2capRetryScheduler(
   private val initialDelayMillis: Long = DEFAULT_INITIAL_DELAY_MILLIS,
   private val maxDelayMillis: Long = DEFAULT_MAX_DELAY_MILLIS,
@@ -20,6 +21,7 @@ public class L2capRetryScheduler(
     }
   }
 
+  /** Returns the delay for the given retry attempt. */
   public fun delayMillisForAttempt(attempt: Int): Long {
     require(attempt >= 0) { "L2capRetryScheduler attempt must be greater than or equal to 0." }
 

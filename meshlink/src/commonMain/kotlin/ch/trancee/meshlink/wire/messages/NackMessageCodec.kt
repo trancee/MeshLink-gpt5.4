@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [NackMessage]. */
 public object NackMessageCodec {
   private const val PAYLOAD_SIZE: Int = Long.SIZE_BYTES + Int.SIZE_BYTES
 

@@ -14,6 +14,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * In-memory [BleTransport] implementation used for tests and host-side simulations.
+ *
+ * Instances can be attached to each other to emulate direct peer-to-peer links without involving
+ * platform BLE stacks.
+ */
 public class VirtualMeshTransport(
   private val localPeerId: PeerIdHex,
   private val diagnosticSink: DiagnosticSink = NoOpDiagnosticSink,
@@ -32,10 +38,12 @@ public class VirtualMeshTransport(
 
   override val receivedFrames: SharedFlow<ByteArray> = mutableReceivedFrames.asSharedFlow()
 
+  /** Makes another virtual transport reachable under the given peer ID. */
   public fun attachPeer(peerId: PeerIdHex, transport: VirtualMeshTransport): Unit {
     attachedPeers[peerId.value] = transport
   }
 
+  /** Returns whether the transport currently considers the peer connected. */
   public fun isConnected(peerId: PeerIdHex): Boolean {
     return peerId.value in connectedPeers
   }
@@ -63,6 +71,8 @@ public class VirtualMeshTransport(
       return
     }
 
+    // Delivery is synchronous and in-memory on purpose so tests can assert end-to-end
+    // behavior deterministically.
     remoteTransport.receiveFromPeer(remotePeerId = localPeerId, payload = payload)
     diagnosticSink.emit(code = DiagnosticCode.MESSAGE_SENT) {
       DiagnosticPayload.PeerLifecycle(peerId = peerId, state = PeerState.Connected)

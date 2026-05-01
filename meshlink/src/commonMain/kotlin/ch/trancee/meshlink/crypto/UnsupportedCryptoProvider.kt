@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.crypto
 
+/** Fallback provider used when no platform backend has been wired yet. */
 public open class UnsupportedCryptoProvider : CryptoProvider {
   override fun generateX25519KeyPair(): KeyPair = unsupported()
 

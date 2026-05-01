@@ -2,16 +2,21 @@ package ch.trancee.meshlink.transfer
 
 import ch.trancee.meshlink.api.PeerIdHex
 
+/** Coordinates outbound transfer sessions and inbound chunk reassembly. */
 public class TransferEngine(
   public val config: TransferConfig,
   private val chunkSizePolicy: ChunkSizePolicy,
   private val scheduler: TransferScheduler = TransferScheduler(),
 ) {
   private val sessionsByTransferId: MutableMap<String, ManagedTransferSession> = linkedMapOf()
+
+  // Inbound chunks are staged by transfer ID until the full set has arrived and can
+  // be reassembled in order.
   private val inboundChunksByTransferId: MutableMap<String, MutableMap<Int, ByteArray>> =
     mutableMapOf()
   private val inboundExpectedChunkCounts: MutableMap<String, Int> = mutableMapOf()
 
+  /** Starts a new outbound transfer and queues it with the scheduler. */
   public fun startTransfer(
     transferId: String,
     recipientPeerId: PeerIdHex,
@@ -45,16 +50,19 @@ public class TransferEngine(
     return TransferEvent.Started(transferId = transferId, priority = priority)
   }
 
+  /** Returns the next transfer ID that should be serviced according to scheduler order. */
   public fun nextScheduledTransferId(): String? {
     return scheduler.dequeue()
   }
 
+  /** Returns the next transmission window for the transfer. */
   public fun nextChunks(transferId: String): List<OutboundChunk> {
     return requireManagedTransferSession(transferId = transferId)
       .session
       .nextChunks(windowSize = config.windowSize)
   }
 
+  /** Records acknowledgement progress for an outbound transfer. */
   public fun acknowledge(
     transferId: String,
     chunkIndex: Int,
@@ -74,12 +82,14 @@ public class TransferEngine(
     return event
   }
 
+  /** Cancels an active outbound transfer. */
   public fun cancel(transferId: String): TransferEvent.Failed? {
     val managedTransferSession: ManagedTransferSession =
       sessionsByTransferId.remove(transferId) ?: return null
     return managedTransferSession.session.cancel()
   }
 
+  /** Fails every transfer whose lifetime exceeded the configured timeout. */
   public fun failTimedOut(nowEpochMillis: Long): List<TransferEvent.Failed> {
     require(nowEpochMillis >= 0) {
       "TransferEngine nowEpochMillis must be greater than or equal to 0."
@@ -93,11 +103,14 @@ public class TransferEngine(
         .map { (transferId, _) -> transferId }
 
     return timedOutTransferIds.map { transferId ->
-      val managedTransferSession: ManagedTransferSession = sessionsByTransferId.remove(transferId)!!
+      sessionsByTransferId.remove(transferId)!!
       TransferEvent.Failed(transferId = transferId, reason = FailureReason.TIMEOUT)
     }
   }
 
+  /**
+   * Accepts an inbound chunk and returns the full payload once every expected chunk has arrived.
+   */
   public fun receiveChunk(
     transferId: String,
     chunkIndex: Int,
@@ -129,12 +142,14 @@ public class TransferEngine(
     }
   }
 
+  /** Returns the current pacing recommendation derived from recent acknowledgements. */
   public fun recommendedDelayMillis(transferId: String): Long? {
     val managedTransferSession: ManagedTransferSession =
       sessionsByTransferId[transferId] ?: return null
     return managedTransferSession.rateController.recommendedDelayMillis()
   }
 
+  /** Returns how many outbound transfers are still active. */
   public fun pendingTransfers(): Int {
     return sessionsByTransferId.size
   }

@@ -20,6 +20,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+/** Android/JVM crypto provider backed by the platform JCA/JCE primitives. */
 public class AndroidCryptoProvider : CryptoProvider {
   override fun generateX25519KeyPair(): KeyPair {
     val generator = KeyPairGenerator.getInstance("X25519")
@@ -36,6 +37,8 @@ public class AndroidCryptoProvider : CryptoProvider {
     val keyPair = generator.generateKeyPair()
     val publicKey: ByteArray = encodeEd25519PublicKey(key = keyPair.public as EdECPublicKey)
     val privateSeed: ByteArray = (keyPair.private as EdECPrivateKey).bytes.get()
+    // The shared code expects the 64-byte secret form used elsewhere in the library:
+    // private seed concatenated with the public key.
     return KeyPair(publicKey = publicKey, secretKey = privateSeed + publicKey)
   }
 
@@ -60,6 +63,7 @@ public class AndroidCryptoProvider : CryptoProvider {
     require(privateKey.size == Identity.SECRET_KEY_SIZE) {
       "Ed25519 secretKey must be exactly ${Identity.SECRET_KEY_SIZE} bytes."
     }
+    // Only the 32-byte seed is needed to reconstruct the private signing key.
     val privateSeed: ByteArray =
       privateKey.copyOfRange(fromIndex = 0, toIndex = Identity.PUBLIC_KEY_SIZE)
     val keyFactory = KeyFactory.getInstance("Ed25519")
@@ -144,6 +148,7 @@ public class AndroidCryptoProvider : CryptoProvider {
     var generatedBytes: Int = 0
     var counter: Int = 1
 
+    // HKDF expand step: T(n) = HMAC(PRK, T(n-1) | info | counter).
     while (generatedBytes < outputLength) {
       val input = ByteArray(size = previousBlock.size + info.size + 1)
       previousBlock.copyInto(destination = input, destinationOffset = 0)
@@ -180,6 +185,7 @@ public class AndroidCryptoProvider : CryptoProvider {
   private fun decodeEd25519Point(publicKey: ByteArray): EdECPoint {
     val yBytes: ByteArray =
       publicKey.copyOf().also { bytes ->
+        // The top bit encodes the X parity; clear it before reconstructing Y.
         bytes[bytes.lastIndex] = (bytes.last().toInt() and 0x7F).toByte()
       }
     return EdECPoint((publicKey.last().toInt() and 0x80) != 0, fromLittleEndian(bytes = yBytes))

@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.power
 
+/** High-level coordinator that translates battery state into connection policy. */
 public class PowerManager(
   private val batteryMonitor: BatteryMonitor,
   private val config: PowerConfig,
@@ -7,6 +8,7 @@ public class PowerManager(
 ) {
   private var currentTier: PowerTier? = null
 
+  /** Produces a power decision for the current connection set. */
   public fun evaluate(connections: List<ManagedConnection>): PowerDecision {
     val batteryPercent: Int = batteryMonitor.batteryPercent()
     val activeTier: PowerTier =
@@ -35,6 +37,7 @@ public class PowerManager(
   }
 }
 
+/** Decision returned by [PowerManager] for the current evaluation cycle. */
 public data class PowerDecision(
   public val tier: PowerTier,
   public val profile: PowerProfile,

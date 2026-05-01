@@ -25,9 +25,16 @@ import ch.trancee.meshlink.wire.messages.RoutedMessageCodec
 import ch.trancee.meshlink.wire.messages.UpdateMessage
 import ch.trancee.meshlink.wire.messages.UpdateMessageCodec
 
+/**
+ * Encodes and decodes the shared MeshLink frame envelope.
+ *
+ * Every frame starts with a one-byte message type followed by a four-byte payload length, then the
+ * message-specific payload bytes.
+ */
 public object WireCodec {
   private const val HEADER_SIZE: Int = 1 + Int.SIZE_BYTES
 
+  /** Serializes a typed wire message into the common frame format. */
   public fun encode(message: WireMessage): ByteArray {
     val frameType: MessageType
     val payload: ByteArray
@@ -94,6 +101,12 @@ public object WireCodec {
     return writeBuffer.toByteArray()
   }
 
+  /**
+   * Parses an encoded frame back into a typed message.
+   *
+   * The envelope is validated inline here so callers can use [decode] directly when they are
+   * willing to accept exceptions for malformed input.
+   */
   public fun decode(encoded: ByteArray): WireMessage {
     if (encoded.size < HEADER_SIZE) {
       throw IllegalArgumentException("Encoded frame is shorter than the 5-byte header.")

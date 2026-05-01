@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Minimal library manifest. Platform permissions and service declarations can be
+     added here as the Android transport moves from the virtual stub to real BLE APIs. -->
 <manifest package="ch.trancee.meshlink" />

@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.engine
 
+/** Retry and timeout policy for peer handshakes. */
 public data class HandshakeConfig(
   public val timeoutMillis: Long,
   public val maxRetries: Int,
@@ -14,6 +15,7 @@ public data class HandshakeConfig(
   }
 
   public companion object {
+    /** Returns the default handshake policy. */
     public fun default(): HandshakeConfig {
       return HandshakeConfig(timeoutMillis = 5_000L, maxRetries = 2, initialRetryDelayMillis = 250L)
     }

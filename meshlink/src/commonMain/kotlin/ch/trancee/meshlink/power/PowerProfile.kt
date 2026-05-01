@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.power
 
+/** Concrete BLE operating profile selected for a power tier. */
 public data class PowerProfile(
   public val scanDutyCyclePercent: Int,
   public val connectionIntervalMillis: Int,

@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [UpdateMessage]. */
 public object UpdateMessageCodec {
   public const val DESTINATION_PEER_ID_SIZE: Int = HelloMessageCodec.PEER_ID_SIZE
   private const val PAYLOAD_SIZE: Int = DESTINATION_PEER_ID_SIZE + Int.SIZE_BYTES + Int.SIZE_BYTES

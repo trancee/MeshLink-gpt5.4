@@ -1,5 +1,11 @@
 package ch.trancee.meshlink.power
 
+/**
+ * Chooses which connections may be closed during a graceful drain.
+ *
+ * In-flight transfers are preserved until they finish, while idle connections may be closed
+ * immediately.
+ */
 public class GracefulDrainManager {
   public fun evaluate(connections: List<ManagedConnection>): GracefulDrainDecision {
     val inFlightConnections: List<ManagedConnection> =
@@ -22,6 +28,7 @@ public class GracefulDrainManager {
   }
 }
 
+/** Result of evaluating graceful drain eligibility. */
 public data class GracefulDrainDecision(
   public val drainComplete: Boolean,
   public val connectionsToClose: List<PeerKey>,

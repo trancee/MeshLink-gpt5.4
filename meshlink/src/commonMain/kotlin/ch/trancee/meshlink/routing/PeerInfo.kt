@@ -2,6 +2,7 @@ package ch.trancee.meshlink.routing
 
 import ch.trancee.meshlink.api.PeerIdHex
 
+/** Snapshot of a neighbor peer used by routing logic. */
 public data class PeerInfo(
   public val peerId: PeerIdHex,
   public val metric: Int,

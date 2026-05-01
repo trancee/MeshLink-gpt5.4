@@ -27,6 +27,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * Default runtime that wires transport, handshake, delivery, peer state, and pseudonym rotation
+ * into the public [MeshLinkApi].
+ */
 public class MeshEngine
 private constructor(
   public val config: MeshEngineConfig,
@@ -86,6 +90,10 @@ private constructor(
     )
   }
 
+  /**
+   * Sends an application payload through the delivery pipeline before touching the transport so
+   * rate-limits and capacity checks happen consistently.
+   */
   override fun send(peerId: PeerIdHex, payload: ByteArray): Unit {
     val result: SendResult =
       deliveryPipeline.send(
@@ -99,6 +107,7 @@ private constructor(
     }
   }
 
+  /** Starts a handshake from the local node's perspective. */
   public fun beginHandshake(
     peerId: PeerIdHex,
     role: HandshakeRole,
@@ -107,10 +116,17 @@ private constructor(
     return handshakeManager.beginHandshake(peerId = peerId, role = role, payload = payload)
   }
 
+  /** Produces the next outbound handshake frame for an already active conversation. */
   public fun continueHandshake(peerId: PeerIdHex, payload: ByteArray): HandshakeMessage {
     return handshakeManager.createOutboundMessage(peerId = peerId, payload = payload)
   }
 
+  /**
+   * Demultiplexes inbound frames to the appropriate subsystem.
+   *
+   * Handshake frames stay inside the handshake manager while routed and broadcast payloads are
+   * surfaced to application consumers as raw bytes.
+   */
   public fun receiveInboundMessage(
     peerId: PeerIdHex,
     message: WireMessage,
@@ -129,6 +145,7 @@ private constructor(
     }
   }
 
+  /** Derives the pseudonym that should be advertised for the given time window. */
   public fun pseudonymAt(identityKey: ByteArray, timestampMillis: Long): ByteArray {
     return pseudonymRotator.pseudonymAt(
       identityKey = identityKey,
@@ -136,6 +153,7 @@ private constructor(
     )
   }
 
+  /** Verifies whether a candidate pseudonym matches the active rotation window. */
   public fun verifyPseudonym(
     candidate: ByteArray,
     identityKey: ByteArray,
@@ -148,6 +166,7 @@ private constructor(
     )
   }
 
+  /** Publishes a fresh peer snapshot and emits discovery diagnostics for each entry. */
   public fun publishPeers(peerDetails: List<PeerDetail>): Unit {
     mutablePeers.value = peerDetails
     peerDetails.forEach { peerDetail ->
@@ -156,6 +175,8 @@ private constructor(
           peerId = peerDetail.peerId,
           state =
             when (peerDetail.state) {
+              // The explicit branch keeps the emitted type obvious at the call site,
+              // even though the current implementation forwards the same value.
               PeerState.Disconnected -> PeerState.Disconnected
               else -> peerDetail.state
             },
@@ -174,12 +195,15 @@ private constructor(
       "MeshEngine cannot transition from ${current.name} to ${target.name}."
     }
 
+    // Update the transport before publishing the state change so observers do not see
+    // RUNNING while advertising is still disabled, or vice versa.
     transport.advertise(enabled = advertisingEnabled)
     mutableState.value = target
     diagnosticSink.emit(code = diagnosticCode)
   }
 
   public companion object {
+    /** Creates a mesh engine using the default crypto provider and diagnostics sink. */
     public fun create(
       config: MeshEngineConfig,
       transport: BleTransport,
@@ -198,6 +222,7 @@ private constructor(
       )
     }
 
+    /** Creates a fully wired engine using caller-supplied infrastructure. */
     public fun create(
       config: MeshEngineConfig,
       transport: BleTransport,

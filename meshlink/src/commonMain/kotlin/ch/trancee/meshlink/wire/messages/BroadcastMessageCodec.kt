@@ -3,6 +3,7 @@ package ch.trancee.meshlink.wire.messages
 import ch.trancee.meshlink.wire.ReadBuffer
 import ch.trancee.meshlink.wire.WriteBuffer
 
+/** Codec for [BroadcastMessage]. */
 public object BroadcastMessageCodec {
   public const val ORIGIN_PEER_ID_SIZE: Int = HelloMessageCodec.PEER_ID_SIZE
   private const val HEADER_SIZE: Int = ORIGIN_PEER_ID_SIZE + Int.SIZE_BYTES + 1

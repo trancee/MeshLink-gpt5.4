@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.transfer
 
+/** Tracks selectively acknowledged chunk indices. */
 public class SackTracker(public val totalChunks: Int) {
   private val acknowledgedChunkIndices: MutableSet<Int> = linkedSetOf()
 
@@ -25,10 +26,12 @@ public class SackTracker(public val totalChunks: Int) {
     return acknowledgedChunkIndices.toSet()
   }
 
+  /** Returns every missing chunk index in ascending order. */
   public fun missingChunks(): List<Int> {
     return (0 until totalChunks).filter { chunkIndex -> chunkIndex !in acknowledgedChunkIndices }
   }
 
+  /** Returns the highest chunk index that is fully contiguous from zero. */
   public fun highestContiguousAcknowledgedChunkIndex(): Int? {
     if (0 !in acknowledgedChunkIndices) {
       return null

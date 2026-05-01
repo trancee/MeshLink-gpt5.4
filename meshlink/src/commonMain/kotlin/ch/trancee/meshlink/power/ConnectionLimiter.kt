@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.power
 
+/** Enforces tier-specific connection-count limits. */
 public object ConnectionLimiter {
   public fun canAcceptConnection(
     currentConnectionCount: Int,
