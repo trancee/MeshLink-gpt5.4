@@ -30,7 +30,7 @@
 
 ## Phase 4: Build & Publish
 
-- [ ] T018 Configure `maven-publish` + `signing` in meshlink/build.gradle.kts
+- [x] T018 Configure `maven-publish` + `signing` in meshlink/build.gradle.kts
 - [x] T019 [P] Configure XCFramework assembly (XCFrameworkConfig)
 - [x] T020 [P] Create `Package.swift` (SPM binary target manifest)
 - [x] T021 [P] Create `consumer-rules.pro` (ProGuard keep rules)
@@ -70,4 +70,4 @@
 
 `jvmCiBenchmark` is the verification command corresponding to the CI-shortened benchmark suite required by FR-005.
 
-34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 16 of the 27 actionable tasks are now complete while 11 remain pending.
+34 total tasks remain recorded, 7 have been marked removed for constitution alignment, and 17 of the 27 actionable tasks are now complete while 10 remain pending.

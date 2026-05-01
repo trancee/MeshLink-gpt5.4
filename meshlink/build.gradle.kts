@@ -1,6 +1,7 @@
 import kotlinx.kover.gradle.plugin.dsl.AggregationType
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
+import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -10,6 +11,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.benchmark)
     alias(libs.plugins.kover)
+    id("maven-publish")
+    id("signing")
 }
 
 val meshLinkXCFramework = XCFramework("MeshLink")
@@ -95,6 +98,63 @@ tasks.register("jvmCiBenchmark") {
     group = "verification"
     description = "Runs the CI-shortened JVM benchmark suite."
     dependsOn("jvmBenchmarkBenchmark")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "OSSRH"
+            val isSnapshotVersion: Boolean = version.toString().endsWith("SNAPSHOT")
+            url = uri(
+                if (isSnapshotVersion) {
+                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                } else {
+                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                },
+            )
+            credentials {
+                username = providers.environmentVariable("OSSRH_USERNAME").orNull
+                password = providers.environmentVariable("OSSRH_PASSWORD").orNull
+            }
+        }
+    }
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            name.set("MeshLink")
+            description.set("Kotlin Multiplatform mesh networking toolkit.")
+            url.set("https://github.com/trancee/meshlink")
+            licenses {
+                license {
+                    name.set("Apache License, Version 2.0")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+            developers {
+                developer {
+                    id.set("meshlink")
+                    name.set("MeshLink Maintainers")
+                }
+            }
+            scm {
+                url.set("https://github.com/trancee/meshlink")
+                connection.set("scm:git:https://github.com/trancee/meshlink.git")
+                developerConnection.set("scm:git:ssh://git@github.com/trancee/meshlink.git")
+            }
+        }
+    }
+}
+
+signing {
+    val signingKey: String? = providers.environmentVariable("SIGNING_KEY").orNull
+    val signingPassword: String? = providers.environmentVariable("SIGNING_PASSWORD").orNull
+    val hasSigningCredentials: Boolean = !signingKey.isNullOrBlank() && !signingPassword.isNullOrBlank()
+
+    isRequired = hasSigningCredentials && !version.toString().endsWith("SNAPSHOT")
+
+    if (hasSigningCredentials) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications)
+    }
 }
 
 kover {
