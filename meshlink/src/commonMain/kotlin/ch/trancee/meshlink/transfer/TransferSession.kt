@@ -9,13 +9,18 @@ public class TransferSession(
   public val priority: Priority,
   private val payload: ByteArray,
   private val chunkSizeBytes: Int,
+  private val retransmitLimit: Int = Int.MAX_VALUE,
 ) {
   private val sackTracker: SackTracker
+  private val transmissionAttemptsByChunkIndex: MutableMap<Int, Int> = mutableMapOf()
 
   init {
     require(transferId.isNotBlank()) { "TransferSession transferId must not be blank." }
     require(payload.isNotEmpty()) { "TransferSession payload must not be empty." }
     require(chunkSizeBytes > 0) { "TransferSession chunkSizeBytes must be greater than 0." }
+    require(retransmitLimit >= 0) {
+      "TransferSession retransmitLimit must be greater than or equal to 0."
+    }
     sackTracker = SackTracker(totalChunks = totalChunkCount(payloadSize = payload.size))
   }
 
@@ -27,7 +32,16 @@ public class TransferSession(
   public fun nextChunks(windowSize: Int): List<OutboundChunk> {
     require(windowSize > 0) { "TransferSession windowSize must be greater than 0." }
 
-    return sackTracker.missingChunks().take(n = windowSize).map { chunkIndex ->
+    val eligibleChunkIndices: List<Int> =
+      sackTracker.missingChunks().filter { chunkIndex ->
+        (transmissionAttemptsByChunkIndex[chunkIndex] ?: 0) <= retransmitLimit
+      }
+    val selectedChunkIndices: List<Int> = eligibleChunkIndices.take(n = windowSize)
+    selectedChunkIndices.forEach { chunkIndex ->
+      val previousAttempts: Int = transmissionAttemptsByChunkIndex[chunkIndex] ?: 0
+      transmissionAttemptsByChunkIndex[chunkIndex] = previousAttempts + 1
+    }
+    return selectedChunkIndices.map { chunkIndex ->
       OutboundChunk(
         transferId = transferId,
         chunkIndex = chunkIndex,
@@ -62,6 +76,13 @@ public class TransferSession(
       chunkSizeBytes = chunkSizeBytes,
       totalBytes = payload.size,
     )
+  }
+
+  internal fun isRetransmitBudgetExhausted(): Boolean {
+    return !sackTracker.isComplete() &&
+      sackTracker.missingChunks().all { chunkIndex ->
+        (transmissionAttemptsByChunkIndex[chunkIndex] ?: 0) > retransmitLimit
+      }
   }
 
   public fun cancel(): TransferEvent.Failed {

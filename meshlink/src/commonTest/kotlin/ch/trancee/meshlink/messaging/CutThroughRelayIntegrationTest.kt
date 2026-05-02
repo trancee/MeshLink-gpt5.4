@@ -2,6 +2,7 @@ package ch.trancee.meshlink.messaging
 
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 public class CutThroughRelayIntegrationTest {
   @Test
@@ -21,8 +22,13 @@ public class CutThroughRelayIntegrationTest {
 
     // Assert
     assertContentEquals(
-      expected = byteArrayOf(0x01, 0x02, 0x03, 0x0A, 0x0B),
+      expected = byteArrayOf(0x01, 0x02, 0x03, 0x01, 0x0A, 0x01, 0x0B),
       actual = secondForwardedFrame,
     )
+    val visitedHops =
+      CutThroughBuffer().visitedHops(chunk0 = secondForwardedFrame, payloadSizeBytes = 3)
+    assertEquals(expected = 2, actual = visitedHops.size)
+    assertContentEquals(expected = firstHopPeerId, actual = visitedHops[0])
+    assertContentEquals(expected = secondHopPeerId, actual = visitedHops[1])
   }
 }

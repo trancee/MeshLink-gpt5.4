@@ -113,6 +113,30 @@ public class TransferSessionTest {
   }
 
   @Test
+  public fun nextChunks_stopsReturningChunksAfterTheRetransmitBudgetIsExhausted(): Unit {
+    // Arrange
+    val session =
+      TransferSession(
+        transferId = "tx-1",
+        recipientPeerId = PeerIdHex(value = "00112233"),
+        priority = Priority.NORMAL,
+        payload = byteArrayOf(0x01, 0x02),
+        chunkSizeBytes = 1,
+        retransmitLimit = 1,
+      )
+
+    // Act
+    val firstAttempt = session.nextChunks(windowSize = 2)
+    val secondAttempt = session.nextChunks(windowSize = 2)
+    val exhaustedAttempt = session.nextChunks(windowSize = 2)
+
+    // Assert
+    assertEquals(expected = listOf(0, 1), actual = firstAttempt.map { chunk -> chunk.chunkIndex })
+    assertEquals(expected = listOf(0, 1), actual = secondAttempt.map { chunk -> chunk.chunkIndex })
+    assertEquals(expected = emptyList(), actual = exhaustedAttempt)
+  }
+
+  @Test
   public fun invalidInputs_areRejected(): Unit {
     // Arrange
     val recipientPeerId = PeerIdHex(value = "00112233")
@@ -148,6 +172,17 @@ public class TransferSessionTest {
           chunkSizeBytes = 0,
         )
       }
+    val retransmitLimitError =
+      assertFailsWith<IllegalArgumentException> {
+        TransferSession(
+          transferId = "tx-1",
+          recipientPeerId = recipientPeerId,
+          priority = Priority.NORMAL,
+          payload = byteArrayOf(0x01),
+          chunkSizeBytes = 1,
+          retransmitLimit = -1,
+        )
+      }
     val session =
       TransferSession(
         transferId = "tx-2",
@@ -171,6 +206,10 @@ public class TransferSessionTest {
     assertEquals(
       expected = "TransferSession chunkSizeBytes must be greater than 0.",
       actual = chunkSizeError.message,
+    )
+    assertEquals(
+      expected = "TransferSession retransmitLimit must be greater than or equal to 0.",
+      actual = retransmitLimitError.message,
     )
     assertEquals(
       expected = "TransferSession windowSize must be greater than 0.",

@@ -3,7 +3,9 @@ package ch.trancee.meshlink.engine
 import ch.trancee.meshlink.api.DiagnosticCode
 import ch.trancee.meshlink.api.DiagnosticSink
 import ch.trancee.meshlink.api.MeshLinkState
+import ch.trancee.meshlink.api.PeerDetail
 import ch.trancee.meshlink.api.PeerIdHex
+import ch.trancee.meshlink.api.PeerState
 import ch.trancee.meshlink.transport.VirtualMeshTransport
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -115,6 +117,82 @@ public class MeshEngineApiLifecycleTest {
 
     // Assert
     assertContentEquals(expected = payload, actual = actual)
+  }
+
+  @Test
+  public fun healthSnapshot_summarizesCurrentRuntimeState(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "44556677")
+    val engine =
+      MeshEngine.create(
+        config = MeshEngineConfig.default(),
+        transport = VirtualMeshTransport(localPeerId = PeerIdHex(value = "00112233")),
+        cryptoProvider = FakeCryptoProvider(),
+      )
+    engine.publishPeers(
+      peerDetails =
+        listOf(
+          PeerDetail(
+            peerId = destinationPeerId,
+            state = PeerState.Connected,
+            displayName = null,
+            lastSeenEpochMillis = 0L,
+          )
+        )
+    )
+    engine.processRoutingUpdate(
+      update =
+        ch.trancee.meshlink.routing.RoutingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = destinationPeerId,
+          metric = 1,
+          sequenceNumber = 4,
+          expiresAtEpochMillis = 100L,
+        )
+    )
+    engine.startTransfer(
+      transferId = "transfer-1",
+      recipientPeerId = destinationPeerId,
+      priority = ch.trancee.meshlink.transfer.Priority.NORMAL,
+      payload = byteArrayOf(0x01),
+      preferL2cap = false,
+      nowEpochMillis = 0L,
+    )
+    engine.sendRouted(
+      peerId = PeerIdHex(value = "8899aabb"),
+      payload = byteArrayOf(0x02),
+      nowEpochMillis = 0L,
+    )
+
+    // Act
+    val snapshot = engine.healthSnapshot()
+
+    // Assert
+    assertEquals(expected = 1, actual = snapshot.connectedPeerCount)
+    assertEquals(expected = 1, actual = snapshot.routingTableSize)
+    assertEquals(expected = 1, actual = snapshot.activeTransferCount)
+    assertEquals(expected = 1, actual = snapshot.bufferedMessageCount)
+  }
+
+  @Test
+  public fun factoryReset_rejectsCallsBeforeStop(): Unit {
+    // Arrange
+    val engine =
+      MeshEngine.create(
+        config = MeshEngineConfig.default(),
+        transport = VirtualMeshTransport(localPeerId = PeerIdHex(value = "00112233")),
+        cryptoProvider = FakeCryptoProvider(),
+      )
+    engine.start()
+
+    // Act
+    val error = assertFailsWith<IllegalStateException> { engine.factoryReset() }
+
+    // Assert
+    assertEquals(
+      expected = "MeshEngine must be stopped before factoryReset().",
+      actual = error.message,
+    )
   }
 
   @Test

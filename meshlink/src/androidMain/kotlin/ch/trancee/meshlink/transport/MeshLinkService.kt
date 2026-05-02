@@ -31,6 +31,7 @@ public class MeshLinkService(private var transport: AndroidBleTransport? = null)
   }
 
   public fun clearTransport(): Unit {
+    transport?.advertise(enabled = false)
     transport = null
   }
 }

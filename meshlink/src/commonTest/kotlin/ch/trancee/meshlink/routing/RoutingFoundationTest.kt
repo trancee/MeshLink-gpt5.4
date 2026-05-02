@@ -52,6 +52,27 @@ public class RoutingFoundationTest {
   }
 
   @Test
+  public fun routingConfig_acceptsTheMinimumValidValues(): Unit {
+    // Arrange
+    val expectedRouteExpiryMillis = 1L
+    val expectedPeerTimeoutMillis = 1L
+    val expectedHopLimit = 1
+
+    // Act
+    val actual =
+      RoutingConfig(
+        routeExpiryMillis = expectedRouteExpiryMillis,
+        peerTimeoutMillis = expectedPeerTimeoutMillis,
+        hopLimit = expectedHopLimit,
+      )
+
+    // Assert
+    assertEquals(expected = expectedRouteExpiryMillis, actual = actual.routeExpiryMillis)
+    assertEquals(expected = expectedPeerTimeoutMillis, actual = actual.peerTimeoutMillis)
+    assertEquals(expected = expectedHopLimit, actual = actual.hopLimit)
+  }
+
+  @Test
   public fun peerInfo_retainsConstructorValues(): Unit {
     // Arrange
     val peerId = PeerIdHex(value = "00112233")

@@ -31,4 +31,30 @@ public open class RoutingBenchmark {
   public open fun lookupBestRoute(): PeerIdHex? {
     return routingEngine.nextHopFor(destinationPeerId = destinationPeerId)
   }
+
+  @Benchmark
+  public open fun withdrawRouteAndRequestSequenceRecovery(): Int? {
+    val engine = RoutingEngine(config = RoutingConfig.default())
+    engine.processUpdate(
+      update =
+        RoutingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = PeerIdHex(value = "44556677"),
+          metric = 1,
+          sequenceNumber = 1,
+          expiresAtEpochMillis = 1_000L,
+        )
+    )
+    engine.processUpdate(
+      update =
+        RoutingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = PeerIdHex(value = "44556677"),
+          metric = RoutingEngine.INFINITE_METRIC,
+          sequenceNumber = 1,
+          expiresAtEpochMillis = 1_001L,
+        )
+    )
+    return engine.routeCoordinator.pendingSequenceNumber(destinationPeerId = destinationPeerId)
+  }
 }

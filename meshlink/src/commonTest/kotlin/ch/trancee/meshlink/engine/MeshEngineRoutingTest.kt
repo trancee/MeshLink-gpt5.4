@@ -4,6 +4,7 @@ import ch.trancee.meshlink.api.DiagnosticCode
 import ch.trancee.meshlink.api.DiagnosticSink
 import ch.trancee.meshlink.api.PeerIdHex
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
+import ch.trancee.meshlink.routing.RoutingUpdate
 import ch.trancee.meshlink.transport.VirtualMeshTransport
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
@@ -80,13 +81,13 @@ public class MeshEngineRoutingTest {
     val peerId = PeerIdHex(value = "44556677")
 
     // Act
+    val firstHandshakeFrame =
+      ch.trancee.meshlink.crypto.noise
+        .NoiseXXHandshake(role = HandshakeRole.INITIATOR)
+        .createOutboundMessage(payload = byteArrayOf(0x05))
     engine.receiveInboundMessage(
       peerId = peerId,
-      message =
-        ch.trancee.meshlink.wire.messages.HandshakeMessage(
-          round = HandshakeRound.ONE,
-          payload = byteArrayOf(0x05),
-        ),
+      message = firstHandshakeFrame,
       handshakeRole = HandshakeRole.RESPONDER,
     )
 
@@ -139,13 +140,13 @@ public class MeshEngineRoutingTest {
         role = HandshakeRole.INITIATOR,
         payload = byteArrayOf(0x11),
       )
+    val responderHandshake =
+      ch.trancee.meshlink.crypto.noise.NoiseXXHandshake(role = HandshakeRole.RESPONDER)
+    responderHandshake.receiveInboundMessage(message = first)
+    val second = responderHandshake.createOutboundMessage(payload = byteArrayOf(0x12))
     engine.receiveInboundMessage(
       peerId = peerId,
-      message =
-        ch.trancee.meshlink.wire.messages.HandshakeMessage(
-          round = HandshakeRound.TWO,
-          payload = byteArrayOf(0x12),
-        ),
+      message = second,
       handshakeRole = HandshakeRole.INITIATOR,
     )
     val third = engine.continueHandshake(peerId = peerId, payload = byteArrayOf(0x13))
@@ -154,5 +155,120 @@ public class MeshEngineRoutingTest {
     assertEquals(expected = HandshakeRound.ONE, actual = first.round)
     assertEquals(expected = HandshakeRound.THREE, actual = third.round)
     assertFalse(actual = engine.handshakeManager.isHandshakeActive(peerId = peerId))
+  }
+
+  @Test
+  public fun send_routesPayloadsThroughThePreferredNextHopWhenRoutingStateExists(): Unit {
+    // Arrange
+    val localPeerId = PeerIdHex(value = "00112233")
+    val destinationPeerId = PeerIdHex(value = "44556677")
+    val nextHopPeerId = PeerIdHex(value = "8899aabb")
+    val transport = VirtualMeshTransport(localPeerId = localPeerId)
+    val nextHopTransport = VirtualMeshTransport(localPeerId = nextHopPeerId)
+    transport.attachPeer(peerId = nextHopPeerId, transport = nextHopTransport)
+    transport.connect(peerId = nextHopPeerId)
+    val engine =
+      MeshEngine.create(
+        config = MeshEngineConfig.default(),
+        transport = transport,
+        cryptoProvider = FakeCryptoProvider(),
+      )
+    val payload = byteArrayOf(0x21, 0x22)
+    engine.processRoutingUpdate(
+      update =
+        RoutingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = 1,
+          sequenceNumber = 7,
+          expiresAtEpochMillis = 1_000L,
+        )
+    )
+
+    // Act
+    engine.send(peerId = destinationPeerId, payload = payload)
+    val actual = nextHopTransport.receivedFrames.replayCache.single()
+
+    // Assert
+    assertContentEquals(expected = payload, actual = actual)
+  }
+
+  @Test
+  public fun sweepState_expiresRoutesAndMarksTrackedPeersDisconnected(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "44556677")
+    val engine =
+      MeshEngine.create(
+        config = MeshEngineConfig.default(),
+        transport = VirtualMeshTransport(localPeerId = PeerIdHex(value = "00112233")),
+        cryptoProvider = FakeCryptoProvider(),
+      )
+    engine.publishPeers(
+      peerDetails =
+        listOf(
+          ch.trancee.meshlink.api.PeerDetail(
+            peerId = destinationPeerId,
+            state = ch.trancee.meshlink.api.PeerState.Connected,
+            displayName = null,
+            lastSeenEpochMillis = 0L,
+          )
+        )
+    )
+    engine.processRoutingUpdate(
+      update =
+        RoutingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = destinationPeerId,
+          metric = 1,
+          sequenceNumber = 2,
+          expiresAtEpochMillis = 10L,
+        )
+    )
+
+    // Act
+    val sweep = engine.sweepState(nowEpochMillis = 31_000L)
+    val session = engine.sessionRegistry.session(peerId = destinationPeerId)
+
+    // Assert
+    assertEquals(expected = listOf(destinationPeerId), actual = sweep.stalePeers)
+    assertEquals(expected = listOf(destinationPeerId), actual = sweep.expiredRoutes)
+    assertTrue(actual = engine.peers.value.isEmpty())
+    assertTrue(actual = session == null || !session.transportConnected)
+    assertTrue(actual = session == null || !session.routeAvailable)
+  }
+
+  @Test
+  public fun processRoutingUpdate_delegatesToTheRoutingEngine(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "00112233")
+    val nextHopPeerId = PeerIdHex(value = "44556677")
+    val engine =
+      MeshEngine.create(
+        config = MeshEngineConfig.default(),
+        transport = VirtualMeshTransport(localPeerId = PeerIdHex(value = "8899aabb")),
+        cryptoProvider = FakeCryptoProvider(),
+      )
+
+    // Act
+    val accepted =
+      engine.processRoutingUpdate(
+        update =
+          RoutingUpdate(
+            destinationPeerId = destinationPeerId,
+            nextHopPeerId = nextHopPeerId,
+            metric = 1,
+            sequenceNumber = 2,
+            expiresAtEpochMillis = 123L,
+          )
+      )
+    val actual = engine.nextHopFor(destinationPeerId = destinationPeerId)
+
+    // Assert
+    assertTrue(actual = accepted)
+    assertEquals(
+      expected = nextHopPeerId,
+      actual = actual,
+      message = "MeshEngine should expose the preferred next hop selected by the routing engine.",
+    )
   }
 }

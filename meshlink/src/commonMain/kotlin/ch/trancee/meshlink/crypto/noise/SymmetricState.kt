@@ -79,6 +79,26 @@ public class SymmetricState(
     return plaintext
   }
 
+  /** Splits the handshake state into initiator->responder and responder->initiator ciphers. */
+  internal fun split(): Pair<CipherState, CipherState> {
+    val derivedKeyMaterial: ByteArray =
+      provider.hkdfSha256(
+        ikm = byteArrayOf(),
+        salt = chainingKey,
+        info = byteArrayOf(),
+        outputLength = DERIVED_KEY_MATERIAL_SIZE,
+      )
+    val firstCipherKey: ByteArray =
+      derivedKeyMaterial.copyOfRange(fromIndex = 0, toIndex = KEY_SIZE)
+    val secondCipherKey: ByteArray =
+      derivedKeyMaterial.copyOfRange(fromIndex = KEY_SIZE, toIndex = DERIVED_KEY_MATERIAL_SIZE)
+    val initiatorToResponder = CipherState(provider = provider)
+    val responderToInitiator = CipherState(provider = provider)
+    initiatorToResponder.initializeKey(key = firstCipherKey)
+    responderToInitiator.initializeKey(key = secondCipherKey)
+    return initiatorToResponder to responderToInitiator
+  }
+
   public companion object {
     private const val KEY_SIZE: Int = 32
     private const val DERIVED_KEY_MATERIAL_SIZE: Int = KEY_SIZE * 2

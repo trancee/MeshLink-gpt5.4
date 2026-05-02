@@ -28,7 +28,7 @@ public data class RoutingUpdate(
 public class RoutingEngine(
   public val config: RoutingConfig,
   private val routingTable: RoutingTable = RoutingTable(),
-  private val routeCoordinator: RouteCoordinator = RouteCoordinator(),
+  internal val routeCoordinator: RouteCoordinator = RouteCoordinator(),
 ) {
   /**
    * Processes a single route advertisement.
@@ -43,7 +43,7 @@ public class RoutingEngine(
         nextHopPeerId = update.nextHopPeerId,
       )
       if (routingTable.bestRoute(destinationPeerId = update.destinationPeerId) == null) {
-        routeCoordinator.withdraw(destinationPeerId = update.destinationPeerId)
+        routeCoordinator.requestSequenceNumber(destinationPeerId = update.destinationPeerId)
       }
       return true
     }
@@ -59,6 +59,9 @@ public class RoutingEngine(
         metric = update.metric,
       )
     ) {
+      if (routingTable.bestRoute(destinationPeerId = update.destinationPeerId) == null) {
+        routeCoordinator.requestSequenceNumber(destinationPeerId = update.destinationPeerId)
+      }
       return false
     }
 

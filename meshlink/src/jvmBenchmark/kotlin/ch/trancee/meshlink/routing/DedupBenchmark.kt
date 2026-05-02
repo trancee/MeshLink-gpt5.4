@@ -22,4 +22,13 @@ public open class DedupBenchmark {
       nowEpochMillis = nowEpochMillis,
     )
   }
+
+  @Benchmark
+  public open fun expireAndReinsertKey(): Boolean {
+    nowEpochMillis += DedupSet.DEFAULT_EXPIRY_MILLIS + 1L
+    return dedupSet.isDuplicate(
+      key = byteArrayOf(0x05, 0x06, 0x07, 0x08),
+      nowEpochMillis = nowEpochMillis,
+    )
+  }
 }

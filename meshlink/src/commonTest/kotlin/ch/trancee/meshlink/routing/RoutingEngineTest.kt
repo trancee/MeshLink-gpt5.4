@@ -182,6 +182,100 @@ public class RoutingEngineTest {
   }
 
   @Test
+  public fun processUpdate_requestsSequenceNumberWhenTheLastRouteIsWithdrawn(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "00112233")
+    val nextHopPeerId = PeerIdHex(value = "44556677")
+    val coordinator = RouteCoordinator()
+    val engine = RoutingEngine(config = RoutingConfig.default(), routeCoordinator = coordinator)
+    engine.processUpdate(
+      update =
+        routingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = 1,
+          sequenceNumber = 7,
+        )
+    )
+
+    // Act
+    engine.processUpdate(
+      update =
+        routingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = RoutingEngine.INFINITE_METRIC,
+          sequenceNumber = 8,
+        )
+    )
+
+    // Assert
+    assertEquals(expected = null, actual = engine.nextHopFor(destinationPeerId = destinationPeerId))
+    assertEquals(expected = emptySet(), actual = engine.destinations())
+    assertEquals(
+      expected = 8,
+      actual = coordinator.pendingSequenceNumber(destinationPeerId = destinationPeerId),
+      message =
+        "RoutingEngine should request a fresher sequence number when the last route disappears.",
+    )
+    assertEquals(
+      expected = 7,
+      actual = coordinator.sourceRecord(destinationPeerId = destinationPeerId)?.sequenceNumber,
+      message =
+        "RoutingEngine should keep the last accepted source record so starvation recovery has context.",
+    )
+  }
+
+  @Test
+  public fun processUpdate_requestsSequenceNumberWhenAnInfeasibleRouteArrivesWithoutAFallback():
+    Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "00112233")
+    val nextHopPeerId = PeerIdHex(value = "44556677")
+    val coordinator = RouteCoordinator()
+    val engine = RoutingEngine(config = RoutingConfig.default(), routeCoordinator = coordinator)
+    engine.processUpdate(
+      update =
+        routingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = 1,
+          sequenceNumber = 5,
+        )
+    )
+    engine.processUpdate(
+      update =
+        routingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = RoutingEngine.INFINITE_METRIC,
+          sequenceNumber = 6,
+        )
+    )
+
+    // Act
+    val actual =
+      engine.processUpdate(
+        update =
+          routingUpdate(
+            destinationPeerId = destinationPeerId,
+            nextHopPeerId = PeerIdHex(value = "8899aabb"),
+            metric = 2,
+            sequenceNumber = 4,
+          )
+      )
+
+    // Assert
+    assertEquals(expected = false, actual = actual)
+    assertEquals(
+      expected = 6,
+      actual = coordinator.pendingSequenceNumber(destinationPeerId = destinationPeerId),
+      message =
+        "RoutingEngine should keep requesting the next sequence number until a feasible route arrives.",
+    )
+  }
+
+  @Test
   public fun routesFor_exposesAllInstalledRoutesForADestination(): Unit {
     // Arrange
     val destinationPeerId = PeerIdHex(value = "00112233")

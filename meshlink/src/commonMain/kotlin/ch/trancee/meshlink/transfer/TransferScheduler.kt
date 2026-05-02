@@ -29,6 +29,11 @@ public class TransferScheduler {
     return queuedTransfers.size
   }
 
+  internal fun reset(): Unit {
+    queuedTransfers.clear()
+    nextSequence = 0L
+  }
+
   public companion object {
     private val scheduledTransferOrdering: Comparator<ScheduledTransfer> =
       compareBy<ScheduledTransfer> { scheduledTransfer ->

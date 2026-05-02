@@ -129,6 +129,7 @@ final enum class ch.trancee.meshlink.messaging/DeliveryFailureReason : kotlin/En
 final enum class ch.trancee.meshlink.messaging/QueuedReason : kotlin/Enum<ch.trancee.meshlink.messaging/QueuedReason> { // ch.trancee.meshlink.messaging/QueuedReason|null[0]
     enum entry BUFFER_FULL // ch.trancee.meshlink.messaging/QueuedReason.BUFFER_FULL|null[0]
     enum entry RATE_LIMITED // ch.trancee.meshlink.messaging/QueuedReason.RATE_LIMITED|null[0]
+    enum entry ROUTE_UNAVAILABLE // ch.trancee.meshlink.messaging/QueuedReason.ROUTE_UNAVAILABLE|null[0]
 
     final val entries // ch.trancee.meshlink.messaging/QueuedReason.entries|#static{}entries[0]
         final fun <get-entries>(): kotlin.enums/EnumEntries<ch.trancee.meshlink.messaging/QueuedReason> // ch.trancee.meshlink.messaging/QueuedReason.entries.<get-entries>|<get-entries>#static(){}[0]
@@ -301,6 +302,9 @@ abstract interface ch.trancee.meshlink.api/MeshLinkApi { // ch.trancee.meshlink.
     abstract val state // ch.trancee.meshlink.api/MeshLinkApi.state|{}state[0]
         abstract fun <get-state>(): kotlinx.coroutines.flow/StateFlow<ch.trancee.meshlink.api/MeshLinkState> // ch.trancee.meshlink.api/MeshLinkApi.state.<get-state>|<get-state>(){}[0]
 
+    abstract fun factoryReset() // ch.trancee.meshlink.api/MeshLinkApi.factoryReset|factoryReset(){}[0]
+    abstract fun forgetPeer(ch.trancee.meshlink.api/PeerIdHex) // ch.trancee.meshlink.api/MeshLinkApi.forgetPeer|forgetPeer(ch.trancee.meshlink.api.PeerIdHex){}[0]
+    abstract fun healthSnapshot(): ch.trancee.meshlink.api/MeshHealthSnapshot // ch.trancee.meshlink.api/MeshLinkApi.healthSnapshot|healthSnapshot(){}[0]
     abstract fun pause() // ch.trancee.meshlink.api/MeshLinkApi.pause|pause(){}[0]
     abstract fun resume() // ch.trancee.meshlink.api/MeshLinkApi.resume|resume(){}[0]
     abstract fun send(ch.trancee.meshlink.api/PeerIdHex, kotlin/ByteArray) // ch.trancee.meshlink.api/MeshLinkApi.send|send(ch.trancee.meshlink.api.PeerIdHex;kotlin.ByteArray){}[0]
@@ -588,6 +592,25 @@ final class ch.trancee.meshlink.api/DiagnosticEvent { // ch.trancee.meshlink.api
     final fun equals(kotlin/Any?): kotlin/Boolean // ch.trancee.meshlink.api/DiagnosticEvent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // ch.trancee.meshlink.api/DiagnosticEvent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // ch.trancee.meshlink.api/DiagnosticEvent.toString|toString(){}[0]
+}
+
+final class ch.trancee.meshlink.api/MeshHealthSnapshot { // ch.trancee.meshlink.api/MeshHealthSnapshot|null[0]
+    constructor <init>(kotlin.collections/List<ch.trancee.meshlink.api/PeerDetail>, kotlin/Int, kotlin/Int, kotlin/Int, ch.trancee.meshlink.power/PowerTier) // ch.trancee.meshlink.api/MeshHealthSnapshot.<init>|<init>(kotlin.collections.List<ch.trancee.meshlink.api.PeerDetail>;kotlin.Int;kotlin.Int;kotlin.Int;ch.trancee.meshlink.power.PowerTier){}[0]
+
+    final val activeTransferCount // ch.trancee.meshlink.api/MeshHealthSnapshot.activeTransferCount|{}activeTransferCount[0]
+        final fun <get-activeTransferCount>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.activeTransferCount.<get-activeTransferCount>|<get-activeTransferCount>(){}[0]
+    final val bufferedMessageCount // ch.trancee.meshlink.api/MeshHealthSnapshot.bufferedMessageCount|{}bufferedMessageCount[0]
+        final fun <get-bufferedMessageCount>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.bufferedMessageCount.<get-bufferedMessageCount>|<get-bufferedMessageCount>(){}[0]
+    final val connectedPeerCount // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeerCount|{}connectedPeerCount[0]
+        final fun <get-connectedPeerCount>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeerCount.<get-connectedPeerCount>|<get-connectedPeerCount>(){}[0]
+    final val connectedPeers // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeers|{}connectedPeers[0]
+        final fun <get-connectedPeers>(): kotlin.collections/List<ch.trancee.meshlink.api/PeerDetail> // ch.trancee.meshlink.api/MeshHealthSnapshot.connectedPeers.<get-connectedPeers>|<get-connectedPeers>(){}[0]
+    final val powerTier // ch.trancee.meshlink.api/MeshHealthSnapshot.powerTier|{}powerTier[0]
+        final fun <get-powerTier>(): ch.trancee.meshlink.power/PowerTier // ch.trancee.meshlink.api/MeshHealthSnapshot.powerTier.<get-powerTier>|<get-powerTier>(){}[0]
+    final val routingTableSize // ch.trancee.meshlink.api/MeshHealthSnapshot.routingTableSize|{}routingTableSize[0]
+        final fun <get-routingTableSize>(): kotlin/Int // ch.trancee.meshlink.api/MeshHealthSnapshot.routingTableSize.<get-routingTableSize>|<get-routingTableSize>(){}[0]
+
+    final fun toString(): kotlin/String // ch.trancee.meshlink.api/MeshHealthSnapshot.toString|toString(){}[0]
 }
 
 final class ch.trancee.meshlink.api/MeshLinkConfig { // ch.trancee.meshlink.api/MeshLinkConfig|null[0]
@@ -1190,6 +1213,9 @@ final class ch.trancee.meshlink.engine/MeshEngine : ch.trancee.meshlink.api/Mesh
 
     final fun beginHandshake(ch.trancee.meshlink.api/PeerIdHex, ch.trancee.meshlink.crypto.noise/HandshakeRole, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/MeshEngine.beginHandshake|beginHandshake(ch.trancee.meshlink.api.PeerIdHex;ch.trancee.meshlink.crypto.noise.HandshakeRole;kotlin.ByteArray){}[0]
     final fun continueHandshake(ch.trancee.meshlink.api/PeerIdHex, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/MeshEngine.continueHandshake|continueHandshake(ch.trancee.meshlink.api.PeerIdHex;kotlin.ByteArray){}[0]
+    final fun factoryReset() // ch.trancee.meshlink.engine/MeshEngine.factoryReset|factoryReset(){}[0]
+    final fun forgetPeer(ch.trancee.meshlink.api/PeerIdHex) // ch.trancee.meshlink.engine/MeshEngine.forgetPeer|forgetPeer(ch.trancee.meshlink.api.PeerIdHex){}[0]
+    final fun healthSnapshot(): ch.trancee.meshlink.api/MeshHealthSnapshot // ch.trancee.meshlink.engine/MeshEngine.healthSnapshot|healthSnapshot(){}[0]
     final fun pause() // ch.trancee.meshlink.engine/MeshEngine.pause|pause(){}[0]
     final fun pseudonymAt(kotlin/ByteArray, kotlin/Long): kotlin/ByteArray // ch.trancee.meshlink.engine/MeshEngine.pseudonymAt|pseudonymAt(kotlin.ByteArray;kotlin.Long){}[0]
     final fun publishPeers(kotlin.collections/List<ch.trancee.meshlink.api/PeerDetail>) // ch.trancee.meshlink.engine/MeshEngine.publishPeers|publishPeers(kotlin.collections.List<ch.trancee.meshlink.api.PeerDetail>){}[0]
@@ -1271,7 +1297,8 @@ final class ch.trancee.meshlink.engine/MeshStateSweepResult { // ch.trancee.mesh
 }
 
 final class ch.trancee.meshlink.engine/NoiseHandshakeManager { // ch.trancee.meshlink.engine/NoiseHandshakeManager|null[0]
-    constructor <init>(ch.trancee.meshlink.api/DiagnosticSink = ...) // ch.trancee.meshlink.engine/NoiseHandshakeManager.<init>|<init>(ch.trancee.meshlink.api.DiagnosticSink){}[0]
+    constructor <init>() // ch.trancee.meshlink.engine/NoiseHandshakeManager.<init>|<init>(){}[0]
+    constructor <init>(ch.trancee.meshlink.api/DiagnosticSink) // ch.trancee.meshlink.engine/NoiseHandshakeManager.<init>|<init>(ch.trancee.meshlink.api.DiagnosticSink){}[0]
 
     final fun beginHandshake(ch.trancee.meshlink.api/PeerIdHex, ch.trancee.meshlink.crypto.noise/HandshakeRole, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/NoiseHandshakeManager.beginHandshake|beginHandshake(ch.trancee.meshlink.api.PeerIdHex;ch.trancee.meshlink.crypto.noise.HandshakeRole;kotlin.ByteArray){}[0]
     final fun createOutboundMessage(ch.trancee.meshlink.api/PeerIdHex, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/NoiseHandshakeManager.createOutboundMessage|createOutboundMessage(ch.trancee.meshlink.api.PeerIdHex;kotlin.ByteArray){}[0]
@@ -1385,12 +1412,14 @@ final class ch.trancee.meshlink.messaging/MessageIdKey { // ch.trancee.meshlink.
 }
 
 final class ch.trancee.meshlink.messaging/MessagingConfig { // ch.trancee.meshlink.messaging/MessagingConfig|null[0]
-    constructor <init>(kotlin/Long, kotlin/Int, kotlin/Long, kotlin/Int, kotlin/Int) // ch.trancee.meshlink.messaging/MessagingConfig.<init>|<init>(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int){}[0]
+    constructor <init>(kotlin/Long, kotlin/Int, kotlin/Long, kotlin/Int, kotlin/Int, kotlin/Int = ...) // ch.trancee.meshlink.messaging/MessagingConfig.<init>|<init>(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 
     final val appIdHash // ch.trancee.meshlink.messaging/MessagingConfig.appIdHash|{}appIdHash[0]
         final fun <get-appIdHash>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.appIdHash.<get-appIdHash>|<get-appIdHash>(){}[0]
     final val deliveryTimeoutMillis // ch.trancee.meshlink.messaging/MessagingConfig.deliveryTimeoutMillis|{}deliveryTimeoutMillis[0]
         final fun <get-deliveryTimeoutMillis>(): kotlin/Long // ch.trancee.meshlink.messaging/MessagingConfig.deliveryTimeoutMillis.<get-deliveryTimeoutMillis>|<get-deliveryTimeoutMillis>(){}[0]
+    final val maxBufferedMessages // ch.trancee.meshlink.messaging/MessagingConfig.maxBufferedMessages|{}maxBufferedMessages[0]
+        final fun <get-maxBufferedMessages>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.maxBufferedMessages.<get-maxBufferedMessages>|<get-maxBufferedMessages>(){}[0]
     final val maxMessagesPerWindow // ch.trancee.meshlink.messaging/MessagingConfig.maxMessagesPerWindow|{}maxMessagesPerWindow[0]
         final fun <get-maxMessagesPerWindow>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.maxMessagesPerWindow.<get-maxMessagesPerWindow>|<get-maxMessagesPerWindow>(){}[0]
     final val maxPendingMessages // ch.trancee.meshlink.messaging/MessagingConfig.maxPendingMessages|{}maxPendingMessages[0]
@@ -1403,12 +1432,16 @@ final class ch.trancee.meshlink.messaging/MessagingConfig { // ch.trancee.meshli
     final fun component3(): kotlin/Long // ch.trancee.meshlink.messaging/MessagingConfig.component3|component3(){}[0]
     final fun component4(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.component4|component4(){}[0]
     final fun component5(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.component5|component5(){}[0]
-    final fun copy(kotlin/Long = ..., kotlin/Int = ..., kotlin/Long = ..., kotlin/Int = ..., kotlin/Int = ...): ch.trancee.meshlink.messaging/MessagingConfig // ch.trancee.meshlink.messaging/MessagingConfig.copy|copy(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int){}[0]
+    final fun component6(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.component6|component6(){}[0]
+    final fun copy(kotlin/Long = ..., kotlin/Int = ..., kotlin/Long = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): ch.trancee.meshlink.messaging/MessagingConfig // ch.trancee.meshlink.messaging/MessagingConfig.copy|copy(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // ch.trancee.meshlink.messaging/MessagingConfig.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // ch.trancee.meshlink.messaging/MessagingConfig.toString|toString(){}[0]
 
     final object Companion { // ch.trancee.meshlink.messaging/MessagingConfig.Companion|null[0]
+        final const val DEFAULT_MAX_BUFFERED_MESSAGES // ch.trancee.meshlink.messaging/MessagingConfig.Companion.DEFAULT_MAX_BUFFERED_MESSAGES|{}DEFAULT_MAX_BUFFERED_MESSAGES[0]
+            final fun <get-DEFAULT_MAX_BUFFERED_MESSAGES>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.Companion.DEFAULT_MAX_BUFFERED_MESSAGES.<get-DEFAULT_MAX_BUFFERED_MESSAGES>|<get-DEFAULT_MAX_BUFFERED_MESSAGES>(){}[0]
+
         final fun default(): ch.trancee.meshlink.messaging/MessagingConfig // ch.trancee.meshlink.messaging/MessagingConfig.Companion.default|default(){}[0]
     }
 }
@@ -1787,6 +1820,7 @@ final class ch.trancee.meshlink.routing/SourceRecord { // ch.trancee.meshlink.ro
 final class ch.trancee.meshlink.storage/IosSecureStorage { // ch.trancee.meshlink.storage/IosSecureStorage|null[0]
     constructor <init>() // ch.trancee.meshlink.storage/IosSecureStorage.<init>|<init>(){}[0]
 
+    final fun clear() // ch.trancee.meshlink.storage/IosSecureStorage.clear|clear(){}[0]
     final fun getString(kotlin/String): kotlin/String? // ch.trancee.meshlink.storage/IosSecureStorage.getString|getString(kotlin.String){}[0]
     final fun putString(kotlin/String, kotlin/String) // ch.trancee.meshlink.storage/IosSecureStorage.putString|putString(kotlin.String;kotlin.String){}[0]
     final fun remove(kotlin/String) // ch.trancee.meshlink.storage/IosSecureStorage.remove|remove(kotlin.String){}[0]
@@ -1909,7 +1943,7 @@ final class ch.trancee.meshlink.transfer/TransferScheduler { // ch.trancee.meshl
 }
 
 final class ch.trancee.meshlink.transfer/TransferSession { // ch.trancee.meshlink.transfer/TransferSession|null[0]
-    constructor <init>(kotlin/String, ch.trancee.meshlink.api/PeerIdHex, ch.trancee.meshlink.transfer/Priority, kotlin/ByteArray, kotlin/Int) // ch.trancee.meshlink.transfer/TransferSession.<init>|<init>(kotlin.String;ch.trancee.meshlink.api.PeerIdHex;ch.trancee.meshlink.transfer.Priority;kotlin.ByteArray;kotlin.Int){}[0]
+    constructor <init>(kotlin/String, ch.trancee.meshlink.api/PeerIdHex, ch.trancee.meshlink.transfer/Priority, kotlin/ByteArray, kotlin/Int, kotlin/Int = ...) // ch.trancee.meshlink.transfer/TransferSession.<init>|<init>(kotlin.String;ch.trancee.meshlink.api.PeerIdHex;ch.trancee.meshlink.transfer.Priority;kotlin.ByteArray;kotlin.Int;kotlin.Int){}[0]
 
     final val priority // ch.trancee.meshlink.transfer/TransferSession.priority|{}priority[0]
         final fun <get-priority>(): ch.trancee.meshlink.transfer/Priority // ch.trancee.meshlink.transfer/TransferSession.priority.<get-priority>|<get-priority>(){}[0]
@@ -1927,8 +1961,10 @@ final class ch.trancee.meshlink.transfer/TransferSession { // ch.trancee.meshlin
 }
 
 final class ch.trancee.meshlink.transport/AdvertisementPayload { // ch.trancee.meshlink.transport/AdvertisementPayload|null[0]
-    constructor <init>(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier) // ch.trancee.meshlink.transport/AdvertisementPayload.<init>|<init>(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier){}[0]
+    constructor <init>(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier, kotlin/Int) // ch.trancee.meshlink.transport/AdvertisementPayload.<init>|<init>(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier;kotlin.Int){}[0]
 
+    final val appIdHash // ch.trancee.meshlink.transport/AdvertisementPayload.appIdHash|{}appIdHash[0]
+        final fun <get-appIdHash>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementPayload.appIdHash.<get-appIdHash>|<get-appIdHash>(){}[0]
     final val powerTier // ch.trancee.meshlink.transport/AdvertisementPayload.powerTier|{}powerTier[0]
         final fun <get-powerTier>(): ch.trancee.meshlink.transport/AdvertisementPowerTier // ch.trancee.meshlink.transport/AdvertisementPayload.powerTier.<get-powerTier>|<get-powerTier>(){}[0]
     final val pseudonym // ch.trancee.meshlink.transport/AdvertisementPayload.pseudonym|{}pseudonym[0]
@@ -1936,7 +1972,8 @@ final class ch.trancee.meshlink.transport/AdvertisementPayload { // ch.trancee.m
 
     final fun component1(): kotlin/ByteArray // ch.trancee.meshlink.transport/AdvertisementPayload.component1|component1(){}[0]
     final fun component2(): ch.trancee.meshlink.transport/AdvertisementPowerTier // ch.trancee.meshlink.transport/AdvertisementPayload.component2|component2(){}[0]
-    final fun copy(kotlin/ByteArray = ..., ch.trancee.meshlink.transport/AdvertisementPowerTier = ...): ch.trancee.meshlink.transport/AdvertisementPayload // ch.trancee.meshlink.transport/AdvertisementPayload.copy|copy(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier){}[0]
+    final fun component3(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementPayload.component3|component3(){}[0]
+    final fun copy(kotlin/ByteArray = ..., ch.trancee.meshlink.transport/AdvertisementPowerTier = ..., kotlin/Int = ...): ch.trancee.meshlink.transport/AdvertisementPayload // ch.trancee.meshlink.transport/AdvertisementPayload.copy|copy(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier;kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // ch.trancee.meshlink.transport/AdvertisementPayload.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementPayload.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // ch.trancee.meshlink.transport/AdvertisementPayload.toString|toString(){}[0]
@@ -2559,6 +2596,8 @@ final object ch.trancee.meshlink.transfer/ResumeCalculator { // ch.trancee.meshl
 }
 
 final object ch.trancee.meshlink.transport/AdvertisementCodec { // ch.trancee.meshlink.transport/AdvertisementCodec|null[0]
+    final const val APP_ID_HASH_LENGTH_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.APP_ID_HASH_LENGTH_BYTES|{}APP_ID_HASH_LENGTH_BYTES[0]
+        final fun <get-APP_ID_HASH_LENGTH_BYTES>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.APP_ID_HASH_LENGTH_BYTES.<get-APP_ID_HASH_LENGTH_BYTES>|<get-APP_ID_HASH_LENGTH_BYTES>(){}[0]
     final const val BLE_ADVERTISEMENT_LIMIT_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.BLE_ADVERTISEMENT_LIMIT_BYTES|{}BLE_ADVERTISEMENT_LIMIT_BYTES[0]
         final fun <get-BLE_ADVERTISEMENT_LIMIT_BYTES>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.BLE_ADVERTISEMENT_LIMIT_BYTES.<get-BLE_ADVERTISEMENT_LIMIT_BYTES>|<get-BLE_ADVERTISEMENT_LIMIT_BYTES>(){}[0]
     final const val ENCODED_LENGTH_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.ENCODED_LENGTH_BYTES|{}ENCODED_LENGTH_BYTES[0]
@@ -2566,8 +2605,9 @@ final object ch.trancee.meshlink.transport/AdvertisementCodec { // ch.trancee.me
     final const val PSEUDONYM_LENGTH_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.PSEUDONYM_LENGTH_BYTES|{}PSEUDONYM_LENGTH_BYTES[0]
         final fun <get-PSEUDONYM_LENGTH_BYTES>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.PSEUDONYM_LENGTH_BYTES.<get-PSEUDONYM_LENGTH_BYTES>|<get-PSEUDONYM_LENGTH_BYTES>(){}[0]
 
+    final fun applicationIdHash(kotlin/String): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.applicationIdHash|applicationIdHash(kotlin.String){}[0]
     final fun decode(kotlin/ByteArray): ch.trancee.meshlink.transport/AdvertisementPayload // ch.trancee.meshlink.transport/AdvertisementCodec.decode|decode(kotlin.ByteArray){}[0]
-    final fun encode(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier): kotlin/ByteArray // ch.trancee.meshlink.transport/AdvertisementCodec.encode|encode(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier){}[0]
+    final fun encode(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier, kotlin/Int): kotlin/ByteArray // ch.trancee.meshlink.transport/AdvertisementCodec.encode|encode(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier;kotlin.Int){}[0]
 }
 
 final object ch.trancee.meshlink.transport/ConnectionInitiationPolicy { // ch.trancee.meshlink.transport/ConnectionInitiationPolicy|null[0]

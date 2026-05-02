@@ -1,5 +1,7 @@
 package ch.trancee.meshlink.transfer
 
+import ch.trancee.meshlink.api.DiagnosticCode
+import ch.trancee.meshlink.api.DiagnosticSink
 import ch.trancee.meshlink.api.PeerIdHex
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -40,6 +42,37 @@ public class TransferEngineTest {
     assertContentEquals(expected = byteArrayOf(0x01, 0x02), actual = actualChunks[0].payload)
     assertContentEquals(expected = byteArrayOf(0x03, 0x04), actual = actualChunks[1].payload)
     assertContentEquals(expected = byteArrayOf(0x05), actual = actualChunks[2].payload)
+  }
+
+  @Test
+  public fun nextChunks_usesPacingFeedbackToReduceTheWindowAfterAcknowledgements(): Unit {
+    // Arrange
+    val engine =
+      TransferEngine(
+        config = TransferConfig(timeoutMillis = 100L, retransmitLimit = 2, windowSize = 4),
+        chunkSizePolicy = ChunkSizePolicy(gattChunkSizeBytes = 1, l2capChunkSizeBytes = 1),
+      )
+    engine.startTransfer(
+      transferId = "paced",
+      recipientPeerId = PeerIdHex(value = "00112233"),
+      priority = Priority.NORMAL,
+      payload = byteArrayOf(0x01, 0x02, 0x03),
+      preferL2cap = false,
+      nowEpochMillis = 0L,
+    )
+    engine.acknowledge(transferId = "paced", chunkIndex = 0, nowEpochMillis = 10L)
+    engine.acknowledge(transferId = "paced", chunkIndex = 1, nowEpochMillis = 30L)
+
+    // Act
+    val actual = engine.nextChunks(transferId = "paced")
+
+    // Assert
+    assertEquals(
+      expected = listOf(2),
+      actual = actual.map { chunk -> chunk.chunkIndex },
+      message = "TransferEngine should feed acknowledgement pacing back into chunk selection.",
+    )
+    assertEquals(expected = 20L, actual = engine.recommendedDelayMillis(transferId = "paced"))
   }
 
   @Test
@@ -136,6 +169,52 @@ public class TransferEngineTest {
     assertEquals(expected = emptyList(), actual = noLongerTimedOut)
     assertEquals(expected = null, actual = missingCancel)
     assertEquals(expected = 0, actual = engine.pendingTransfers())
+  }
+
+  @Test
+  public fun transferLifecycle_emitsExistingDiagnosticCodesForStartedProgressCompletedAndFailedPaths():
+    Unit {
+    // Arrange
+    val diagnosticSink = DiagnosticSink.create(bufferSize = 8, clock = { 1L })
+    val engine =
+      TransferEngine(
+        config = TransferConfig(timeoutMillis = 100L, retransmitLimit = 1, windowSize = 1),
+        chunkSizePolicy = ChunkSizePolicy(gattChunkSizeBytes = 1, l2capChunkSizeBytes = 1),
+        diagnosticSink = diagnosticSink,
+      )
+
+    // Act
+    engine.startTransfer(
+      transferId = "complete-me",
+      recipientPeerId = PeerIdHex(value = "00112233"),
+      priority = Priority.NORMAL,
+      payload = byteArrayOf(0x01),
+      preferL2cap = false,
+      nowEpochMillis = 0L,
+    )
+    engine.acknowledge(transferId = "complete-me", chunkIndex = 0, nowEpochMillis = 1L)
+    engine.startTransfer(
+      transferId = "cancel-me",
+      recipientPeerId = PeerIdHex(value = "44556677"),
+      priority = Priority.NORMAL,
+      payload = byteArrayOf(0x02),
+      preferL2cap = false,
+      nowEpochMillis = 0L,
+    )
+    engine.cancel(transferId = "cancel-me")
+    val actual = diagnosticSink.diagnosticEvents.replayCache.map { event -> event.code }
+
+    // Assert
+    assertEquals(
+      expected =
+        listOf(
+          DiagnosticCode.TRANSFER_STARTED,
+          DiagnosticCode.TRANSFER_COMPLETED,
+          DiagnosticCode.TRANSFER_STARTED,
+          DiagnosticCode.TRANSFER_FAILED,
+        ),
+      actual = actual,
+    )
   }
 
   @Test

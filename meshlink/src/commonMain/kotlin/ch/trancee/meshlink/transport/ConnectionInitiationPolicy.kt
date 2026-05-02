@@ -19,4 +19,38 @@ public object ConnectionInitiationPolicy {
 
     return normalizedLocalPeerId < normalizedRemotePeerId
   }
+
+  /** Chooses the preferred data path before connection establishment begins. */
+  internal fun preferredDataPath(
+    preferL2cap: Boolean,
+    cachedCapability: OemL2capProbeResult?,
+  ): TransportDataPath {
+    if (!preferL2cap) {
+      return TransportDataPath.GATT
+    }
+    if (cachedCapability == null) {
+      return TransportDataPath.L2CAP
+    }
+    if (cachedCapability.supportsL2cap) {
+      return TransportDataPath.L2CAP
+    }
+    return if (cachedCapability.isStale) {
+      TransportDataPath.L2CAP
+    } else {
+      TransportDataPath.GATT
+    }
+  }
+
+  /** Demotes a failed transport attempt to the bounded fallback path. */
+  internal fun fallbackDataPath(failedDataPath: TransportDataPath): TransportDataPath {
+    return when (failedDataPath) {
+      TransportDataPath.L2CAP,
+      TransportDataPath.GATT -> TransportDataPath.GATT
+    }
+  }
+}
+
+internal enum class TransportDataPath {
+  L2CAP,
+  GATT,
 }

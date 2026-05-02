@@ -144,4 +144,41 @@ public class OemL2capProbeCacheTest {
     // Assert
     assertEquals(expected = expectedMessage, actual = error.message)
   }
+
+  @Test
+  public fun probe_marksEntriesAsStaleWhenTheirObservationWindowExpires(): Unit {
+    // Arrange
+    val cache = OemL2capProbeCache()
+    cache.recordProbe(deviceModel = "Pixel 9", supportsL2cap = false, observedAtEpochMillis = 10L)
+
+    // Act
+    val actual = cache.probe(deviceModel = "Pixel 9", nowEpochMillis = 100L, maxAgeMillis = 25L)
+
+    // Assert
+    assertEquals(expected = false, actual = actual?.supportsL2cap)
+    assertEquals(
+      expected = true,
+      actual = actual?.isStale,
+      message =
+        "OemL2capProbeCache should mark entries stale once they exceed the freshness window.",
+    )
+  }
+
+  @Test
+  public fun probe_keepsEntriesFreshWhenTheirObservationWindowIsStillValid(): Unit {
+    // Arrange
+    val cache = OemL2capProbeCache()
+    cache.recordProbe(deviceModel = "Pixel 9", supportsL2cap = true, observedAtEpochMillis = 10L)
+
+    // Act
+    val actual = cache.probe(deviceModel = "Pixel 9", nowEpochMillis = 20L, maxAgeMillis = 25L)
+
+    // Assert
+    assertEquals(expected = true, actual = actual?.supportsL2cap)
+    assertEquals(
+      expected = false,
+      actual = actual?.isStale,
+      message = "OemL2capProbeCache should keep recent observations fresh.",
+    )
+  }
 }

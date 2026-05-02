@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-Version change: 1.0.2 → 1.0.3
+Version change: 1.0.3 → 1.0.4
 Modified principles:
 - None renamed
 Added sections:
@@ -8,23 +8,13 @@ Added sections:
 Removed sections:
 - None
 Templates requiring updates:
-- ✅ .specify/templates/plan-template.md
-- ✅ .specify/templates/tasks-template.md
-- ✅ .specify/templates/checklist-template.md
+- None
 Related guidance and tooling updates:
-- ✅ .specify/extensions/git/git-config.yml
-- ✅ .specify/extensions/git/config-template.yml
-- ✅ .specify/extensions/git/commands/speckit.git.initialize.md
-- ✅ .specify/extensions/git/commands/speckit.git.commit.md
-- ✅ .specify/extensions/git/README.md
-- ✅ .specify/extensions/git/scripts/bash/initialize-repo.sh
-- ✅ .specify/extensions/git/scripts/bash/auto-commit.sh
-- ✅ .specify/extensions/git/scripts/powershell/initialize-repo.ps1
-- ✅ .specify/extensions/git/scripts/powershell/auto-commit.ps1
-- ✅ .github/copilot-instructions.md
+- None
 Follow-up TODOs:
 - None
 History:
+- v1.0.4 (2026-05-02): Clarified that YAML validation MUST use `yamllint` and that Ruby-based YAML validation commands are prohibited.
 - v1.0.3 (2026-05-01): Clarified that all commits, including automated Spec Kit commits, MUST use Conventional Commits and aligned supporting tooling/docs.
 - v1.0.2 (2026-04-30): Compressed duplicated gate detail, clarified ambiguous wording, and added enforcement references.
 - v1.0.1 (2026-04-30): Wording optimization and gate consolidation.
@@ -152,6 +142,8 @@ Every change MUST satisfy these release-blocking gates before merge.
 - Every PR MUST pass the coverage gate required by Principle II.
 - Every PR MUST pass the formatting and static-analysis gates required
   by Principle I.
+- YAML files and workflow definitions MUST be validated with
+  `yamllint`. Ruby-based YAML validation commands are prohibited.
 - Every PR MUST pass the API compatibility and required platform test
   gates required by Principles I–III.
 - Every PR MUST provide the benchmark evidence required by Principle IV.
@@ -215,4 +207,4 @@ development.
 - Day-to-day conventions that do not rise to constitutional level MUST
   live in `docs/` or other project documentation.
 
-**Version**: 1.0.3 | **Ratified**: 2026-04-30 | **Last Amended**: 2026-05-01
+**Version**: 1.0.4 | **Ratified**: 2026-04-30 | **Last Amended**: 2026-05-02

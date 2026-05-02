@@ -1,0 +1,20 @@
+---
+extends: default
+
+rules:
+  line-length: disable
+  comments: disable
+  comments-indentation: disable
+  truthy: disable
+  document-start: disable
+  indentation:
+    spaces: consistent
+    indent-sequences: consistent
+  braces:
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+  brackets:
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+    min-spaces-inside: 0
+    max-spaces-inside: 0

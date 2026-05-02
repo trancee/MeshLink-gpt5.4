@@ -22,6 +22,23 @@ public class AndroidSecureStorageTest {
   }
 
   @Test
+  public fun clear_erasesAllStoredValues(): Unit {
+    // Arrange
+    val storage = AndroidSecureStorage()
+    storage.putString(key = "token", value = "secret")
+    storage.putString(key = "device", value = "peer")
+
+    // Act
+    storage.clear()
+    val token = storage.getString(key = "token")
+    val device = storage.getString(key = "device")
+
+    // Assert
+    assertEquals(expected = null, actual = token)
+    assertEquals(expected = null, actual = device)
+  }
+
+  @Test
   public fun blankKeys_areRejectedAcrossAllOperations(): Unit {
     // Arrange
     val storage = AndroidSecureStorage()

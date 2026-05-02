@@ -38,4 +38,24 @@ public open class TransferBenchmark {
     }
     return chunks.sumOf { chunk -> chunk.payload.size }
   }
+
+  @Benchmark
+  public open fun sparseAcksProduceRetryWindow(): Int {
+    val engine =
+      TransferEngine(
+        config = TransferConfig(timeoutMillis = 100L, retransmitLimit = 2, windowSize = 4),
+        chunkSizePolicy = ChunkSizePolicy(gattChunkSizeBytes = 1, l2capChunkSizeBytes = 1),
+      )
+    engine.startTransfer(
+      transferId = "retry-transfer",
+      recipientPeerId = PeerIdHex(value = "00112233"),
+      priority = Priority.NORMAL,
+      payload = byteArrayOf(0x01, 0x02, 0x03, 0x04),
+      preferL2cap = false,
+      nowEpochMillis = 0L,
+    )
+    engine.acknowledge(transferId = "retry-transfer", chunkIndex = 0, nowEpochMillis = 10L)
+    engine.acknowledge(transferId = "retry-transfer", chunkIndex = 2, nowEpochMillis = 20L)
+    return engine.nextChunks(transferId = "retry-transfer").sumOf { chunk -> chunk.chunkIndex }
+  }
 }

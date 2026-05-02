@@ -7,7 +7,7 @@ import kotlin.test.assertFailsWith
 
 public class CutThroughBufferTest {
   @Test
-  public fun appendVisitedHop_appendsTheRelayHopToChunk0(): Unit {
+  public fun appendVisitedHop_appendsALengthPrefixedRelayHopToChunk0(): Unit {
     // Arrange
     val buffer = CutThroughBuffer()
     val chunk0 = byteArrayOf(0x01, 0x02)
@@ -17,7 +17,22 @@ public class CutThroughBufferTest {
     val actual = buffer.appendVisitedHop(chunk0 = chunk0, hopPeerId = hopPeerId)
 
     // Assert
-    assertContentEquals(expected = byteArrayOf(0x01, 0x02, 0x0A, 0x0B, 0x0C), actual = actual)
+    assertContentEquals(expected = byteArrayOf(0x01, 0x02, 0x03, 0x0A, 0x0B, 0x0C), actual = actual)
+  }
+
+  @Test
+  public fun visitedHops_decodesTheLengthPrefixedHopTrail(): Unit {
+    // Arrange
+    val buffer = CutThroughBuffer()
+    val chunk0 = byteArrayOf(0x01, 0x02, 0x01, 0x0A, 0x02, 0x0B, 0x0C)
+
+    // Act
+    val actual = buffer.visitedHops(chunk0 = chunk0, payloadSizeBytes = 2)
+
+    // Assert
+    assertEquals(expected = 2, actual = actual.size)
+    assertContentEquals(expected = byteArrayOf(0x0A), actual = actual[0])
+    assertContentEquals(expected = byteArrayOf(0x0B, 0x0C), actual = actual[1])
   }
 
   @Test
@@ -34,6 +49,10 @@ public class CutThroughBufferTest {
       assertFailsWith<IllegalArgumentException> {
         buffer.appendVisitedHop(chunk0 = byteArrayOf(0x01), hopPeerId = byteArrayOf())
       }
+    val truncatedTrailError =
+      assertFailsWith<IllegalArgumentException> {
+        buffer.visitedHops(chunk0 = byteArrayOf(0x01, 0x02), payloadSizeBytes = 1)
+      }
 
     // Assert
     assertEquals(
@@ -43,6 +62,10 @@ public class CutThroughBufferTest {
     assertEquals(
       expected = "CutThroughBuffer hopPeerId must not be empty.",
       actual = emptyHopError.message,
+    )
+    assertEquals(
+      expected = "CutThroughBuffer encoded hop trail was truncated.",
+      actual = truncatedTrailError.message,
     )
   }
 }

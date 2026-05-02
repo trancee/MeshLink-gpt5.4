@@ -1,15 +1,19 @@
-# Release workflow that publishes Maven artifacts first, then packages and uploads the
-# SwiftPM/XCFramework distribution once the repository publications succeeded.
+---
+# Release workflow that publishes Maven artifacts first, then packages
+# and uploads the SwiftPM/XCFramework distribution once the repository
+# publications succeeded.
 name: release
 
-on:
+'on':
   push:
     tags:
       - "v*"
   workflow_dispatch:
     inputs:
       release_tag:
-        description: "Existing release tag to publish (for example v0.1.0)"
+        description: >-
+          Existing release tag to publish
+          (for example v0.1.0)
         required: true
         type: string
 
@@ -17,12 +21,15 @@ permissions:
   contents: write
 
 jobs:
-  # Publish the Android/JVM/KMP Maven artifacts from Linux where the shared release
-  # verification path is fastest and easiest to cache.
+  # Publish the Android/JVM/KMP Maven artifacts from Linux where the
+  # shared release verification path is fastest and easiest to cache.
   publish-android:
     runs-on: ubuntu-latest
     env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
+      RELEASE_TAG: >-
+        ${{ github.event_name == 'workflow_dispatch'
+        && github.event.inputs.release_tag
+        || github.ref_name }}
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -49,12 +56,15 @@ jobs:
           :meshlink:publishJvmPublicationToOSSRHRepository
           :meshlink:publishKotlinMultiplatformPublicationToOSSRHRepository
 
-  # Publish the iOS Maven publication separately on macOS because Apple binaries must
-  # be assembled on an Apple runner.
+  # Publish the iOS Maven publication separately on macOS because
+  # Apple binaries must be assembled on an Apple runner.
   publish-ios:
     runs-on: macos-latest
     env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
+      RELEASE_TAG: >-
+        ${{ github.event_name == 'workflow_dispatch'
+        && github.event.inputs.release_tag
+        || github.ref_name }}
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -77,15 +87,19 @@ jobs:
       - name: Publish iOS artifacts
         run: ./gradlew :meshlink:publishIosArm64PublicationToOSSRHRepository
 
-  # Only package and upload the XCFramework after the Maven publications completed so
-  # release assets and repository metadata describe the same version.
+  # Only package and upload the XCFramework after the Maven
+  # publications completed so release assets and repository metadata
+  # describe the same version.
   publish-xcframework:
     needs:
       - publish-android
       - publish-ios
     runs-on: macos-latest
     env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
+      RELEASE_TAG: >-
+        ${{ github.event_name == 'workflow_dispatch'
+        && github.event.inputs.release_tag
+        || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -108,16 +122,36 @@ jobs:
         id: package_xcframework
         run: ./scripts/package-xcframework.sh
 
-      - name: Verify Package.swift release metadata
+      - name: Generate release Package.swift metadata
+        id: package_manifest
+        run: >-
+          ./scripts/update-package-swift.sh
+          --version "${RELEASE_TAG}"
+          --checksum "${{ steps.package_xcframework.outputs.checksum }}"
+          --repository "${GITHUB_REPOSITORY}"
+          --package-file
+          "meshlink/build/XCFrameworks/release/Package.swift"
+
+      - name: Verify generated Package.swift release metadata
         run: >-
           ./scripts/update-package-swift.sh
           --verify
           --version "${RELEASE_TAG}"
           --checksum "${{ steps.package_xcframework.outputs.checksum }}"
           --repository "${GITHUB_REPOSITORY}"
+          --package-file
+          "meshlink/build/XCFrameworks/release/Package.swift"
 
       - name: Verify packaged release artifacts
-        run: ./scripts/verify-publish.sh meshlink/build/XCFrameworks/release
+        run: >-
+          ./scripts/verify-publish.sh
+          --package-file
+          "meshlink/build/XCFrameworks/release/Package.swift"
+          --expected-package-url
+          "${{ steps.package_manifest.outputs.package_url }}"
+          --expected-package-checksum
+          "${{ steps.package_xcframework.outputs.checksum }}"
+          meshlink/build/XCFrameworks/release
 
       - name: Publish GitHub release assets
         uses: softprops/action-gh-release@v3.0.0
@@ -125,3 +159,4 @@ jobs:
           files: |
             meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip
             meshlink/build/XCFrameworks/release/MeshLink.xcframework.zip.checksum
+            meshlink/build/XCFrameworks/release/Package.swift
