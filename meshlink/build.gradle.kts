@@ -105,8 +105,9 @@ tasks.register("androidHostTest") {
   dependsOn("testAndroidHostTest")
 }
 
-// Aggregate the Linux CI checks into a single task to minimize repeated configuration
-// overhead on ephemeral runners.
+// Aggregate the Linux CI checks into a single task to minimize repeated
+// configuration overhead on ephemeral runners while keeping the task graph
+// aligned with the explicit workflow contract.
 tasks.register("ciQualityGate") {
   group = "verification"
   description =
@@ -117,7 +118,7 @@ tasks.register("ciQualityGate") {
     "jvmTest",
     "androidHostTest",
     "koverVerify",
-    "jvmApiCheck",
+    "apiCheck",
     "jvmCiBenchmark",
   )
 }
