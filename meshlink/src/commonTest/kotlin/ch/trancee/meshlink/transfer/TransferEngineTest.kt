@@ -43,6 +43,37 @@ public class TransferEngineTest {
   }
 
   @Test
+  public fun nextChunks_usesPacingFeedbackToReduceTheWindowAfterAcknowledgements(): Unit {
+    // Arrange
+    val engine =
+      TransferEngine(
+        config = TransferConfig(timeoutMillis = 100L, retransmitLimit = 2, windowSize = 4),
+        chunkSizePolicy = ChunkSizePolicy(gattChunkSizeBytes = 1, l2capChunkSizeBytes = 1),
+      )
+    engine.startTransfer(
+      transferId = "paced",
+      recipientPeerId = PeerIdHex(value = "00112233"),
+      priority = Priority.NORMAL,
+      payload = byteArrayOf(0x01, 0x02, 0x03),
+      preferL2cap = false,
+      nowEpochMillis = 0L,
+    )
+    engine.acknowledge(transferId = "paced", chunkIndex = 0, nowEpochMillis = 10L)
+    engine.acknowledge(transferId = "paced", chunkIndex = 1, nowEpochMillis = 30L)
+
+    // Act
+    val actual = engine.nextChunks(transferId = "paced")
+
+    // Assert
+    assertEquals(
+      expected = listOf(2),
+      actual = actual.map { chunk -> chunk.chunkIndex },
+      message = "TransferEngine should feed acknowledgement pacing back into chunk selection.",
+    )
+    assertEquals(expected = 20L, actual = engine.recommendedDelayMillis(transferId = "paced"))
+  }
+
+  @Test
   public fun acknowledge_retransmitsOnlyMissingChunksAndCompletesTheTransfer(): Unit {
     // Arrange
     val engine =

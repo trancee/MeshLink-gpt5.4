@@ -9,9 +9,6 @@ public class TransferEngine(
   private val scheduler: TransferScheduler = TransferScheduler(),
 ) {
   private val sessionsByTransferId: MutableMap<String, ManagedTransferSession> = linkedMapOf()
-
-  // Inbound chunks are staged by transfer ID until the full set has arrived and can
-  // be reassembled in order.
   private val inboundChunksByTransferId: MutableMap<String, MutableMap<Int, ByteArray>> =
     mutableMapOf()
   private val inboundExpectedChunkCounts: MutableMap<String, Int> = mutableMapOf()
@@ -39,6 +36,7 @@ public class TransferEngine(
         priority = priority,
         payload = payload,
         chunkSizeBytes = chunkSizePolicy.sizeFor(preferL2cap = preferL2cap),
+        retransmitLimit = config.retransmitLimit,
       )
     sessionsByTransferId[transferId] =
       ManagedTransferSession(
@@ -57,9 +55,12 @@ public class TransferEngine(
 
   /** Returns the next transmission window for the transfer. */
   public fun nextChunks(transferId: String): List<OutboundChunk> {
-    return requireManagedTransferSession(transferId = transferId)
-      .session
-      .nextChunks(windowSize = config.windowSize)
+    val managedTransferSession: ManagedTransferSession =
+      requireManagedTransferSession(transferId = transferId)
+    val recommendedDelayMillis: Long =
+      managedTransferSession.rateController.recommendedDelayMillis()
+    val effectiveWindowSize: Int = if (recommendedDelayMillis > 0L) 1 else config.windowSize
+    return managedTransferSession.session.nextChunks(windowSize = effectiveWindowSize)
   }
 
   /** Records acknowledgement progress for an outbound transfer. */

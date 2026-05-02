@@ -1709,7 +1709,8 @@ public final class ch/trancee/meshlink/transfer/TransferScheduler$Companion {
 }
 
 public final class ch/trancee/meshlink/transfer/TransferSession {
-	public fun <init> (Ljava/lang/String;Lch/trancee/meshlink/api/PeerIdHex;Lch/trancee/meshlink/transfer/Priority;[BI)V
+	public fun <init> (Ljava/lang/String;Lch/trancee/meshlink/api/PeerIdHex;Lch/trancee/meshlink/transfer/Priority;[BII)V
+	public synthetic fun <init> (Ljava/lang/String;Lch/trancee/meshlink/api/PeerIdHex;Lch/trancee/meshlink/transfer/Priority;[BIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun acknowledge (I)Lch/trancee/meshlink/transfer/TransferEvent;
 	public final fun cancel ()Lch/trancee/meshlink/transfer/TransferEvent$Failed;
 	public final fun getPriority ()Lch/trancee/meshlink/transfer/Priority;
