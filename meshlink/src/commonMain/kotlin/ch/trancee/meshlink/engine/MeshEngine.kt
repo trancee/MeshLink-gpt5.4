@@ -17,10 +17,13 @@ import ch.trancee.meshlink.messaging.SendResult
 import ch.trancee.meshlink.routing.RoutingConfig as EngineRoutingConfig
 import ch.trancee.meshlink.routing.RoutingEngine
 import ch.trancee.meshlink.routing.RoutingUpdate
+import ch.trancee.meshlink.transport.AdvertisementCodec
 import ch.trancee.meshlink.transport.BleTransport
+import ch.trancee.meshlink.transport.MeshHashFilter
 import ch.trancee.meshlink.wire.WireMessage
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
+import ch.trancee.meshlink.wire.messages.HelloMessage
 import ch.trancee.meshlink.wire.messages.RoutedMessage
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,6 +49,9 @@ private constructor(
 ) : MeshLinkApi {
   private val routingEngine: RoutingEngine = RoutingEngine(config = EngineRoutingConfig.default())
   private val mutableState = MutableStateFlow(MeshLinkState.UNINITIALIZED)
+  private val expectedApplicationIdHash: Int =
+    AdvertisementCodec.applicationIdHash(applicationId = config.meshLinkConfig.applicationId)
+  private val meshHashFilter: MeshHashFilter = MeshHashFilter()
   private val mutablePeers = MutableStateFlow<List<PeerDetail>>(emptyList())
   private val mutableMessages =
     MutableSharedFlow<ByteArray>(
@@ -145,6 +151,7 @@ private constructor(
         )
       is RoutedMessage -> mutableMessages.tryEmit(message.payload.copyOf())
       is BroadcastMessage -> mutableMessages.tryEmit(message.payload.copyOf())
+      is HelloMessage -> handleHelloMessage(message = message)
       else -> Unit
     }
   }
@@ -175,6 +182,30 @@ private constructor(
       candidate = candidate,
       identityKey = identityKey,
       timestampMillis = timestampMillis,
+    )
+  }
+
+  private fun handleHelloMessage(message: HelloMessage): Unit {
+    val peerId: PeerIdHex = PeerIdHex.fromBytes(message.peerId)
+    val accepted: Boolean =
+      meshHashFilter.accepts(
+        meshHash = message.peerId,
+        appIdHash = message.appIdHash,
+        expectedAppIdHash = expectedApplicationIdHash,
+      )
+    if (!accepted) {
+      return
+    }
+    publishPeers(
+      peerDetails =
+        listOf(
+          PeerDetail(
+            peerId = peerId,
+            state = PeerState.Discovered,
+            displayName = null,
+            lastSeenEpochMillis = 0L,
+          )
+        )
     )
   }
 
