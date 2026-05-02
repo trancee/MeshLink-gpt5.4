@@ -90,6 +90,25 @@ public class RouteCoordinatorSeqNoTest {
   }
 
   @Test
+  public fun requestSequenceNumber_startsAtOneWhenNoSourceRecordExists(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "00112233")
+    val coordinator = RouteCoordinator()
+
+    // Act
+    val actual = coordinator.requestSequenceNumber(destinationPeerId = destinationPeerId)
+
+    // Assert
+    assertEquals(expected = 1, actual = actual)
+    assertEquals(
+      expected = 1,
+      actual = coordinator.pendingSequenceNumber(destinationPeerId = destinationPeerId),
+      message =
+        "RouteCoordinator should start starvation recovery at sequence number one when no source record exists.",
+    )
+  }
+
+  @Test
   public fun recordAcceptedRoute_updatesTheSourceRecordAndClearsPendingRequests(): Unit {
     // Arrange
     val destinationPeerId = PeerIdHex(value = "00112233")
@@ -180,13 +199,13 @@ public class RouteCoordinatorSeqNoTest {
           metric = -1,
         )
       }
+    coordinator.recordAcceptedRoute(
+      destinationPeerId = destinationPeerId,
+      sequenceNumber = 0,
+      metric = 1,
+    )
     val infeasibleRouteError =
       assertFailsWith<IllegalArgumentException> {
-        coordinator.recordAcceptedRoute(
-          destinationPeerId = destinationPeerId,
-          sequenceNumber = 0,
-          metric = 1,
-        )
         coordinator.recordAcceptedRoute(
           destinationPeerId = destinationPeerId,
           sequenceNumber = 0,
