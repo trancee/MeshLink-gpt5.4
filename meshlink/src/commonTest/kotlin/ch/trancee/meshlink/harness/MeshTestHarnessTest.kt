@@ -39,4 +39,23 @@ public class MeshTestHarnessTest {
       message = "MeshTestHarness should create the second engine without starting it.",
     )
   }
+
+  @Test
+  public fun createLinearNetwork_linksAdjacentPeersAcrossTheWholeTopology(): Unit {
+    // Arrange
+    val expectedNodeCount = 4
+
+    // Act
+    val harness = MeshTestHarness.createLinearNetwork(size = expectedNodeCount)
+
+    // Assert
+    assertEquals(expected = expectedNodeCount, actual = harness.peerIds.size)
+    assertEquals(expected = expectedNodeCount, actual = harness.transports.size)
+    assertTrue(actual = harness.transports[0].isConnected(peerId = harness.peerIds[1]))
+    assertTrue(actual = harness.transports[1].isConnected(peerId = harness.peerIds[0]))
+    assertTrue(actual = harness.transports[1].isConnected(peerId = harness.peerIds[2]))
+    assertTrue(actual = harness.transports[2].isConnected(peerId = harness.peerIds[1]))
+    assertTrue(actual = harness.transports[2].isConnected(peerId = harness.peerIds[3]))
+    assertTrue(actual = harness.transports[3].isConnected(peerId = harness.peerIds[2]))
+  }
 }
