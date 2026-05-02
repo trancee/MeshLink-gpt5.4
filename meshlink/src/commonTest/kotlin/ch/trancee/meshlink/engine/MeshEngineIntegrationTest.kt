@@ -3,6 +3,8 @@ package ch.trancee.meshlink.engine
 import ch.trancee.meshlink.api.MeshLinkState
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
 import ch.trancee.meshlink.harness.MeshTestHarness
+import ch.trancee.meshlink.transfer.Priority
+import ch.trancee.meshlink.transfer.TransferEvent
 import ch.trancee.meshlink.wire.messages.HandshakeMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
 import ch.trancee.meshlink.wire.messages.RoutedMessage
@@ -10,6 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 
 public class MeshEngineIntegrationTest {
   @Test
@@ -33,6 +36,37 @@ public class MeshEngineIntegrationTest {
     assertEquals(expected = MeshLinkState.RUNNING, actual = harness.firstEngine.state.value)
     assertEquals(expected = MeshLinkState.RUNNING, actual = harness.secondEngine.state.value)
     assertContentEquals(expected = payload, actual = actual)
+  }
+
+  @Test
+  public fun startTransfer_tracksSessionRegistryUntilTheTransferCompletes(): Unit {
+    // Arrange
+    val harness = MeshTestHarness.createConnected()
+    val transferId = "transfer-1"
+    val payload = byteArrayOf(0x01, 0x02, 0x03)
+
+    // Act
+    val started =
+      harness.firstEngine.startTransfer(
+        transferId = transferId,
+        recipientPeerId = harness.secondPeerId,
+        priority = Priority.HIGH,
+        payload = payload,
+        preferL2cap = false,
+        nowEpochMillis = 0L,
+      )
+    val outboundChunk = harness.firstEngine.nextTransferChunks(transferId = transferId).single()
+    val completed =
+      harness.firstEngine.acknowledgeTransfer(
+        transferId = transferId,
+        chunkIndex = outboundChunk.chunkIndex,
+        nowEpochMillis = 1L,
+      )
+
+    // Assert
+    assertIs<TransferEvent.Started>(started)
+    assertIs<TransferEvent.Complete>(completed)
+    assertEquals(expected = 0, actual = harness.firstEngine.sessionRegistry.activeTransferCount())
   }
 
   @Test

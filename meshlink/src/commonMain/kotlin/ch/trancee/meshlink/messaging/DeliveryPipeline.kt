@@ -233,6 +233,11 @@ public class DeliveryPipeline(
     return pendingDeliveries.size
   }
 
+  internal fun payloadFor(messageId: MessageIdKey): ByteArray? {
+    return pendingDeliveries[messageId]?.payload?.copyOf()
+      ?: bufferedDeliveries[messageId]?.payload?.copyOf()
+  }
+
   internal fun bufferedCount(): Int {
     return bufferedDeliveries.size
   }
