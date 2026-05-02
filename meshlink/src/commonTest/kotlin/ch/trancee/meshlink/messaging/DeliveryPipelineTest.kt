@@ -61,6 +61,37 @@ public class DeliveryPipelineTest {
   }
 
   @Test
+  public fun bufferForUnavailableRoute_andFlushBuffered_moveDelayedMessagesIntoPendingDelivery():
+    Unit {
+    // Arrange
+    val senderPeerId = PeerIdHex(value = "00112233")
+    val recipientPeerId = PeerIdHex(value = "44556677")
+    val pipeline = DeliveryPipeline(config = MessagingConfig.default())
+    val payload = byteArrayOf(0x09, 0x0A)
+
+    // Act
+    val queued =
+      pipeline.bufferForUnavailableRoute(
+        senderPeerId = senderPeerId,
+        recipientPeerId = recipientPeerId,
+        payload = payload,
+        nowEpochMillis = 0L,
+      )
+    val flushed = pipeline.flushBuffered(recipientPeerId = recipientPeerId, nowEpochMillis = 1L)
+    val flushedMessageId = assertIs<SendResult.Sent>(flushed.single()).messageId
+    val acknowledged = pipeline.acknowledge(messageId = flushedMessageId)
+
+    // Assert
+    val queuedResult = assertIs<SendResult.Queued>(queued)
+    assertEquals(expected = QueuedReason.ROUTE_UNAVAILABLE, actual = queuedResult.reason)
+    val delivered = assertIs<Delivered>(acknowledged)
+    assertEquals(expected = flushedMessageId, actual = delivered.messageId)
+    assertEquals(expected = recipientPeerId, actual = delivered.peerId)
+    assertEquals(expected = 0, actual = pipeline.bufferedCount())
+    assertEquals(expected = 0, actual = pipeline.pendingCount())
+  }
+
+  @Test
   public fun send_emitsMessageSentDiagnosticsForAcceptedDeliveries(): Unit {
     // Arrange
     val senderPeerId = PeerIdHex(value = "00112233")

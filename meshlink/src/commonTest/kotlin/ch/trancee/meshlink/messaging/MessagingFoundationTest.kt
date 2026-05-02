@@ -19,6 +19,7 @@ public class MessagingFoundationTest {
     assertEquals(expected = 5_000L, actual = actual.deliveryTimeoutMillis)
     assertEquals(expected = 64, actual = actual.maxPendingMessages)
     assertEquals(expected = 0, actual = actual.appIdHash)
+    assertEquals(expected = 32, actual = actual.maxBufferedMessages)
   }
 
   @Test
@@ -32,6 +33,8 @@ public class MessagingFoundationTest {
       assertFailsWith<IllegalArgumentException> { MessagingConfig(1L, 1, 0L, 1, 0) }
     val pendingError =
       assertFailsWith<IllegalArgumentException> { MessagingConfig(1L, 1, 1L, 0, 0) }
+    val bufferedError =
+      assertFailsWith<IllegalArgumentException> { MessagingConfig(1L, 1, 1L, 1, 0, 0) }
 
     // Assert
     assertEquals(
@@ -49,6 +52,10 @@ public class MessagingFoundationTest {
     assertEquals(
       expected = "MessagingConfig maxPendingMessages must be greater than 0.",
       actual = pendingError.message,
+    )
+    assertEquals(
+      expected = "MessagingConfig maxBufferedMessages must be greater than 0.",
+      actual = bufferedError.message,
     )
   }
 

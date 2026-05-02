@@ -7,6 +7,7 @@ public data class MessagingConfig(
   public val deliveryTimeoutMillis: Long,
   public val maxPendingMessages: Int,
   public val appIdHash: Int,
+  public val maxBufferedMessages: Int = DEFAULT_MAX_BUFFERED_MESSAGES,
 ) {
   init {
     require(rateLimitWindowMillis > 0) {
@@ -19,9 +20,14 @@ public data class MessagingConfig(
       "MessagingConfig deliveryTimeoutMillis must be greater than 0."
     }
     require(maxPendingMessages > 0) { "MessagingConfig maxPendingMessages must be greater than 0." }
+    require(maxBufferedMessages > 0) {
+      "MessagingConfig maxBufferedMessages must be greater than 0."
+    }
   }
 
   public companion object {
+    public const val DEFAULT_MAX_BUFFERED_MESSAGES: Int = 32
+
     /** Returns the default delivery-pipeline configuration. */
     public fun default(): MessagingConfig {
       return MessagingConfig(
@@ -30,6 +36,7 @@ public data class MessagingConfig(
         deliveryTimeoutMillis = 5_000L,
         maxPendingMessages = 64,
         appIdHash = 0,
+        maxBufferedMessages = DEFAULT_MAX_BUFFERED_MESSAGES,
       )
     }
   }

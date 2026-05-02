@@ -4,10 +4,12 @@ import ch.trancee.meshlink.api.DiagnosticCode
 import ch.trancee.meshlink.api.DiagnosticPayload
 import ch.trancee.meshlink.api.DiagnosticSink
 import ch.trancee.meshlink.api.NoOpDiagnosticSink
+import ch.trancee.meshlink.api.PeerIdHex
+import ch.trancee.meshlink.api.PeerState
 
 /**
- * Coordinates outbound delivery bookkeeping, inbound deduplication, and cut-through relay support
- * for user-visible messages.
+ * Coordinates outbound delivery bookkeeping, inbound deduplication, cut-through relay support, and
+ * bounded store-and-forward buffering for user-visible messages.
  */
 public class DeliveryPipeline(
   private val config: MessagingConfig,
@@ -19,27 +21,14 @@ public class DeliveryPipeline(
     ),
   private val cutThroughBuffer: CutThroughBuffer = CutThroughBuffer(),
 ) {
-  // Sequence numbers are tracked per sender so message IDs stay monotonic for each
-  // originating peer without requiring a global counter.
   private val nextSequenceNumbersBySender: MutableMap<String, Long> = mutableMapOf()
-
-  // Pending outbound deliveries are retained until they are acknowledged, cancelled,
-  // or expired by the timeout sweep.
   private val pendingDeliveries: MutableMap<MessageIdKey, PendingDelivery> = linkedMapOf()
-
-  // Inbound message IDs are remembered to provide at-most-once delivery semantics to
-  // application code even if lower layers retransmit.
+  private val bufferedDeliveries: MutableMap<MessageIdKey, BufferedDelivery> = linkedMapOf()
   private val deliveredInboundMessageIds: MutableSet<MessageIdKey> = linkedSetOf()
 
-  /**
-   * Registers a new outbound payload with the delivery pipeline.
-   *
-   * The payload is only considered sent once it survives capacity checks and the current rate limit
-   * window.
-   */
   public fun send(
-    senderPeerId: ch.trancee.meshlink.api.PeerIdHex,
-    recipientPeerId: ch.trancee.meshlink.api.PeerIdHex,
+    senderPeerId: PeerIdHex,
+    recipientPeerId: PeerIdHex,
     payload: ByteArray,
     nowEpochMillis: Long,
   ): SendResult {
@@ -66,19 +55,82 @@ public class DeliveryPipeline(
         payload = payload.copyOf(),
         startedAtEpochMillis = nowEpochMillis,
       )
-    diagnosticSink.emit(code = DiagnosticCode.MESSAGE_SENT) {
-      DiagnosticPayload.PeerLifecycle(
-        peerId = recipientPeerId,
-        state = ch.trancee.meshlink.api.PeerState.Connected,
-      )
-    }
+    emitMessageSent(recipientPeerId = recipientPeerId)
     return SendResult.Sent(messageId = messageId)
   }
 
-  /** Accepts an inbound payload if it has not been delivered before. */
+  internal fun bufferForUnavailableRoute(
+    senderPeerId: PeerIdHex,
+    recipientPeerId: PeerIdHex,
+    payload: ByteArray,
+    nowEpochMillis: Long,
+  ): SendResult {
+    require(nowEpochMillis >= 0) {
+      "DeliveryPipeline nowEpochMillis must be greater than or equal to 0."
+    }
+
+    if (bufferedDeliveries.size >= config.maxBufferedMessages) {
+      val evictedMessageId: MessageIdKey = bufferedDeliveries.keys.first()
+      bufferedDeliveries.remove(evictedMessageId)
+      diagnosticSink.emit(code = DiagnosticCode.BUFFER_PRESSURE) {
+        DiagnosticPayload.BufferPressure(usedBytes = config.maxBufferedMessages, droppedEvents = 1)
+      }
+    }
+
+    val messageId: MessageIdKey = nextMessageId(senderPeerId = senderPeerId)
+    bufferedDeliveries[messageId] =
+      BufferedDelivery(
+        senderPeerId = senderPeerId,
+        recipientPeerId = recipientPeerId,
+        payload = payload.copyOf(),
+        bufferedAtEpochMillis = nowEpochMillis,
+      )
+    return SendResult.Queued(messageId = messageId, reason = QueuedReason.ROUTE_UNAVAILABLE)
+  }
+
+  internal fun flushBuffered(recipientPeerId: PeerIdHex, nowEpochMillis: Long): List<SendResult> {
+    require(nowEpochMillis >= 0) {
+      "DeliveryPipeline nowEpochMillis must be greater than or equal to 0."
+    }
+
+    val flushedResults: MutableList<SendResult> = mutableListOf()
+    val candidateMessageIds: List<MessageIdKey> =
+      bufferedDeliveries.keys.filter { messageId ->
+        bufferedDeliveries.getValue(messageId).recipientPeerId == recipientPeerId
+      }
+
+    for (messageId in candidateMessageIds) {
+      val bufferedDelivery: BufferedDelivery = bufferedDeliveries.getValue(messageId)
+      val peerPair =
+        PeerPair(
+          senderPeerId = bufferedDelivery.senderPeerId,
+          recipientPeerId = bufferedDelivery.recipientPeerId,
+        )
+      val canPromoteToPending: Boolean = pendingDeliveries.size < config.maxPendingMessages
+      val allowedByRateLimiter: Boolean =
+        canPromoteToPending &&
+          rateLimiter.tryAcquire(peerPair = peerPair, nowEpochMillis = nowEpochMillis)
+      if (!allowedByRateLimiter) {
+        break
+      }
+
+      bufferedDeliveries.remove(messageId)
+      pendingDeliveries[messageId] =
+        PendingDelivery(
+          recipientPeerId = bufferedDelivery.recipientPeerId,
+          payload = bufferedDelivery.payload.copyOf(),
+          startedAtEpochMillis = bufferedDelivery.bufferedAtEpochMillis,
+        )
+      emitMessageSent(recipientPeerId = bufferedDelivery.recipientPeerId)
+      flushedResults += SendResult.Sent(messageId = messageId)
+    }
+
+    return flushedResults
+  }
+
   public fun receive(
     messageId: MessageIdKey,
-    fromPeerId: ch.trancee.meshlink.api.PeerIdHex,
+    fromPeerId: PeerIdHex,
     payload: ByteArray,
   ): InboundMessage? {
     return if (deliveredInboundMessageIds.add(messageId)) {
@@ -88,56 +140,86 @@ public class DeliveryPipeline(
     }
   }
 
-  /** Completes an outbound delivery once the remote side acknowledges it. */
   public fun acknowledge(messageId: MessageIdKey): DeliveryOutcome? {
-    val pendingDelivery: PendingDelivery = pendingDeliveries.remove(messageId) ?: return null
-    return Delivered(messageId = messageId, peerId = pendingDelivery.recipientPeerId)
-  }
-
-  /** Cancels an outbound delivery that should no longer be retried. */
-  public fun cancel(messageId: MessageIdKey): DeliveryOutcome? {
-    val pendingDelivery: PendingDelivery = pendingDeliveries.remove(messageId) ?: return null
-    diagnosticSink.emit(code = DiagnosticCode.MESSAGE_FAILED) {
-      DiagnosticPayload.InternalError(message = "cancelled")
+    val pendingDelivery: PendingDelivery? = pendingDeliveries.remove(messageId)
+    if (pendingDelivery != null) {
+      return Delivered(messageId = messageId, peerId = pendingDelivery.recipientPeerId)
     }
-    return DeliveryOutcomeMapper.failed(
-      messageId = messageId,
-      peerId = pendingDelivery.recipientPeerId,
-      reason = DeliveryFailureReason.CANCELLED,
-    )
+
+    val bufferedDelivery: BufferedDelivery? = bufferedDeliveries.remove(messageId)
+    if (bufferedDelivery != null) {
+      return Delivered(messageId = messageId, peerId = bufferedDelivery.recipientPeerId)
+    }
+    return null
   }
 
-  /** Expires every delivery that has exceeded the configured timeout window. */
+  public fun cancel(messageId: MessageIdKey): DeliveryOutcome? {
+    val pendingDelivery: PendingDelivery? = pendingDeliveries.remove(messageId)
+    if (pendingDelivery != null) {
+      emitMessageFailed(reason = "cancelled")
+      return DeliveryOutcomeMapper.failed(
+        messageId = messageId,
+        peerId = pendingDelivery.recipientPeerId,
+        reason = DeliveryFailureReason.CANCELLED,
+      )
+    }
+
+    val bufferedDelivery: BufferedDelivery? = bufferedDeliveries.remove(messageId)
+    if (bufferedDelivery != null) {
+      emitMessageFailed(reason = "cancelled")
+      return DeliveryOutcomeMapper.failed(
+        messageId = messageId,
+        peerId = bufferedDelivery.recipientPeerId,
+        reason = DeliveryFailureReason.CANCELLED,
+      )
+    }
+    return null
+  }
+
   public fun failTimedOut(nowEpochMillis: Long): List<DeliveryOutcome> {
     require(nowEpochMillis >= 0) {
       "DeliveryPipeline nowEpochMillis must be greater than or equal to 0."
     }
 
-    val timedOutMessageIds: List<MessageIdKey> =
+    val timedOutPendingMessageIds: List<MessageIdKey> =
       pendingDeliveries.entries
         .filter { (_, pendingDelivery) ->
           nowEpochMillis - pendingDelivery.startedAtEpochMillis >= config.deliveryTimeoutMillis
         }
         .map { (messageId, _) -> messageId }
+    val timedOutBufferedMessageIds: List<MessageIdKey> =
+      bufferedDeliveries.entries
+        .filter { (_, bufferedDelivery) ->
+          nowEpochMillis - bufferedDelivery.bufferedAtEpochMillis >= config.deliveryTimeoutMillis
+        }
+        .map { (messageId, _) -> messageId }
 
-    return timedOutMessageIds.map { messageId ->
+    val outcomes: MutableList<DeliveryOutcome> = mutableListOf()
+    for (messageId in timedOutPendingMessageIds) {
       val pendingDelivery: PendingDelivery = pendingDeliveries.getValue(messageId)
       pendingDeliveries.remove(messageId)
-      diagnosticSink.emit(code = DiagnosticCode.MESSAGE_FAILED) {
-        DiagnosticPayload.InternalError(message = "timeout")
-      }
-      DeliveryOutcomeMapper.failed(
-        messageId = messageId,
-        peerId = pendingDelivery.recipientPeerId,
-        reason = DeliveryFailureReason.TIMEOUT,
-      )
+      emitMessageFailed(reason = "timeout")
+      outcomes +=
+        DeliveryOutcomeMapper.failed(
+          messageId = messageId,
+          peerId = pendingDelivery.recipientPeerId,
+          reason = DeliveryFailureReason.TIMEOUT,
+        )
     }
+    for (messageId in timedOutBufferedMessageIds) {
+      val bufferedDelivery: BufferedDelivery = bufferedDeliveries.getValue(messageId)
+      bufferedDeliveries.remove(messageId)
+      emitMessageFailed(reason = "timeout")
+      outcomes +=
+        DeliveryOutcomeMapper.failed(
+          messageId = messageId,
+          peerId = bufferedDelivery.recipientPeerId,
+          reason = DeliveryFailureReason.TIMEOUT,
+        )
+    }
+    return outcomes
   }
 
-  /**
-   * Appends the local hop to an already streaming relay frame without fully re-buffering the
-   * transfer payload.
-   */
   public fun relayChunk0(chunk0: ByteArray, localHopPeerId: ByteArray): ByteArray {
     val forwardedFrame: ByteArray =
       cutThroughBuffer.appendVisitedHop(chunk0 = chunk0, hopPeerId = localHopPeerId)
@@ -147,20 +229,42 @@ public class DeliveryPipeline(
     return forwardedFrame
   }
 
-  /** Number of outbound deliveries still awaiting a terminal outcome. */
   public fun pendingCount(): Int {
     return pendingDeliveries.size
   }
 
-  private fun nextMessageId(senderPeerId: ch.trancee.meshlink.api.PeerIdHex): MessageIdKey {
-    val nextSequenceNumber: Long = (nextSequenceNumbersBySender[senderPeerId.value] ?: 0L)
+  internal fun bufferedCount(): Int {
+    return bufferedDeliveries.size
+  }
+
+  private fun nextMessageId(senderPeerId: PeerIdHex): MessageIdKey {
+    val nextSequenceNumber: Long = nextSequenceNumbersBySender[senderPeerId.value] ?: 0L
     nextSequenceNumbersBySender[senderPeerId.value] = nextSequenceNumber + 1L
     return MessageIdKey(senderPeerId = senderPeerId, sequenceNumber = nextSequenceNumber)
+  }
+
+  private fun emitMessageSent(recipientPeerId: PeerIdHex): Unit {
+    diagnosticSink.emit(code = DiagnosticCode.MESSAGE_SENT) {
+      DiagnosticPayload.PeerLifecycle(peerId = recipientPeerId, state = PeerState.Connected)
+    }
+  }
+
+  private fun emitMessageFailed(reason: String): Unit {
+    diagnosticSink.emit(code = DiagnosticCode.MESSAGE_FAILED) {
+      DiagnosticPayload.InternalError(message = reason)
+    }
   }
 }
 
 private data class PendingDelivery(
-  val recipientPeerId: ch.trancee.meshlink.api.PeerIdHex,
+  val recipientPeerId: PeerIdHex,
   val payload: ByteArray,
   val startedAtEpochMillis: Long,
+)
+
+private data class BufferedDelivery(
+  val senderPeerId: PeerIdHex,
+  val recipientPeerId: PeerIdHex,
+  val payload: ByteArray,
+  val bufferedAtEpochMillis: Long,
 )

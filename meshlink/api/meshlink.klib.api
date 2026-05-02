@@ -129,6 +129,7 @@ final enum class ch.trancee.meshlink.messaging/DeliveryFailureReason : kotlin/En
 final enum class ch.trancee.meshlink.messaging/QueuedReason : kotlin/Enum<ch.trancee.meshlink.messaging/QueuedReason> { // ch.trancee.meshlink.messaging/QueuedReason|null[0]
     enum entry BUFFER_FULL // ch.trancee.meshlink.messaging/QueuedReason.BUFFER_FULL|null[0]
     enum entry RATE_LIMITED // ch.trancee.meshlink.messaging/QueuedReason.RATE_LIMITED|null[0]
+    enum entry ROUTE_UNAVAILABLE // ch.trancee.meshlink.messaging/QueuedReason.ROUTE_UNAVAILABLE|null[0]
 
     final val entries // ch.trancee.meshlink.messaging/QueuedReason.entries|#static{}entries[0]
         final fun <get-entries>(): kotlin.enums/EnumEntries<ch.trancee.meshlink.messaging/QueuedReason> // ch.trancee.meshlink.messaging/QueuedReason.entries.<get-entries>|<get-entries>#static(){}[0]
@@ -1405,12 +1406,14 @@ final class ch.trancee.meshlink.messaging/MessageIdKey { // ch.trancee.meshlink.
 }
 
 final class ch.trancee.meshlink.messaging/MessagingConfig { // ch.trancee.meshlink.messaging/MessagingConfig|null[0]
-    constructor <init>(kotlin/Long, kotlin/Int, kotlin/Long, kotlin/Int, kotlin/Int) // ch.trancee.meshlink.messaging/MessagingConfig.<init>|<init>(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int){}[0]
+    constructor <init>(kotlin/Long, kotlin/Int, kotlin/Long, kotlin/Int, kotlin/Int, kotlin/Int = ...) // ch.trancee.meshlink.messaging/MessagingConfig.<init>|<init>(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 
     final val appIdHash // ch.trancee.meshlink.messaging/MessagingConfig.appIdHash|{}appIdHash[0]
         final fun <get-appIdHash>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.appIdHash.<get-appIdHash>|<get-appIdHash>(){}[0]
     final val deliveryTimeoutMillis // ch.trancee.meshlink.messaging/MessagingConfig.deliveryTimeoutMillis|{}deliveryTimeoutMillis[0]
         final fun <get-deliveryTimeoutMillis>(): kotlin/Long // ch.trancee.meshlink.messaging/MessagingConfig.deliveryTimeoutMillis.<get-deliveryTimeoutMillis>|<get-deliveryTimeoutMillis>(){}[0]
+    final val maxBufferedMessages // ch.trancee.meshlink.messaging/MessagingConfig.maxBufferedMessages|{}maxBufferedMessages[0]
+        final fun <get-maxBufferedMessages>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.maxBufferedMessages.<get-maxBufferedMessages>|<get-maxBufferedMessages>(){}[0]
     final val maxMessagesPerWindow // ch.trancee.meshlink.messaging/MessagingConfig.maxMessagesPerWindow|{}maxMessagesPerWindow[0]
         final fun <get-maxMessagesPerWindow>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.maxMessagesPerWindow.<get-maxMessagesPerWindow>|<get-maxMessagesPerWindow>(){}[0]
     final val maxPendingMessages // ch.trancee.meshlink.messaging/MessagingConfig.maxPendingMessages|{}maxPendingMessages[0]
@@ -1423,12 +1426,16 @@ final class ch.trancee.meshlink.messaging/MessagingConfig { // ch.trancee.meshli
     final fun component3(): kotlin/Long // ch.trancee.meshlink.messaging/MessagingConfig.component3|component3(){}[0]
     final fun component4(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.component4|component4(){}[0]
     final fun component5(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.component5|component5(){}[0]
-    final fun copy(kotlin/Long = ..., kotlin/Int = ..., kotlin/Long = ..., kotlin/Int = ..., kotlin/Int = ...): ch.trancee.meshlink.messaging/MessagingConfig // ch.trancee.meshlink.messaging/MessagingConfig.copy|copy(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int){}[0]
+    final fun component6(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.component6|component6(){}[0]
+    final fun copy(kotlin/Long = ..., kotlin/Int = ..., kotlin/Long = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): ch.trancee.meshlink.messaging/MessagingConfig // ch.trancee.meshlink.messaging/MessagingConfig.copy|copy(kotlin.Long;kotlin.Int;kotlin.Long;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // ch.trancee.meshlink.messaging/MessagingConfig.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // ch.trancee.meshlink.messaging/MessagingConfig.toString|toString(){}[0]
 
     final object Companion { // ch.trancee.meshlink.messaging/MessagingConfig.Companion|null[0]
+        final const val DEFAULT_MAX_BUFFERED_MESSAGES // ch.trancee.meshlink.messaging/MessagingConfig.Companion.DEFAULT_MAX_BUFFERED_MESSAGES|{}DEFAULT_MAX_BUFFERED_MESSAGES[0]
+            final fun <get-DEFAULT_MAX_BUFFERED_MESSAGES>(): kotlin/Int // ch.trancee.meshlink.messaging/MessagingConfig.Companion.DEFAULT_MAX_BUFFERED_MESSAGES.<get-DEFAULT_MAX_BUFFERED_MESSAGES>|<get-DEFAULT_MAX_BUFFERED_MESSAGES>(){}[0]
+
         final fun default(): ch.trancee.meshlink.messaging/MessagingConfig // ch.trancee.meshlink.messaging/MessagingConfig.Companion.default|default(){}[0]
     }
 }

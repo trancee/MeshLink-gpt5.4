@@ -15,6 +15,6 @@ public class DeliveryPipelineCutThroughTest {
     val actual = pipeline.relayChunk0(chunk0 = chunk0, localHopPeerId = localHopPeerId)
 
     // Assert
-    assertContentEquals(expected = byteArrayOf(0x01, 0x02, 0x03, 0x0A, 0x0B), actual = actual)
+    assertContentEquals(expected = byteArrayOf(0x01, 0x02, 0x03, 0x02, 0x0A, 0x0B), actual = actual)
   }
 }
