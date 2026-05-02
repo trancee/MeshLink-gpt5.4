@@ -132,7 +132,7 @@
 - [x] T036 [P] [US3] Replace the placeholder binary-target checksum flow in `Package.swift` with the release-generated artifact URL/checksum contract expected by `.github/workflows/release.yml`.
 - [x] T037 [US3] Update `meshlink/build.gradle.kts` if needed so release verification, BCV checks, and benchmark entry points stay aligned with the hardened CI/release workflows.
 - [x] T038 [P] [US3] Add maintainer documentation in `docs/platform-distribution-remediation.md` covering CodeQL cadence, checksum update flow, macOS-only release verification, and the SKIE validation expectations from watchpoint [V2].
-- [ ] T039 [US3] Verify User Story 3 by dry-running the repository verification commands and confirming the workflow/package files are internally consistent: `./gradlew :meshlink:apiCheck :meshlink:detekt :meshlink:ktfmtCheck`.
+- [x] T039 [US3] Verify User Story 3 by dry-running the repository verification commands and confirming the workflow/package files are internally consistent: `./gradlew :meshlink:apiCheck :meshlink:detekt :meshlink:ktfmtCheck`.
 
 **Checkpoint**: The repo has a complete security/release hardening story, and the remaining platform-distribution gaps identified in the umbrella analysis are closed.
 
