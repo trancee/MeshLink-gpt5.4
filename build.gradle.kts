@@ -19,7 +19,6 @@ plugins {
 buildscript {
     dependencies {
         constraints {
-            classpath("org.bouncycastle:bcpg-jdk18on:${libs.versions.bouncycastle.get()}")
             classpath("org.bouncycastle:bcpkix-jdk18on:${libs.versions.bouncycastle.get()}")
             classpath("org.bouncycastle:bcprov-jdk18on:${libs.versions.bouncycastle.get()}")
             classpath("org.bouncycastle:bcutil-jdk18on:${libs.versions.bouncycastle.get()}")
