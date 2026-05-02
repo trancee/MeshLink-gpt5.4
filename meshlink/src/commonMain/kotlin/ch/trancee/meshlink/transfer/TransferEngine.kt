@@ -7,12 +7,35 @@ import ch.trancee.meshlink.api.NoOpDiagnosticSink
 import ch.trancee.meshlink.api.PeerIdHex
 
 /** Coordinates outbound transfer sessions and inbound chunk reassembly. */
-public class TransferEngine(
+public class TransferEngine
+private constructor(
   public val config: TransferConfig,
   private val chunkSizePolicy: ChunkSizePolicy,
-  private val scheduler: TransferScheduler = TransferScheduler(),
-  private val diagnosticSink: DiagnosticSink = NoOpDiagnosticSink,
+  private val scheduler: TransferScheduler,
+  private val diagnosticSink: DiagnosticSink,
 ) {
+  public constructor(
+    config: TransferConfig,
+    chunkSizePolicy: ChunkSizePolicy,
+    scheduler: TransferScheduler = TransferScheduler(),
+  ) : this(
+    config = config,
+    chunkSizePolicy = chunkSizePolicy,
+    scheduler = scheduler,
+    diagnosticSink = NoOpDiagnosticSink,
+  )
+
+  internal constructor(
+    config: TransferConfig,
+    chunkSizePolicy: ChunkSizePolicy,
+    diagnosticSink: DiagnosticSink,
+  ) : this(
+    config = config,
+    chunkSizePolicy = chunkSizePolicy,
+    scheduler = TransferScheduler(),
+    diagnosticSink = diagnosticSink,
+  )
+
   private val sessionsByTransferId: MutableMap<String, ManagedTransferSession> = linkedMapOf()
   private val inboundChunksByTransferId: MutableMap<String, MutableMap<Int, ByteArray>> =
     mutableMapOf()

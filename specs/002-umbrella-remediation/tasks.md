@@ -155,8 +155,8 @@
 
 - [x] T044 [P] [US2] Update benchmark coverage in `meshlink/src/jvmBenchmark/kotlin/ch/trancee/meshlink/routing/RoutingBenchmark.kt`, `meshlink/src/jvmBenchmark/kotlin/ch/trancee/meshlink/routing/DedupBenchmark.kt`, `meshlink/src/jvmBenchmark/kotlin/ch/trancee/meshlink/transfer/TransferBenchmark.kt`, and `meshlink/src/jvmBenchmark/kotlin/ch/trancee/meshlink/wire/WireFormatBenchmark.kt` where remediation changes affect hot paths.
 - [x] T045 [P] [US2] Ensure newly wired runtime paths reuse existing diagnostic codes before adding any new catalog entries by updating emitters in `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/engine/MeshEngine.kt`, `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/engine/NoiseHandshakeManager.kt`, `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/messaging/DeliveryPipeline.kt`, and `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/transfer/TransferEngine.kt`.
-- [ ] T046 [US2] Run the full verification gate from watchpoint [V1]: `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck :meshlink:detekt :meshlink:ktfmtCheck`.
-- [ ] T047 [P] [US2] Run performance and packaging spot checks from watchpoints [V1] and [V2]: `./gradlew :meshlink:jvmCiBenchmark` locally and `./gradlew :meshlink:compileKotlinIosArm64` on macOS, then record any regressions against the plan budgets.
+- [x] T046 [US2] Run the full verification gate from watchpoint [V1]: `./gradlew :meshlink:jvmTest :meshlink:androidHostTest :meshlink:koverVerify :meshlink:apiCheck :meshlink:detekt :meshlink:ktfmtCheck`.
+- [x] T047 [P] [US2] Run performance and packaging spot checks from watchpoints [V1] and [V2]: `./gradlew :meshlink:jvmCiBenchmark` locally and `./gradlew :meshlink:compileKotlinIosArm64` on macOS, then record any regressions against the plan budgets.
 
 **Final Gate**: All required verification commands pass, benchmark regressions stay within budget, and platform packaging evidence is captured.
 
