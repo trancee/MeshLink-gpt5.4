@@ -23,4 +23,9 @@ public class AndroidSecureStorage {
     require(key.isNotBlank()) { "AndroidSecureStorage key must not be blank." }
     valuesByKey.remove(key)
   }
+
+  /** Erases every stored value. */
+  public fun clear(): Unit {
+    valuesByKey.clear()
+  }
 }

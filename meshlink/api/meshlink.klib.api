@@ -302,6 +302,9 @@ abstract interface ch.trancee.meshlink.api/MeshLinkApi { // ch.trancee.meshlink.
     abstract val state // ch.trancee.meshlink.api/MeshLinkApi.state|{}state[0]
         abstract fun <get-state>(): kotlinx.coroutines.flow/StateFlow<ch.trancee.meshlink.api/MeshLinkState> // ch.trancee.meshlink.api/MeshLinkApi.state.<get-state>|<get-state>(){}[0]
 
+    abstract fun factoryReset() // ch.trancee.meshlink.api/MeshLinkApi.factoryReset|factoryReset(){}[0]
+    abstract fun forgetPeer(ch.trancee.meshlink.api/PeerIdHex) // ch.trancee.meshlink.api/MeshLinkApi.forgetPeer|forgetPeer(ch.trancee.meshlink.api.PeerIdHex){}[0]
+    abstract fun healthSnapshot(): ch.trancee.meshlink.api/MeshHealthSnapshot // ch.trancee.meshlink.api/MeshLinkApi.healthSnapshot|healthSnapshot(){}[0]
     abstract fun pause() // ch.trancee.meshlink.api/MeshLinkApi.pause|pause(){}[0]
     abstract fun resume() // ch.trancee.meshlink.api/MeshLinkApi.resume|resume(){}[0]
     abstract fun send(ch.trancee.meshlink.api/PeerIdHex, kotlin/ByteArray) // ch.trancee.meshlink.api/MeshLinkApi.send|send(ch.trancee.meshlink.api.PeerIdHex;kotlin.ByteArray){}[0]
@@ -1210,6 +1213,9 @@ final class ch.trancee.meshlink.engine/MeshEngine : ch.trancee.meshlink.api/Mesh
 
     final fun beginHandshake(ch.trancee.meshlink.api/PeerIdHex, ch.trancee.meshlink.crypto.noise/HandshakeRole, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/MeshEngine.beginHandshake|beginHandshake(ch.trancee.meshlink.api.PeerIdHex;ch.trancee.meshlink.crypto.noise.HandshakeRole;kotlin.ByteArray){}[0]
     final fun continueHandshake(ch.trancee.meshlink.api/PeerIdHex, kotlin/ByteArray): ch.trancee.meshlink.wire.messages/HandshakeMessage // ch.trancee.meshlink.engine/MeshEngine.continueHandshake|continueHandshake(ch.trancee.meshlink.api.PeerIdHex;kotlin.ByteArray){}[0]
+    final fun factoryReset() // ch.trancee.meshlink.engine/MeshEngine.factoryReset|factoryReset(){}[0]
+    final fun forgetPeer(ch.trancee.meshlink.api/PeerIdHex) // ch.trancee.meshlink.engine/MeshEngine.forgetPeer|forgetPeer(ch.trancee.meshlink.api.PeerIdHex){}[0]
+    final fun healthSnapshot(): ch.trancee.meshlink.api/MeshHealthSnapshot // ch.trancee.meshlink.engine/MeshEngine.healthSnapshot|healthSnapshot(){}[0]
     final fun pause() // ch.trancee.meshlink.engine/MeshEngine.pause|pause(){}[0]
     final fun pseudonymAt(kotlin/ByteArray, kotlin/Long): kotlin/ByteArray // ch.trancee.meshlink.engine/MeshEngine.pseudonymAt|pseudonymAt(kotlin.ByteArray;kotlin.Long){}[0]
     final fun publishPeers(kotlin.collections/List<ch.trancee.meshlink.api/PeerDetail>) // ch.trancee.meshlink.engine/MeshEngine.publishPeers|publishPeers(kotlin.collections.List<ch.trancee.meshlink.api.PeerDetail>){}[0]
@@ -1814,6 +1820,7 @@ final class ch.trancee.meshlink.routing/SourceRecord { // ch.trancee.meshlink.ro
 final class ch.trancee.meshlink.storage/IosSecureStorage { // ch.trancee.meshlink.storage/IosSecureStorage|null[0]
     constructor <init>() // ch.trancee.meshlink.storage/IosSecureStorage.<init>|<init>(){}[0]
 
+    final fun clear() // ch.trancee.meshlink.storage/IosSecureStorage.clear|clear(){}[0]
     final fun getString(kotlin/String): kotlin/String? // ch.trancee.meshlink.storage/IosSecureStorage.getString|getString(kotlin.String){}[0]
     final fun putString(kotlin/String, kotlin/String) // ch.trancee.meshlink.storage/IosSecureStorage.putString|putString(kotlin.String;kotlin.String){}[0]
     final fun remove(kotlin/String) // ch.trancee.meshlink.storage/IosSecureStorage.remove|remove(kotlin.String){}[0]

@@ -155,6 +155,13 @@ public class TransferEngine(
     return sessionsByTransferId.size
   }
 
+  internal fun reset(): Unit {
+    sessionsByTransferId.clear()
+    inboundChunksByTransferId.clear()
+    inboundExpectedChunkCounts.clear()
+    scheduler.reset()
+  }
+
   private fun requireManagedTransferSession(transferId: String): ManagedTransferSession {
     return requireNotNull(sessionsByTransferId[transferId]) {
       "TransferEngine has no active transfer for $transferId."

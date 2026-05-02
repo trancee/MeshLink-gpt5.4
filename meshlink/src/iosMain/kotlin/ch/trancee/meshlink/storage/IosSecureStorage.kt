@@ -17,4 +17,8 @@ public class IosSecureStorage {
     require(key.isNotBlank()) { "IosSecureStorage key must not be blank." }
     valuesByKey.remove(key)
   }
+
+  public fun clear(): Unit {
+    valuesByKey.clear()
+  }
 }

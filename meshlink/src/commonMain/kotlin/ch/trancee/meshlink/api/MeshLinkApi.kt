@@ -82,4 +82,13 @@ public interface MeshLinkApi {
    * acknowledgment.
    */
   public fun send(peerId: PeerIdHex, payload: ByteArray)
+
+  /** Returns a point-in-time operational snapshot of the mesh runtime. */
+  public fun healthSnapshot(): MeshHealthSnapshot
+
+  /** Erases runtime state associated with a single peer without resetting the entire mesh. */
+  public fun forgetPeer(peerId: PeerIdHex)
+
+  /** Erases all runtime state after the caller has stopped the mesh instance. */
+  public fun factoryReset()
 }

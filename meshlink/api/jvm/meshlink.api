@@ -204,10 +204,13 @@ public final class ch/trancee/meshlink/api/MeshLink {
 }
 
 public abstract interface class ch/trancee/meshlink/api/MeshLinkApi {
+	public abstract fun factoryReset ()V
+	public abstract fun forgetPeer (Lch/trancee/meshlink/api/PeerIdHex;)V
 	public abstract fun getDiagnosticEvents ()Lkotlinx/coroutines/flow/SharedFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/SharedFlow;
 	public abstract fun getPeers ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun healthSnapshot ()Lch/trancee/meshlink/api/MeshHealthSnapshot;
 	public abstract fun pause ()V
 	public abstract fun resume ()V
 	public abstract fun send (Lch/trancee/meshlink/api/PeerIdHex;[B)V
@@ -873,6 +876,8 @@ public final class ch/trancee/meshlink/engine/MeshEngine : ch/trancee/meshlink/a
 	public synthetic fun <init> (Lch/trancee/meshlink/engine/MeshEngineConfig;Lch/trancee/meshlink/transport/BleTransport;Lch/trancee/meshlink/engine/NoiseHandshakeManager;Lch/trancee/meshlink/engine/MeshStateManager;Lch/trancee/meshlink/engine/PseudonymRotator;Lch/trancee/meshlink/messaging/DeliveryPipeline;Lch/trancee/meshlink/api/DiagnosticSink;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun beginHandshake (Lch/trancee/meshlink/api/PeerIdHex;Lch/trancee/meshlink/crypto/noise/HandshakeRole;[B)Lch/trancee/meshlink/wire/messages/HandshakeMessage;
 	public final fun continueHandshake (Lch/trancee/meshlink/api/PeerIdHex;[B)Lch/trancee/meshlink/wire/messages/HandshakeMessage;
+	public fun factoryReset ()V
+	public fun forgetPeer (Lch/trancee/meshlink/api/PeerIdHex;)V
 	public final fun getConfig ()Lch/trancee/meshlink/engine/MeshEngineConfig;
 	public final fun getDeliveryPipeline ()Lch/trancee/meshlink/messaging/DeliveryPipeline;
 	public fun getDiagnosticEvents ()Lkotlinx/coroutines/flow/SharedFlow;
@@ -883,6 +888,7 @@ public final class ch/trancee/meshlink/engine/MeshEngine : ch/trancee/meshlink/a
 	public fun getState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getStateManager ()Lch/trancee/meshlink/engine/MeshStateManager;
 	public final fun getTransport ()Lch/trancee/meshlink/transport/BleTransport;
+	public fun healthSnapshot ()Lch/trancee/meshlink/api/MeshHealthSnapshot;
 	public fun pause ()V
 	public final fun pseudonymAt ([BJ)[B
 	public final fun publishPeers (Ljava/util/List;)V

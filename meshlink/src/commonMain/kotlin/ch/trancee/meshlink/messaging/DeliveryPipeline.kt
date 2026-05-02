@@ -238,6 +238,27 @@ public class DeliveryPipeline(
       ?: bufferedDeliveries[messageId]?.payload?.copyOf()
   }
 
+  internal fun clearPeer(recipientPeerId: PeerIdHex): Int {
+    val pendingMessageIds: List<MessageIdKey> =
+      pendingDeliveries.keys.filter { messageId ->
+        pendingDeliveries.getValue(messageId).recipientPeerId == recipientPeerId
+      }
+    val bufferedMessageIds: List<MessageIdKey> =
+      bufferedDeliveries.keys.filter { messageId ->
+        bufferedDeliveries.getValue(messageId).recipientPeerId == recipientPeerId
+      }
+    pendingMessageIds.forEach { messageId -> pendingDeliveries.remove(messageId) }
+    bufferedMessageIds.forEach { messageId -> bufferedDeliveries.remove(messageId) }
+    return pendingMessageIds.size + bufferedMessageIds.size
+  }
+
+  internal fun reset(): Unit {
+    nextSequenceNumbersBySender.clear()
+    pendingDeliveries.clear()
+    bufferedDeliveries.clear()
+    deliveredInboundMessageIds.clear()
+  }
+
   internal fun bufferedCount(): Int {
     return bufferedDeliveries.size
   }

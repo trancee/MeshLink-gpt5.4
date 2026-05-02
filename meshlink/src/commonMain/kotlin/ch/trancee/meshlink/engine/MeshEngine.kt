@@ -4,6 +4,7 @@ import ch.trancee.meshlink.api.DiagnosticCode
 import ch.trancee.meshlink.api.DiagnosticEvent
 import ch.trancee.meshlink.api.DiagnosticPayload
 import ch.trancee.meshlink.api.DiagnosticSink
+import ch.trancee.meshlink.api.MeshHealthSnapshot
 import ch.trancee.meshlink.api.MeshLinkApi
 import ch.trancee.meshlink.api.MeshLinkState
 import ch.trancee.meshlink.api.PeerDetail
@@ -150,6 +151,47 @@ private constructor(
       transport.send(peerId = nextHopPeerId, payload = payload)
     }
     syncSession(peerId = peerId)
+  }
+
+  override fun healthSnapshot(): MeshHealthSnapshot {
+    val connectedPeers: List<PeerDetail> =
+      mutablePeers.value.filter { peerDetail ->
+        peerDetail.state == PeerState.Connected || peerDetail.state == PeerState.Connecting
+      }
+    return MeshHealthSnapshot(
+      connectedPeers = connectedPeers,
+      routingTableSize = routingEngine.destinations().size,
+      activeTransferCount = sessionRegistry.activeTransferCount(),
+      bufferedMessageCount = deliveryPipeline.pendingCount() + deliveryPipeline.bufferedCount(),
+      powerTier = currentPowerDecision.tier,
+    )
+  }
+
+  override fun forgetPeer(peerId: PeerIdHex): Unit {
+    mutablePeers.value = mutablePeers.value.filterNot { peerDetail -> peerDetail.peerId == peerId }
+    deliveryPipeline.clearPeer(recipientPeerId = peerId)
+    activeTransferIdsByPeer[peerId.value]?.toSet()?.forEach { transferId ->
+      cancelTransfer(transferId = transferId)
+    }
+    clearRoutesForPeer(peerId = peerId)
+    transport.disconnect(peerId = peerId)
+    sessionRegistry.remove(peerId = peerId)
+    reevaluatePowerDecision()
+  }
+
+  override fun factoryReset(): Unit {
+    check(state.value == MeshLinkState.STOPPED) {
+      "MeshEngine must be stopped before factoryReset()."
+    }
+
+    mutablePeers.value = emptyList()
+    deliveryPipeline.reset()
+    transferEngine.reset()
+    activeTransferIdsByPeer.clear()
+    recipientPeerIdsByTransferId.clear()
+    clearAllRoutes()
+    sessionRegistry.clear()
+    reevaluatePowerDecision()
   }
 
   /** Starts a handshake from the local node's perspective. */
@@ -470,6 +512,18 @@ private constructor(
       routeAvailable = effectiveRouteAvailable,
       activeTransferIds = effectiveTransferIds,
     )
+  }
+
+  private fun clearRoutesForPeer(peerId: PeerIdHex): Unit {
+    routingEngine.routesFor(destinationPeerId = peerId).forEach { route ->
+      withdrawRoute(route = route, nowEpochMillis = 0L)
+    }
+  }
+
+  private fun clearAllRoutes(): Unit {
+    routingEngine.destinations().forEach { destinationPeerId ->
+      clearRoutesForPeer(peerId = destinationPeerId)
+    }
   }
 
   private fun shouldRetainSession(

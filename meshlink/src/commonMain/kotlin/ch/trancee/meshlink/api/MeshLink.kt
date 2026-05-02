@@ -1,5 +1,6 @@
 package ch.trancee.meshlink.api
 
+import ch.trancee.meshlink.power.PowerTier
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 import kotlinx.coroutines.channels.BufferOverflow
@@ -102,6 +103,29 @@ internal class StubMeshLinkApi(
     diagnosticSink.emit(code = DiagnosticCode.MESSAGE_SENT) {
       DiagnosticPayload.PeerLifecycle(peerId = peerId, state = PeerState.Connected)
     }
+  }
+
+  override fun healthSnapshot(): MeshHealthSnapshot {
+    val connectedPeers: List<PeerDetail> =
+      mutablePeers.value.filter { peerDetail -> peerDetail.state == PeerState.Connected }
+    return MeshHealthSnapshot(
+      connectedPeers = connectedPeers,
+      routingTableSize = 0,
+      activeTransferCount = 0,
+      bufferedMessageCount = 0,
+      powerTier = PowerTier.HIGH,
+    )
+  }
+
+  override fun forgetPeer(peerId: PeerIdHex): Unit {
+    mutablePeers.value = mutablePeers.value.filterNot { peerDetail -> peerDetail.peerId == peerId }
+  }
+
+  override fun factoryReset(): Unit {
+    check(state.value == MeshLinkState.STOPPED) {
+      "StubMeshLinkApi must be stopped before factoryReset()."
+    }
+    mutablePeers.value = emptyList()
   }
 
   internal fun publishPeers(peerDetails: List<PeerDetail>): Unit {
