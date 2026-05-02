@@ -14,6 +14,9 @@ import ch.trancee.meshlink.crypto.noise.HandshakeRole
 import ch.trancee.meshlink.messaging.DeliveryPipeline
 import ch.trancee.meshlink.messaging.MessagingConfig
 import ch.trancee.meshlink.messaging.SendResult
+import ch.trancee.meshlink.routing.RoutingConfig as EngineRoutingConfig
+import ch.trancee.meshlink.routing.RoutingEngine
+import ch.trancee.meshlink.routing.RoutingUpdate
 import ch.trancee.meshlink.transport.BleTransport
 import ch.trancee.meshlink.wire.WireMessage
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
@@ -41,6 +44,7 @@ private constructor(
   public val deliveryPipeline: DeliveryPipeline,
   private val diagnosticSink: DiagnosticSink,
 ) : MeshLinkApi {
+  private val routingEngine: RoutingEngine = RoutingEngine(config = EngineRoutingConfig.default())
   private val mutableState = MutableStateFlow(MeshLinkState.UNINITIALIZED)
   private val mutablePeers = MutableStateFlow<List<PeerDetail>>(emptyList())
   private val mutableMessages =
@@ -143,6 +147,14 @@ private constructor(
       is BroadcastMessage -> mutableMessages.tryEmit(message.payload.copyOf())
       else -> Unit
     }
+  }
+
+  internal fun processRoutingUpdate(update: RoutingUpdate): Boolean {
+    return routingEngine.processUpdate(update = update)
+  }
+
+  internal fun nextHopFor(destinationPeerId: PeerIdHex): PeerIdHex? {
+    return routingEngine.nextHopFor(destinationPeerId = destinationPeerId)
   }
 
   /** Derives the pseudonym that should be advertised for the given time window. */

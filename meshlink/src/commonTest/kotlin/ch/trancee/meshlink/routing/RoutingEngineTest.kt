@@ -182,6 +182,51 @@ public class RoutingEngineTest {
   }
 
   @Test
+  public fun processUpdate_requestsSequenceNumberWhenTheLastRouteIsWithdrawn(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "00112233")
+    val nextHopPeerId = PeerIdHex(value = "44556677")
+    val coordinator = RouteCoordinator()
+    val engine = RoutingEngine(config = RoutingConfig.default(), routeCoordinator = coordinator)
+    engine.processUpdate(
+      update =
+        routingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = 1,
+          sequenceNumber = 7,
+        )
+    )
+
+    // Act
+    engine.processUpdate(
+      update =
+        routingUpdate(
+          destinationPeerId = destinationPeerId,
+          nextHopPeerId = nextHopPeerId,
+          metric = RoutingEngine.INFINITE_METRIC,
+          sequenceNumber = 8,
+        )
+    )
+
+    // Assert
+    assertEquals(expected = null, actual = engine.nextHopFor(destinationPeerId = destinationPeerId))
+    assertEquals(expected = emptySet(), actual = engine.destinations())
+    assertEquals(
+      expected = 8,
+      actual = coordinator.pendingSequenceNumber(destinationPeerId = destinationPeerId),
+      message =
+        "RoutingEngine should request a fresher sequence number when the last route disappears.",
+    )
+    assertEquals(
+      expected = 7,
+      actual = coordinator.sourceRecord(destinationPeerId = destinationPeerId)?.sequenceNumber,
+      message =
+        "RoutingEngine should keep the last accepted source record so starvation recovery has context.",
+    )
+  }
+
+  @Test
   public fun routesFor_exposesAllInstalledRoutesForADestination(): Unit {
     // Arrange
     val destinationPeerId = PeerIdHex(value = "00112233")

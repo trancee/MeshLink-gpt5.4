@@ -45,14 +45,16 @@ public class RouteCoordinator(private val diagnosticSink: DiagnosticSink = NoOpD
     sequenceNumber: Int,
     metric: Int,
   ): Unit {
-    require(
+    val feasible: Boolean =
       isFeasible(
         destinationPeerId = destinationPeerId,
         sequenceNumber = sequenceNumber,
         metric = metric,
       )
-    ) {
-      "RouteCoordinator rejected infeasible route for ${destinationPeerId.value}."
+    if (!feasible) {
+      throw IllegalArgumentException(
+        "RouteCoordinator rejected infeasible route for ${destinationPeerId.value}."
+      )
     }
 
     sourceRecords[destinationPeerId.value] =

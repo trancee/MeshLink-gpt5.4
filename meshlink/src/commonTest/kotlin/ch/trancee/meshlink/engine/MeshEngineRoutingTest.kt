@@ -4,6 +4,7 @@ import ch.trancee.meshlink.api.DiagnosticCode
 import ch.trancee.meshlink.api.DiagnosticSink
 import ch.trancee.meshlink.api.PeerIdHex
 import ch.trancee.meshlink.crypto.noise.HandshakeRole
+import ch.trancee.meshlink.routing.RoutingUpdate
 import ch.trancee.meshlink.transport.VirtualMeshTransport
 import ch.trancee.meshlink.wire.messages.BroadcastMessage
 import ch.trancee.meshlink.wire.messages.HandshakeRound
@@ -154,5 +155,40 @@ public class MeshEngineRoutingTest {
     assertEquals(expected = HandshakeRound.ONE, actual = first.round)
     assertEquals(expected = HandshakeRound.THREE, actual = third.round)
     assertFalse(actual = engine.handshakeManager.isHandshakeActive(peerId = peerId))
+  }
+
+  @Test
+  public fun processRoutingUpdate_delegatesToTheRoutingEngine(): Unit {
+    // Arrange
+    val destinationPeerId = PeerIdHex(value = "00112233")
+    val nextHopPeerId = PeerIdHex(value = "44556677")
+    val engine =
+      MeshEngine.create(
+        config = MeshEngineConfig.default(),
+        transport = VirtualMeshTransport(localPeerId = PeerIdHex(value = "8899aabb")),
+        cryptoProvider = FakeCryptoProvider(),
+      )
+
+    // Act
+    val accepted =
+      engine.processRoutingUpdate(
+        update =
+          RoutingUpdate(
+            destinationPeerId = destinationPeerId,
+            nextHopPeerId = nextHopPeerId,
+            metric = 1,
+            sequenceNumber = 2,
+            expiresAtEpochMillis = 123L,
+          )
+      )
+    val actual = engine.nextHopFor(destinationPeerId = destinationPeerId)
+
+    // Assert
+    assertTrue(actual = accepted)
+    assertEquals(
+      expected = nextHopPeerId,
+      actual = actual,
+      message = "MeshEngine should expose the preferred next hop selected by the routing engine.",
+    )
   }
 }
