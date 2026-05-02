@@ -1,6 +1,6 @@
 ---
-# Continuous integration workflow that validates shared code on Linux
-# and release-shaped Apple packaging on macOS.
+# Continuous integration workflow that keeps PR feedback focused on code changes
+# while still exercising release-shaped Apple packaging when relevant.
 name: ci
 
 'on':
@@ -12,16 +12,116 @@ name: ci
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # Primary Linux verification lane. Run the remediation-required
-  # checks explicitly so the workflow contract stays visible in CI logs
-  # and aligned with the spec.
+  # Classify the changed files first so docs/spec-only changes can skip heavy
+  # verification, code changes still run the full Linux test lane, and Apple
+  # packaging only runs when a PR can affect that surface.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      quality: ${{ steps.classify.outputs.quality }}
+      benchmark: ${{ steps.classify.outputs.benchmark }}
+      ios_packaging: ${{ steps.classify.outputs.ios_packaging }}
+    steps:
+      - name: Classify changed files
+        id: classify
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const qualityMatchers = [
+              /^meshlink\/src\//,
+              /^meshlink\/build\.gradle\.kts$/,
+              /^build\.gradle\.kts$/,
+              /^settings\.gradle\.kts$/,
+              /^gradle\.properties$/,
+              /^gradle\//,
+              /^detekt\.yml$/,
+              /^consumer-rules\.pro$/,
+            ];
+
+            const iosPackagingMatchers = [
+              /^meshlink\/src\/iosMain\//,
+              /^meshlink\/build\.gradle\.kts$/,
+              /^build\.gradle\.kts$/,
+              /^settings\.gradle\.kts$/,
+              /^gradle\.properties$/,
+              /^gradle\//,
+              /^consumer-rules\.pro$/,
+              /^scripts\/package-xcframework\.sh$/,
+              /^scripts\/verify-publish\.sh$/,
+              /^scripts\/update-package-swift\.sh$/,
+            ];
+
+            const matchesAny = (file, matchers) => matchers.some((matcher) => matcher.test(file));
+
+            async function changedFiles() {
+              if (context.eventName === 'workflow_dispatch') {
+                return ['__all__'];
+              }
+
+              if (context.eventName === 'pull_request') {
+                const files = await github.paginate(github.rest.pulls.listFiles, {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.payload.pull_request.number,
+                  per_page: 100,
+                });
+                return files.map((file) => file.filename);
+              }
+
+              if (context.eventName === 'push') {
+                const before = context.payload.before;
+                const after = context.payload.after;
+
+                if (!before || /^0+$/.test(before)) {
+                  return ['__all__'];
+                }
+
+                const comparison = await github.rest.repos.compareCommitsWithBasehead({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  basehead: `${before}...${after}`,
+                });
+
+                return (comparison.data.files || []).map((file) => file.filename);
+              }
+
+              return ['__all__'];
+            }
+
+            const files = await changedFiles();
+            const forceAll = files.includes('__all__');
+            const quality = forceAll || files.some((file) => matchesAny(file, qualityMatchers));
+            const iosPackaging = forceAll || files.some((file) => matchesAny(file, iosPackagingMatchers));
+            const benchmark = quality;
+
+            core.info(`Changed files (${files.length}): ${forceAll ? 'all files' : files.join(', ') || '[none]'}`);
+            core.setOutput('quality', String(quality));
+            core.setOutput('benchmark', String(benchmark));
+            core.setOutput('ios_packaging', String(iosPackaging));
+
+            await core.summary
+              .addHeading('CI change classification')
+              .addTable([
+                [{ data: 'Signal', header: true }, { data: 'Value', header: true }],
+                ['quality', String(quality)],
+                ['benchmark', String(benchmark)],
+                ['ios_packaging', String(iosPackaging)],
+              ])
+              .addRaw(`\nChanged files considered: ${forceAll ? 'all files' : files.join(', ') || '[none]'}`)
+              .write();
+
+  # Primary Linux verification lane. Run the code-quality and test gates only
+  # when a PR or push actually changes implementation/build inputs.
   quality:
+    needs: changes
+    if: needs.changes.outputs.quality == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -34,10 +134,20 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      - name: Cache Kotlin/Native distribution
+        uses: actions/cache@v4.2.4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Run explicit remediation quality gate
+      - name: Run required test and quality gate
         run: >-
           ./gradlew
           :meshlink:ktfmtCheck
@@ -46,12 +156,46 @@ jobs:
           :meshlink:androidHostTest
           :meshlink:koverVerify
           :meshlink:apiCheck
-          :meshlink:jvmCiBenchmark
 
-  # macOS verification lane that proves the Apple artifact still
-  # assembles into the SwiftPM-consumable XCFramework package while also
-  # exercising the cross-target API baseline on an Apple runner.
+  # Benchmarks stay in CI for main-branch and manual verification, but they no
+  # longer slow down pull-request feedback.
+  benchmark:
+    needs: changes
+    if: github.event_name != 'pull_request' && needs.changes.outputs.benchmark == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5.2.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Cache Kotlin/Native distribution
+        uses: actions/cache@v4.2.4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6.1.0
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Run CI benchmark lane
+        run: ./gradlew :meshlink:jvmCiBenchmark
+
+  # macOS verification lane that proves the Apple artifact still assembles into
+  # the SwiftPM-consumable XCFramework package. On pull requests, only run this
+  # when iOS/package-related files changed.
   ios-device-packaging:
+    needs: changes
+    if: needs.changes.outputs.ios_packaging == 'true'
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
@@ -64,8 +208,18 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      - name: Cache Kotlin/Native distribution
+        uses: actions/cache@v4.2.4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Run consolidated iOS packaging gate
         run: ./gradlew :meshlink:iosPackagingGate

@@ -123,13 +123,13 @@ tasks.register("ciQualityGate") {
   )
 }
 
-// macOS-only packaging gate used by release workflows to prove the Apple artifact still
-// assembles cleanly after shared-code changes.
+// macOS-only packaging gate used by CI/release workflows to prove the Apple artifact
+// still assembles cleanly without re-running the full cross-platform API baseline.
 tasks.register("iosPackagingGate") {
   group = "verification"
   description =
     "Runs the macOS iOS packaging gate in one Gradle invocation to reduce repeated configuration overhead."
-  dependsOn("apiCheck", "assembleMeshLinkReleaseXCFramework")
+  dependsOn("assembleMeshLinkReleaseXCFramework")
 }
 
 detekt {
