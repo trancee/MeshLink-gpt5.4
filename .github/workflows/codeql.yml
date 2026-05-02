@@ -35,29 +35,37 @@ jobs:
         with:
           languages: actions
 
+      # This repository already has GitHub-managed CodeQL default setup enabled.
+      # Avoid uploading a second advanced-configuration SARIF from the PR path,
+      # because GitHub rejects duplicate advanced uploads while default setup is
+      # active.
       - name: Analyze
         uses: github/codeql-action/analyze@v4
         with:
           category: /language:actions
+          upload: never
 
   analyze-c-cpp:
     name: Analyze (c-cpp)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: c-cpp
-          build-mode: none
-
-      - name: Analyze
-        uses: github/codeql-action/analyze@v4
-        with:
-          category: /language:c-cpp
+      - name: Verify repository has no C or C++ sources to scan
+        run: >-
+          if find .
+          \( -path './.git' -o -path './.gradle' -o -path './build' -o -path './meshlink/build' \)
+          -prune
+          -o
+          -type f
+          \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.h' -o -name '*.hh' -o -name '*.hpp' -o -name '*.hxx' \)
+          -print
+          | grep -q .; then
+            echo 'C/C++ sources were detected. Revisit CodeQL configuration and coordinate it with GitHub default setup before merging.' >&2;
+            exit 1;
+          fi
 
   analyze-java-kotlin:
     name: Analyze (java-kotlin)
@@ -93,3 +101,4 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: /language:java-kotlin
+          upload: never
