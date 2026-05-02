@@ -126,7 +126,7 @@
 
 ### Implementation
 
-- [ ] T033 [US3] Create `.github/workflows/codeql.yml` with scheduled and PR coverage for `actions`, `c-cpp`, and `java-kotlin` to satisfy watchpoint [W5].
+- [x] T033 [US3] Create `.github/workflows/codeql.yml` with scheduled and PR coverage for `actions`, `c-cpp`, and `java-kotlin` to satisfy watchpoint [W5].
 - [ ] T034 [P] [US3] Update `.github/workflows/ci.yml` so the remediation feature’s required checks (`:meshlink:apiCheck`, `:meshlink:koverVerify`, `:meshlink:detekt`, `:meshlink:ktfmtCheck`, and any chosen benchmark smoke path) are enforced consistently.
 - [ ] T035 [US3] Update `.github/workflows/release.yml` to compute the XCFramework checksum, publish the asset metadata consumed by SwiftPM, and validate the generated package reference before release completion.
 - [ ] T036 [P] [US3] Replace the placeholder binary-target checksum flow in `Package.swift` with the release-generated artifact URL/checksum contract expected by `.github/workflows/release.yml`.
