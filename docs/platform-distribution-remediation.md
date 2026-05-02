@@ -136,3 +136,20 @@ If either behavior regresses:
 
 For the Swift-side examples and crypto-delegate install order, see
 `docs/ios-crypto-bridge.md`.
+
+## API-facing operational notes
+
+The remediation wave also finalized a small set of public operational APIs that
+matter during release validation and support handoff:
+
+- `healthSnapshot()` returns a point-in-time summary of connected peers, routing
+  entries, active transfers, buffered delivery state, and the currently applied
+  power tier.
+- `forgetPeer(peerId)` erases runtime state for one peer without resetting the
+  full mesh instance. Peer-scoped routes, active transfers, and buffered
+  deliveries for that peer are cleared.
+- `factoryReset()` is intentionally stricter: callers must stop the runtime
+  first, then the reset clears all in-memory runtime state.
+
+These semantics should remain stable across Android and iOS because they are now
+part of the shared `MeshLinkApi` contract and BCV-tracked public surface.

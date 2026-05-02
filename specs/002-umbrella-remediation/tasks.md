@@ -144,8 +144,8 @@
 
 - [x] T040 [US2] Update `meshlink/api/jvm/meshlink.api` and `meshlink/api/meshlink.klib.api` after intentional public API changes from `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/api/MeshLinkApi.kt` and `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/api/MeshHealthSnapshot.kt`, satisfying watchpoint [V3].
 - [x] T041 [P] [US2] Add or refine KDoc in `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/api/MeshLinkApi.kt`, `meshlink/src/commonMain/kotlin/ch/trancee/meshlink/api/MeshHealthSnapshot.kt`, and any new public enums/data classes introduced by this remediation wave.
-- [ ] T042 [P] [US2] Update any API-facing behavior notes in `docs/platform-distribution-remediation.md` and, if needed, `specs/002-umbrella-remediation/plan.md` when public operational semantics (health snapshots or erasure behavior) are finalized.
-- [ ] T043 [US2] Verify API/doc stability with `./gradlew :meshlink:apiCheck :meshlink:compileKotlinIosArm64`.
+- [x] T042 [P] [US2] Update any API-facing behavior notes in `docs/platform-distribution-remediation.md` and, if needed, `specs/002-umbrella-remediation/plan.md` when public operational semantics (health snapshots or erasure behavior) are finalized.
+- [x] T043 [US2] Verify API/doc stability with `./gradlew :meshlink:apiCheck :meshlink:compileKotlinIosArm64`.
 
 ---
 
