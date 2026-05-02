@@ -1,8 +1,9 @@
-# Continuous integration workflow that validates shared code on Linux and release-shaped
-# Apple packaging on macOS.
+---
+# Continuous integration workflow that validates shared code on Linux
+# and release-shaped Apple packaging on macOS.
 name: ci
 
-on:
+'on':
   pull_request:
   push:
     branches:
@@ -17,8 +18,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Primary Linux verification lane. The Gradle task aggregates formatting, static
-  # analysis, tests, coverage, API checks, and CI-shortened benchmarks.
+  # Primary Linux verification lane. Run the remediation-required
+  # checks explicitly so the workflow contract stays visible in CI logs
+  # and aligned with the spec.
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -35,11 +37,20 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
-      - name: Run consolidated quality gate
-        run: ./gradlew :meshlink:ciQualityGate
+      - name: Run explicit remediation quality gate
+        run: >-
+          ./gradlew
+          :meshlink:ktfmtCheck
+          :meshlink:detekt
+          :meshlink:jvmTest
+          :meshlink:androidHostTest
+          :meshlink:koverVerify
+          :meshlink:apiCheck
+          :meshlink:jvmCiBenchmark
 
-  # macOS verification lane that proves the Apple artifact still assembles into the
-  # SwiftPM-consumable XCFramework package.
+  # macOS verification lane that proves the Apple artifact still
+  # assembles into the SwiftPM-consumable XCFramework package while also
+  # exercising the cross-target API baseline on an Apple runner.
   ios-device-packaging:
     runs-on: macos-latest
     timeout-minutes: 20
