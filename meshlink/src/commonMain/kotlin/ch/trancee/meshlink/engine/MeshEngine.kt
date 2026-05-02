@@ -24,6 +24,7 @@ import ch.trancee.meshlink.power.PowerConfig
 import ch.trancee.meshlink.power.PowerDecision
 import ch.trancee.meshlink.power.PowerManager
 import ch.trancee.meshlink.power.TransferStatus
+import ch.trancee.meshlink.routing.RouteCoordinator
 import ch.trancee.meshlink.routing.RouteEntry
 import ch.trancee.meshlink.routing.RoutingConfig as EngineRoutingConfig
 import ch.trancee.meshlink.routing.RoutingEngine
@@ -64,7 +65,11 @@ private constructor(
   public val deliveryPipeline: DeliveryPipeline,
   private val diagnosticSink: DiagnosticSink,
 ) : MeshLinkApi {
-  private val routingEngine: RoutingEngine = RoutingEngine(config = EngineRoutingConfig.default())
+  private val routingEngine: RoutingEngine =
+    RoutingEngine(
+      config = EngineRoutingConfig.default(),
+      routeCoordinator = RouteCoordinator(diagnosticSink = diagnosticSink),
+    )
   internal val sessionRegistry: MeshSessionRegistry = MeshSessionRegistry()
   internal val transferEngine: TransferEngine =
     TransferEngine(
@@ -74,6 +79,7 @@ private constructor(
           gattChunkSizeBytes = config.meshLinkConfig.transfers.chunkSizeBytes,
           l2capChunkSizeBytes = config.meshLinkConfig.transfers.chunkSizeBytes,
         ),
+      diagnosticSink = diagnosticSink,
     )
   internal val batteryMonitor: FixedBatteryMonitor =
     FixedBatteryMonitor(initialBatteryPercent = 100)
@@ -168,6 +174,10 @@ private constructor(
   }
 
   override fun forgetPeer(peerId: PeerIdHex): Unit {
+    val hadTrackedState: Boolean =
+      mutablePeers.value.any { peerDetail -> peerDetail.peerId == peerId } ||
+        sessionRegistry.session(peerId = peerId) != null ||
+        nextHopFor(destinationPeerId = peerId) != null
     mutablePeers.value = mutablePeers.value.filterNot { peerDetail -> peerDetail.peerId == peerId }
     deliveryPipeline.clearPeer(recipientPeerId = peerId)
     activeTransferIdsByPeer[peerId.value]?.toSet()?.forEach { transferId ->
@@ -176,6 +186,11 @@ private constructor(
     clearRoutesForPeer(peerId = peerId)
     transport.disconnect(peerId = peerId)
     sessionRegistry.remove(peerId = peerId)
+    if (hadTrackedState) {
+      diagnosticSink.emit(code = DiagnosticCode.PEER_LOST) {
+        DiagnosticPayload.PeerLifecycle(peerId = peerId, state = PeerState.Disconnected)
+      }
+    }
     reevaluatePowerDecision()
   }
 
