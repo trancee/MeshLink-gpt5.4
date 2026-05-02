@@ -1723,21 +1723,25 @@ public final class ch/trancee/meshlink/transfer/TransferSession {
 }
 
 public final class ch/trancee/meshlink/transport/AdvertisementCodec {
+	public static final field APP_ID_HASH_LENGTH_BYTES I
 	public static final field BLE_ADVERTISEMENT_LIMIT_BYTES I
 	public static final field ENCODED_LENGTH_BYTES I
 	public static final field INSTANCE Lch/trancee/meshlink/transport/AdvertisementCodec;
 	public static final field PSEUDONYM_LENGTH_BYTES I
+	public final fun applicationIdHash (Ljava/lang/String;)I
 	public final fun decode ([B)Lch/trancee/meshlink/transport/AdvertisementPayload;
-	public final fun encode ([BLch/trancee/meshlink/transport/AdvertisementPowerTier;)[B
+	public final fun encode ([BLch/trancee/meshlink/transport/AdvertisementPowerTier;I)[B
 }
 
 public final class ch/trancee/meshlink/transport/AdvertisementPayload {
-	public fun <init> ([BLch/trancee/meshlink/transport/AdvertisementPowerTier;)V
+	public fun <init> ([BLch/trancee/meshlink/transport/AdvertisementPowerTier;I)V
 	public final fun component1 ()[B
 	public final fun component2 ()Lch/trancee/meshlink/transport/AdvertisementPowerTier;
-	public final fun copy ([BLch/trancee/meshlink/transport/AdvertisementPowerTier;)Lch/trancee/meshlink/transport/AdvertisementPayload;
-	public static synthetic fun copy$default (Lch/trancee/meshlink/transport/AdvertisementPayload;[BLch/trancee/meshlink/transport/AdvertisementPowerTier;ILjava/lang/Object;)Lch/trancee/meshlink/transport/AdvertisementPayload;
+	public final fun component3 ()I
+	public final fun copy ([BLch/trancee/meshlink/transport/AdvertisementPowerTier;I)Lch/trancee/meshlink/transport/AdvertisementPayload;
+	public static synthetic fun copy$default (Lch/trancee/meshlink/transport/AdvertisementPayload;[BLch/trancee/meshlink/transport/AdvertisementPowerTier;IILjava/lang/Object;)Lch/trancee/meshlink/transport/AdvertisementPayload;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppIdHash ()I
 	public final fun getPowerTier ()Lch/trancee/meshlink/transport/AdvertisementPowerTier;
 	public final fun getPseudonym ()[B
 	public fun hashCode ()I

@@ -36,6 +36,7 @@ public class AndroidBleTransport(
     )
   private var deviceModel: String = DEFAULT_DEVICE_MODEL
   private var supportsL2cap: Boolean = true
+  private var applicationIdHash: Int = 0
   private val nowEpochMillis: Long = 0L
 
   override val isAdvertising: StateFlow<Boolean> = mutableIsAdvertising.asStateFlow()
@@ -57,6 +58,10 @@ public class AndroidBleTransport(
     this.supportsL2cap = supportsL2cap
   }
 
+  internal fun configureApplicationIdHash(applicationIdHash: Int): Unit {
+    this.applicationIdHash = applicationIdHash
+  }
+
   internal fun activeDataPath(peerId: PeerIdHex): TransportDataPath? {
     return activeDataPaths[peerId.value]
   }
@@ -68,7 +73,7 @@ public class AndroidBleTransport(
   override fun connect(peerId: PeerIdHex): Unit {
     val androidPeer: AndroidBleTransport? = attachedAndroidPeers[peerId.value]
     if (androidPeer != null) {
-      if (!androidPeer.isAdvertising.value) {
+      if (!androidPeer.isAdvertising.value || androidPeer.applicationIdHash != applicationIdHash) {
         return
       }
       val selectedDataPath: TransportDataPath =

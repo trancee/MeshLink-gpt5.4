@@ -82,6 +82,31 @@ public class AndroidBleTransportTest {
   }
 
   @Test
+  public fun connect_rejectsPeersFromAnotherApplicationMesh(): Unit {
+    // Arrange
+    val localPeerId = PeerIdHex(value = "00112233")
+    val remotePeerId = PeerIdHex(value = "44556677")
+    val localTransport = AndroidBleTransport(localPeerId = localPeerId)
+    val remoteTransport = AndroidBleTransport(localPeerId = remotePeerId)
+    localTransport.attachPeer(peerId = remotePeerId, transport = remoteTransport)
+    remoteTransport.attachPeer(peerId = localPeerId, transport = localTransport)
+    localTransport.configureApplicationIdHash(applicationIdHash = 1)
+    remoteTransport.configureApplicationIdHash(applicationIdHash = 2)
+    remoteTransport.advertise(enabled = true)
+
+    // Act
+    localTransport.connect(peerId = remotePeerId)
+    val actual = localTransport.isConnected(peerId = remotePeerId)
+
+    // Assert
+    assertFalse(
+      actual = actual,
+      message =
+        "AndroidBleTransport should refuse connections to peers from a different application mesh.",
+    )
+  }
+
+  @Test
   public fun connect_fallsBackToGattWhenThePeerCannotAcceptL2cap(): Unit {
     // Arrange
     val localPeerId = PeerIdHex(value = "00112233")

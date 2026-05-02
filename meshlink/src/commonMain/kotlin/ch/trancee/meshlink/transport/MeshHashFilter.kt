@@ -27,6 +27,13 @@ public class MeshHashFilter(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
     return false
   }
 
+  internal fun accepts(meshHash: ByteArray, appIdHash: Int, expectedAppIdHash: Int): Boolean {
+    if (appIdHash != expectedAppIdHash) {
+      return false
+    }
+    return !isDuplicate(meshHash = meshHash)
+  }
+
   public fun clear(): Unit {
     entries.clear()
   }

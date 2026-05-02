@@ -8,19 +8,26 @@ import kotlin.test.assertTrue
 
 public class AdvertisementCodecTest {
   @Test
-  public fun encodeAndDecode_roundTripPseudonymAndPowerTier(): Unit {
+  public fun encodeAndDecode_roundTripPseudonymPowerTierAndApplicationHash(): Unit {
     // Arrange
     val pseudonym =
       byteArrayOf(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B)
     val expectedPowerTier = AdvertisementPowerTier.NORMAL
+    val expectedAppIdHash = 0x01020304
 
     // Act
-    val encoded = AdvertisementCodec.encode(pseudonym = pseudonym, powerTier = expectedPowerTier)
+    val encoded =
+      AdvertisementCodec.encode(
+        pseudonym = pseudonym,
+        powerTier = expectedPowerTier,
+        appIdHash = expectedAppIdHash,
+      )
     val actual = AdvertisementCodec.decode(serviceData = encoded)
 
     // Assert
     assertContentEquals(expected = pseudonym, actual = actual.pseudonym)
     assertEquals(expected = expectedPowerTier, actual = actual.powerTier)
+    assertEquals(expected = expectedAppIdHash, actual = actual.appIdHash)
   }
 
   @Test
@@ -31,7 +38,11 @@ public class AdvertisementCodecTest {
 
     // Act
     val actual =
-      AdvertisementCodec.encode(pseudonym = pseudonym, powerTier = AdvertisementPowerTier.HIGH)
+      AdvertisementCodec.encode(
+        pseudonym = pseudonym,
+        powerTier = AdvertisementPowerTier.HIGH,
+        appIdHash = 0x01020304,
+      )
 
     // Assert
     assertTrue(
@@ -52,6 +63,7 @@ public class AdvertisementCodecTest {
         AdvertisementCodec.encode(
           pseudonym = ByteArray(size = 11),
           powerTier = AdvertisementPowerTier.LOW,
+          appIdHash = 0,
         )
       }
 
@@ -62,7 +74,7 @@ public class AdvertisementCodecTest {
   @Test
   public fun decode_rejectsUnexpectedServiceDataLengths(): Unit {
     // Arrange
-    val expectedMessage = "AdvertisementCodec serviceData must be exactly 13 bytes."
+    val expectedMessage = "AdvertisementCodec serviceData must be exactly 17 bytes."
 
     // Act
     val error =
@@ -78,7 +90,7 @@ public class AdvertisementCodecTest {
   public fun decode_rejectsUnknownPowerTierCodes(): Unit {
     // Arrange
     val invalidPayload = ByteArray(size = AdvertisementCodec.ENCODED_LENGTH_BYTES)
-    invalidPayload[AdvertisementCodec.ENCODED_LENGTH_BYTES - 1] = 0x7F
+    invalidPayload[AdvertisementCodec.PSEUDONYM_LENGTH_BYTES] = 0x7F
 
     // Act
     val error =
@@ -89,6 +101,35 @@ public class AdvertisementCodecTest {
     // Assert
     assertEquals(
       expected = "AdvertisementPowerTier wireCode 127 is not supported.",
+      actual = error.message,
+    )
+  }
+
+  @Test
+  public fun applicationIdHash_isStableForTheSameApplicationId(): Unit {
+    // Arrange
+    val applicationId = "chat-app"
+
+    // Act
+    val first = AdvertisementCodec.applicationIdHash(applicationId = applicationId)
+    val second = AdvertisementCodec.applicationIdHash(applicationId = applicationId)
+
+    // Assert
+    assertEquals(expected = first, actual = second)
+  }
+
+  @Test
+  public fun applicationIdHash_rejectsBlankApplicationIds(): Unit {
+    // Arrange
+    // Act
+    val error =
+      assertFailsWith<IllegalArgumentException> {
+        AdvertisementCodec.applicationIdHash(applicationId = "   ")
+      }
+
+    // Assert
+    assertEquals(
+      expected = "AdvertisementCodec applicationId must not be blank.",
       actual = error.message,
     )
   }

@@ -1954,8 +1954,10 @@ final class ch.trancee.meshlink.transfer/TransferSession { // ch.trancee.meshlin
 }
 
 final class ch.trancee.meshlink.transport/AdvertisementPayload { // ch.trancee.meshlink.transport/AdvertisementPayload|null[0]
-    constructor <init>(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier) // ch.trancee.meshlink.transport/AdvertisementPayload.<init>|<init>(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier){}[0]
+    constructor <init>(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier, kotlin/Int) // ch.trancee.meshlink.transport/AdvertisementPayload.<init>|<init>(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier;kotlin.Int){}[0]
 
+    final val appIdHash // ch.trancee.meshlink.transport/AdvertisementPayload.appIdHash|{}appIdHash[0]
+        final fun <get-appIdHash>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementPayload.appIdHash.<get-appIdHash>|<get-appIdHash>(){}[0]
     final val powerTier // ch.trancee.meshlink.transport/AdvertisementPayload.powerTier|{}powerTier[0]
         final fun <get-powerTier>(): ch.trancee.meshlink.transport/AdvertisementPowerTier // ch.trancee.meshlink.transport/AdvertisementPayload.powerTier.<get-powerTier>|<get-powerTier>(){}[0]
     final val pseudonym // ch.trancee.meshlink.transport/AdvertisementPayload.pseudonym|{}pseudonym[0]
@@ -1963,7 +1965,8 @@ final class ch.trancee.meshlink.transport/AdvertisementPayload { // ch.trancee.m
 
     final fun component1(): kotlin/ByteArray // ch.trancee.meshlink.transport/AdvertisementPayload.component1|component1(){}[0]
     final fun component2(): ch.trancee.meshlink.transport/AdvertisementPowerTier // ch.trancee.meshlink.transport/AdvertisementPayload.component2|component2(){}[0]
-    final fun copy(kotlin/ByteArray = ..., ch.trancee.meshlink.transport/AdvertisementPowerTier = ...): ch.trancee.meshlink.transport/AdvertisementPayload // ch.trancee.meshlink.transport/AdvertisementPayload.copy|copy(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier){}[0]
+    final fun component3(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementPayload.component3|component3(){}[0]
+    final fun copy(kotlin/ByteArray = ..., ch.trancee.meshlink.transport/AdvertisementPowerTier = ..., kotlin/Int = ...): ch.trancee.meshlink.transport/AdvertisementPayload // ch.trancee.meshlink.transport/AdvertisementPayload.copy|copy(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier;kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // ch.trancee.meshlink.transport/AdvertisementPayload.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementPayload.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // ch.trancee.meshlink.transport/AdvertisementPayload.toString|toString(){}[0]
@@ -2586,6 +2589,8 @@ final object ch.trancee.meshlink.transfer/ResumeCalculator { // ch.trancee.meshl
 }
 
 final object ch.trancee.meshlink.transport/AdvertisementCodec { // ch.trancee.meshlink.transport/AdvertisementCodec|null[0]
+    final const val APP_ID_HASH_LENGTH_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.APP_ID_HASH_LENGTH_BYTES|{}APP_ID_HASH_LENGTH_BYTES[0]
+        final fun <get-APP_ID_HASH_LENGTH_BYTES>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.APP_ID_HASH_LENGTH_BYTES.<get-APP_ID_HASH_LENGTH_BYTES>|<get-APP_ID_HASH_LENGTH_BYTES>(){}[0]
     final const val BLE_ADVERTISEMENT_LIMIT_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.BLE_ADVERTISEMENT_LIMIT_BYTES|{}BLE_ADVERTISEMENT_LIMIT_BYTES[0]
         final fun <get-BLE_ADVERTISEMENT_LIMIT_BYTES>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.BLE_ADVERTISEMENT_LIMIT_BYTES.<get-BLE_ADVERTISEMENT_LIMIT_BYTES>|<get-BLE_ADVERTISEMENT_LIMIT_BYTES>(){}[0]
     final const val ENCODED_LENGTH_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.ENCODED_LENGTH_BYTES|{}ENCODED_LENGTH_BYTES[0]
@@ -2593,8 +2598,9 @@ final object ch.trancee.meshlink.transport/AdvertisementCodec { // ch.trancee.me
     final const val PSEUDONYM_LENGTH_BYTES // ch.trancee.meshlink.transport/AdvertisementCodec.PSEUDONYM_LENGTH_BYTES|{}PSEUDONYM_LENGTH_BYTES[0]
         final fun <get-PSEUDONYM_LENGTH_BYTES>(): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.PSEUDONYM_LENGTH_BYTES.<get-PSEUDONYM_LENGTH_BYTES>|<get-PSEUDONYM_LENGTH_BYTES>(){}[0]
 
+    final fun applicationIdHash(kotlin/String): kotlin/Int // ch.trancee.meshlink.transport/AdvertisementCodec.applicationIdHash|applicationIdHash(kotlin.String){}[0]
     final fun decode(kotlin/ByteArray): ch.trancee.meshlink.transport/AdvertisementPayload // ch.trancee.meshlink.transport/AdvertisementCodec.decode|decode(kotlin.ByteArray){}[0]
-    final fun encode(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier): kotlin/ByteArray // ch.trancee.meshlink.transport/AdvertisementCodec.encode|encode(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier){}[0]
+    final fun encode(kotlin/ByteArray, ch.trancee.meshlink.transport/AdvertisementPowerTier, kotlin/Int): kotlin/ByteArray // ch.trancee.meshlink.transport/AdvertisementCodec.encode|encode(kotlin.ByteArray;ch.trancee.meshlink.transport.AdvertisementPowerTier;kotlin.Int){}[0]
 }
 
 final object ch.trancee.meshlink.transport/ConnectionInitiationPolicy { // ch.trancee.meshlink.transport/ConnectionInitiationPolicy|null[0]

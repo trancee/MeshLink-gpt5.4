@@ -35,6 +35,7 @@ public class IosBleTransport(
     )
   private var deviceModel: String = DEFAULT_DEVICE_MODEL
   private var supportsL2cap: Boolean = true
+  private var applicationIdHash: Int = 0
   private val nowEpochMillis: Long = 0L
 
   override val isAdvertising: StateFlow<Boolean> = mutableIsAdvertising.asStateFlow()
@@ -56,6 +57,10 @@ public class IosBleTransport(
     this.supportsL2cap = supportsL2cap
   }
 
+  internal fun configureApplicationIdHash(applicationIdHash: Int): Unit {
+    this.applicationIdHash = applicationIdHash
+  }
+
   internal fun activeDataPath(peerId: PeerIdHex): TransportDataPath? {
     return activeDataPaths[peerId.value]
   }
@@ -67,7 +72,7 @@ public class IosBleTransport(
   override fun connect(peerId: PeerIdHex): Unit {
     val iosPeer: IosBleTransport? = attachedIosPeers[peerId.value]
     if (iosPeer != null) {
-      if (!iosPeer.isAdvertising.value) {
+      if (!iosPeer.isAdvertising.value || iosPeer.applicationIdHash != applicationIdHash) {
         return
       }
       val selectedDataPath: TransportDataPath =

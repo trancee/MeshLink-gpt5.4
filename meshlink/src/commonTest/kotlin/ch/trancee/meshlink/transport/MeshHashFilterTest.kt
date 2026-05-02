@@ -126,6 +126,38 @@ public class MeshHashFilterTest {
   }
 
   @Test
+  public fun accepts_rejectsAdvertisementsFromDifferentApplicationIds(): Unit {
+    // Arrange
+    val filter = MeshHashFilter()
+    val meshHash = byteArrayOf(0x01, 0x02)
+
+    // Act
+    val actual = filter.accepts(meshHash = meshHash, appIdHash = 1, expectedAppIdHash = 2)
+
+    // Assert
+    assertFalse(
+      actual = actual,
+      message =
+        "MeshHashFilter should reject advertisements that belong to another application mesh.",
+    )
+  }
+
+  @Test
+  public fun accepts_acceptsTheFirstMatchingAdvertisementAndRejectsDuplicates(): Unit {
+    // Arrange
+    val filter = MeshHashFilter()
+    val meshHash = byteArrayOf(0x01, 0x02)
+
+    // Act
+    val first = filter.accepts(meshHash = meshHash, appIdHash = 7, expectedAppIdHash = 7)
+    val duplicate = filter.accepts(meshHash = meshHash, appIdHash = 7, expectedAppIdHash = 7)
+
+    // Assert
+    assertTrue(actual = first)
+    assertFalse(actual = duplicate)
+  }
+
+  @Test
   public fun init_rejectsNonPositiveCapacity(): Unit {
     // Arrange
     val expectedMessage = "MeshHashFilter maxEntries must be greater than 0."
